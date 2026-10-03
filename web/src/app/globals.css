@@ -56,8 +56,16 @@
   --vx-radius-control: 8px;
   --vx-radius-panel: 14px;
   --vx-rail: 244px;
+  --vx-rail-tablet: 215px;
+  --vx-rail-icon: 74px;
   --vx-topbar: 65px;
+  --vx-header-mobile: 54px;
+  --vx-bottom-nav: 63px;
   --vx-content: 1320px;
+  --vx-pad-desktop: 40px;
+  --vx-pad-tablet: 28px;
+  --vx-pad-mobile: 16px;
+  --vx-pad-xs: 12px;
 
   --background: var(--vx-paper);
   --foreground: var(--vx-ink);
@@ -90,11 +98,62 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+
+  .vx-page-enter {
+    animation: none !important;
+  }
 }
 
 :focus-visible {
   outline: 3px solid var(--vx-brand);
   outline-offset: 2px;
+}
+
+@keyframes vx-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.vx-page-enter {
+  animation: vx-page-enter 280ms ease-out both;
+}
+
+.vx-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.vx-skip-link:focus,
+.vx-skip-link:focus-visible {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 50;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: nowrap;
+  border-radius: 8px;
+  background: var(--vx-brand);
+  color: var(--vx-on-deep);
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 @layer base {
