@@ -1,0 +1,325 @@
+<!DOCTYPE html><html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voyix Shift - Add a shift</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+    :root {
+      --brand-purple: #5F249F;
+      --brand-purple-deep: #341A4B;
+      --brand-purple-light: #C3A3E0;
+      --brand-purple-tint: #F1E9F8;
+      --ink: #211E25;
+      --ink-soft: #4C4651;
+      --muted: #706A75;
+      --paper: #F5F2F6;
+      --surface: #FFFEFA;
+      --surface-soft: #FBF9FC;
+      --line: #E8E4EB;
+      --line-strong: #D8D1DE;
+      --success: #356D5B;
+      --amber: #A86C2E;
+      --amber-bg: #FBF3E8;
+      --rose: #A75143;
+    }
+
+    body {
+      font-family: 'Manrope', sans-serif;
+      background-color: var(--paper);
+      color: var(--ink);
+    }
+
+    .font-mono {
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Custom tailwind config */
+    .bg-paper { background-color: var(--paper); }
+    .bg-surface { background-color: var(--surface); }
+    .bg-surface-soft { background-color: var(--surface-soft); }
+    .bg-brand-deep { background-color: var(--brand-purple-deep); }
+    .bg-brand { background-color: var(--brand-purple); }
+    .bg-brand-tint { background-color: var(--brand-purple-tint); }
+    .bg-amber-light { background-color: var(--amber-bg); }
+
+    .text-ink { color: var(--ink); }
+    .text-ink-soft { color: var(--ink-soft); }
+    .text-muted { color: var(--muted); }
+    .text-brand { color: var(--brand-purple); }
+    .text-brand-light { color: var(--brand-purple-light); }
+    .text-amber { color: var(--amber); }
+    .text-success { color: var(--success); }
+
+    .border-line { border-color: var(--line); }
+    .border-line-strong { border-color: var(--line-strong); }
+    .border-brand { border-color: var(--brand-purple); }
+
+    .ring-brand { --tw-ring-color: var(--brand-purple); }
+
+    /* Amber hatching for timeline */
+    .hatching-amber {
+      background-image: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 4px,
+        var(--amber) 4px,
+        var(--amber) 5px
+      );
+    }
+  </style>
+</head>
+<body>
+  <div class="min-h-screen flex bg-paper text-ink w-full max-w-[1440px] mx-auto overflow-hidden" data-sd-id="1">
+    
+    <!-- Left Navigation Rail -->
+    <nav class="w-[244px] shrink-0 bg-brand-deep h-screen fixed top-0 left-0 flex flex-col z-40" data-sd-id="2">
+      <div class="p-8 pb-10" data-sd-id="3">
+        <div class="text-2xl font-bold tracking-tight text-white flex items-center" data-sd-id="4">
+          voyix<span class="text-brand-light" data-sd-id="5">shift</span>
+        </div>
+      </div>
+      
+      <ul class="flex flex-col px-4 gap-1" data-sd-id="6">
+        <li data-sd-id="7">
+          <a href="#" id="nav-overview" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-brand-light hover:text-white hover:bg-white/5 transition-colors" data-sd-id="8">
+            <iconify-icon icon="lucide:layout-grid" class="text-lg"></iconify-icon>
+            <span class="font-medium text-[14px]" data-sd-id="9">Overview</span>
+          </a>
+        </li>
+        <li data-sd-id="10">
+          <a href="#" id="nav-records" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-brand-light hover:text-white hover:bg-white/5 transition-colors" data-sd-id="11">
+            <iconify-icon icon="lucide:file-text" class="text-lg"></iconify-icon>
+            <span class="font-medium text-[14px]" data-sd-id="12">My records</span>
+          </a>
+        </li>
+        <li data-sd-id="13">
+          <a href="#" id="nav-calendar" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-brand-light hover:text-white hover:bg-white/5 transition-colors" data-sd-id="14">
+            <iconify-icon icon="lucide:calendar" class="text-lg"></iconify-icon>
+            <span class="font-medium text-[14px]" data-sd-id="15">Calendar</span>
+          </a>
+        </li>
+        <li data-sd-id="16">
+          <a href="#" id="nav-settings" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-brand-light hover:text-white hover:bg-white/5 transition-colors mt-4" data-sd-id="17">
+            <iconify-icon icon="lucide:settings" class="text-lg"></iconify-icon>
+            <span class="font-medium text-[14px]" data-sd-id="18">Settings</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 ml-[244px] flex flex-col min-h-screen relative" data-sd-id="19">
+      
+      <!-- Top Bar -->
+      <header class="h-[65px] sticky top-0 bg-paper/90 backdrop-blur-sm border-b border-line px-10 flex items-center justify-between z-30" data-sd-id="20">
+        <div class="flex items-center gap-4" data-sd-id="21">
+          <!-- Context indicator for current page -->
+          <div class="text-sm font-medium text-ink flex items-center gap-2" data-sd-id="22">
+            <iconify-icon icon="lucide:plus-circle" class="text-muted"></iconify-icon>
+            Add a shift
+          </div>
+        </div>
+        <div class="flex items-center gap-2 text-[13px] text-success" data-sd-id="23">
+          <div class="w-2 h-2 rounded-full bg-success" data-sd-id="24"></div>
+          <span class="font-medium" data-sd-id="25">Saved privately</span>
+        </div>
+      </header>
+
+      <!-- Main Workspace -->
+      <main class="p-10 max-w-[1320px] w-full mx-auto" data-sd-id="26">
+        
+        <!-- Page Header -->
+        <div class="mb-8" data-sd-id="27">
+          <div class="font-mono text-[9px] uppercase tracking-[0.1em] text-muted mb-3" data-sd-id="28">Add a shift</div>
+          <h1 class="text-[32px] font-extrabold text-ink leading-tight mb-2" data-sd-id="29">Calculate this <span class="text-brand" data-sd-id="30">shift</span></h1>
+          <p class="text-ink-soft text-[14px]" data-sd-id="31">Your night hours, accounted for.</p>
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-8 items-start" data-sd-id="32">
+          
+          <!-- Left Column: Form -->
+          <div class="flex flex-col gap-6" data-sd-id="33">
+            <div class="bg-surface border border-line rounded-[14px] shadow-sm p-6" data-sd-id="34">
+              <form class="flex flex-col gap-5" data-sd-id="35">
+                
+                <div class="flex flex-col gap-1.5" data-sd-id="36">
+                  <label class="text-[13px] font-medium text-ink-soft" data-sd-id="37">Work date</label>
+                  <div class="relative" data-sd-id="38">
+                    <input type="text" value="October 1, 2026" class="w-full h-[42px] px-3 border border-line-strong rounded-lg bg-white text-[14px] font-mono text-ink focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 transition-shadow" readonly="" data-sd-id="39">
+                    <iconify-icon icon="lucide:calendar" class="absolute right-3 top-1/2 -translate-y-1/2 text-muted"></iconify-icon>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4" data-sd-id="40">
+                  <div class="flex flex-col gap-1.5" data-sd-id="41">
+                    <label class="text-[13px] font-medium text-ink-soft" data-sd-id="42">Shift start</label>
+                    <input type="text" value="9:00 PM" class="w-full h-[42px] px-3 border border-line-strong rounded-lg bg-white text-[14px] font-mono text-ink focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 transition-shadow" readonly="" data-sd-id="43">
+                  </div>
+                  <div class="flex flex-col gap-1.5" data-sd-id="44">
+                    <label class="text-[13px] font-medium text-ink-soft" data-sd-id="45">Shift end</label>
+                    <input type="text" value="6:00 AM" class="w-full h-[42px] px-3 border border-line-strong rounded-lg bg-white text-[14px] font-mono text-ink focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 transition-shadow" readonly="" data-sd-id="46">
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap-1.5" data-sd-id="47">
+                  <label class="text-[13px] font-medium text-ink-soft" data-sd-id="48">Day classification</label>
+                  <select class="w-full h-[42px] px-3 border border-line-strong rounded-lg bg-white text-[14px] text-ink focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 transition-shadow appearance-none" data-sd-id="49">
+                    <option selected="" data-sd-id="50">Regular Work Day</option>
+                    <option data-sd-id="51">Rest Day</option>
+                  </select>
+                </div>
+
+                <div class="flex flex-col gap-1.5 pt-2" data-sd-id="52">
+                  <label class="text-[13px] font-medium text-ink-soft" data-sd-id="53">Break included in Night Differential?</label>
+                  <div class="flex items-center gap-4 mt-1" data-sd-id="54">
+                    <label class="flex items-center gap-2 cursor-pointer" data-sd-id="55">
+                      <input type="radio" name="break" class="w-4 h-4 text-brand focus:ring-brand border-line-strong" disabled="" data-sd-id="56">
+                      <span class="text-[14px]" data-sd-id="57">Yes</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer" data-sd-id="58">
+                      <input type="radio" name="break" class="w-4 h-4 text-brand focus:ring-brand border-line-strong" checked="" readonly="" data-sd-id="59">
+                      <span class="text-[14px]" data-sd-id="60">No</span>
+                    </label>
+                  </div>
+                  <p class="text-[13px] text-muted mt-1 leading-snug" data-sd-id="61">Default unpaid break is 1 hour. Start and end of the break are not collected.</p>
+                </div>
+
+                <div class="pt-4 flex items-center gap-3" data-sd-id="62">
+                  <button type="button" class="h-[42px] px-6 bg-brand text-white font-semibold rounded-lg text-[14px] hover:bg-brand/90 transition-colors" data-sd-id="63">Calculate shift</button>
+                  <button type="button" class="h-[42px] px-4 text-brand font-semibold rounded-lg text-[14px] hover:bg-brand-tint transition-colors" data-sd-id="64">Cancel</button>
+                </div>
+              </form>
+            </div>
+            <p class="text-[12px] text-muted text-center" data-sd-id="65">This does not submit anything to payroll.</p>
+          </div>
+
+          <!-- Right Column: Calculation Preview -->
+          <div class="flex flex-col gap-6" data-sd-id="66">
+            <div class="bg-surface border border-line rounded-[14px] shadow-sm overflow-hidden" data-sd-id="67">
+              
+              <!-- Status Bar -->
+              <div class="bg-amber-light border-b border-line px-6 py-3 flex items-center gap-2" data-sd-id="68">
+                <iconify-icon icon="lucide:alert-circle" class="text-amber text-[16px]"></iconify-icon>
+                <span class="font-mono text-[11px] font-semibold text-amber uppercase tracking-wider" data-sd-id="69">Estimate Only</span>
+              </div>
+
+              <div class="p-6 flex flex-col gap-8" data-sd-id="70">
+                
+                <!-- Timeline Trace -->
+                <div class="flex flex-col gap-4" data-sd-id="71">
+                  <div class="flex justify-between items-end mb-1" data-sd-id="72">
+                    <h3 class="text-[15px] font-bold text-ink" data-sd-id="73">Night-window trace</h3>
+                    <span class="text-[12px] text-muted font-mono" data-sd-id="74">10:00 PM–6:00 AM window</span>
+                  </div>
+                  
+                  <!-- Timeline Bar -->
+                  <div class="relative h-8 bg-surface-soft border border-line rounded-md w-full overflow-hidden flex" data-sd-id="75">
+                    <!-- 9pm to 10pm: Overlap/Prep (1hr) -->
+                    <div class="h-full w-[11.11%] bg-brand-light/30 border-r border-white/50" data-sd-id="76"></div>
+                    <!-- 10pm to 6am (8hrs total window) -->
+                    <!-- 4hrs ND -->
+                    <div class="h-full w-[44.44%] bg-brand border-r border-white/50" data-sd-id="77"></div>
+                    <!-- 1hr Break Excluded -->
+                    <div class="h-full w-[11.11%] hatching-amber border-r border-white/50" data-sd-id="78"></div>
+                    <!-- 3hrs ND -->
+                    <div class="h-full w-[33.34%] bg-brand" data-sd-id="79"></div>
+                  </div>
+
+                  <!-- Timeline Labels (Start/End) -->
+                  <div class="flex justify-between text-[11px] font-mono text-muted -mt-2" data-sd-id="80">
+                    <span data-sd-id="81">9:00 PM</span>
+                    <span data-sd-id="82">6:00 AM</span>
+                  </div>
+
+                  <!-- Legend -->
+                  <div class="flex flex-wrap gap-4 text-[12px] text-ink-soft" data-sd-id="83">
+                    <div class="flex items-center gap-1.5" data-sd-id="84">
+                      <div class="w-3 h-3 rounded-sm bg-brand" data-sd-id="85"></div>
+                      <span data-sd-id="86">Qualifying ND</span>
+                    </div>
+                    <div class="flex items-center gap-1.5" data-sd-id="87">
+                      <div class="w-3 h-3 rounded-sm bg-brand-light/30" data-sd-id="88"></div>
+                      <span data-sd-id="89">Outside window</span>
+                    </div>
+                    <div class="flex items-center gap-1.5" data-sd-id="90">
+                      <div class="w-3 h-3 rounded-sm hatching-amber" data-sd-id="91"></div>
+                      <span data-sd-id="92">Excluded break</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Number Strip -->
+                <div class="flex items-center justify-between bg-surface-soft p-4 rounded-lg border border-line" data-sd-id="93">
+                  <div class="flex flex-col" data-sd-id="94">
+                    <span class="font-mono text-[9px] uppercase tracking-wider text-muted mb-1" data-sd-id="95">Potential ND</span>
+                    <span class="font-mono tabular-nums text-[14px] text-ink" data-sd-id="96">8.00 hrs</span>
+                  </div>
+                  <div class="text-muted text-[16px]" data-sd-id="97">-</div>
+                  <div class="flex flex-col" data-sd-id="98">
+                    <span class="font-mono text-[9px] uppercase tracking-wider text-muted mb-1" data-sd-id="99">Break excluded</span>
+                    <span class="font-mono tabular-nums text-[14px] text-ink" data-sd-id="100">1.00 hr</span>
+                  </div>
+                  <div class="text-muted text-[16px]" data-sd-id="101">=</div>
+                  <div class="flex flex-col text-right" data-sd-id="102">
+                    <span class="font-mono text-[9px] uppercase tracking-wider text-brand font-bold mb-1" data-sd-id="103">Final ND</span>
+                    <span class="font-mono tabular-nums text-[20px] font-bold text-ink" data-sd-id="104">7.00 hrs</span>
+                  </div>
+                </div>
+
+                <!-- Wage Table -->
+                <div class="flex flex-col" data-sd-id="105">
+                  <div class="overflow-x-auto" data-sd-id="106">
+                    <table class="w-full text-left" data-sd-id="107">
+                      <thead data-sd-id="108">
+                        <tr class="border-b border-line-strong" data-sd-id="109">
+                          <th class="pb-2 font-mono text-[9px] uppercase tracking-wider text-muted font-medium w-[80px]" data-sd-id="110">Code</th>
+                          <th class="pb-2 font-mono text-[9px] uppercase tracking-wider text-muted font-medium" data-sd-id="111">Category</th>
+                          <th class="pb-2 font-mono text-[9px] uppercase tracking-wider text-muted font-medium text-right w-[60px]" data-sd-id="112">Hours</th>
+                          <th class="pb-2 font-mono text-[9px] uppercase tracking-wider text-muted font-medium text-right w-[60px]" data-sd-id="113">Rate</th>
+                          <th class="pb-2 font-mono text-[9px] uppercase tracking-wider text-muted font-medium text-right w-[90px]" data-sd-id="114">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody class="font-mono text-[13px] tabular-nums" data-sd-id="115">
+                        <tr class="border-b border-line" data-sd-id="116">
+                          <td class="py-3" data-sd-id="117">
+                            <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-brand-tint text-brand text-[12px] font-semibold" data-sd-id="118">
+                              2211
+                            </span>
+                          </td>
+                          <td class="py-3 text-[13px] font-sans text-ink-soft pr-4" data-sd-id="119">Ordinary day — night shift, first 8 hours</td>
+                          <td class="py-3 text-right text-ink" data-sd-id="120">7.00</td>
+                          <td class="py-3 text-right text-muted" data-sd-id="121">10%</td>
+                          <td class="py-3 text-right font-medium text-ink" data-sd-id="122">₱140.00</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p class="text-[12px] text-muted mt-3 leading-relaxed" data-sd-id="123">
+                    10% of a saved hourly rate of ₱200.00 for each qualifying hour. Estimate only — confirm your payroll rule before relying on this amount.
+                  </p>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Final Actions -->
+            <div class="flex items-center justify-end gap-3" data-sd-id="124">
+              <button type="button" class="h-[42px] px-4 text-brand font-semibold rounded-lg text-[14px] hover:bg-surface border border-brand transition-colors" data-sd-id="125">Cancel</button>
+              <button type="button" class="h-[42px] px-6 bg-brand text-white font-semibold rounded-lg text-[14px] hover:bg-brand/90 transition-colors shadow-sm" data-sd-id="126">Save entry</button>
+            </div>
+          </div>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+</body></html>
