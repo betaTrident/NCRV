@@ -1,26 +1,110 @@
 @import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --vx-brand: #5f249f;
+  --vx-brand-hover: #531f8c;
+  --vx-brand-deep: #341a4b;
+  --vx-brand-light: #c3a3e0;
+  --vx-brand-tint: #f1e9f8;
+  --vx-ink: #211e25;
+  --vx-ink-soft: #4c4651;
+  --vx-muted: #706a75;
+  --vx-paper: #f5f2f6;
+  --vx-surface: #fffefa;
+  --vx-surface-soft: #fbf9fc;
+  --vx-line: #e8e4eb;
+  --vx-line-strong: #d8d1de;
+  --vx-success: #356d5b;
+  --vx-success-bg: #e7f2ec;
+  --vx-amber: #a86c2e;
+  --vx-amber-bg: #fbf3e8;
+  --vx-rose: #a75143;
+  --vx-rose-bg: #f8ebe8;
+  --vx-on-deep: #fffefa;
+  --vx-radius-control: 8px;
+  --vx-radius-panel: 14px;
+  --vx-rail: 244px;
+  --vx-topbar: 65px;
+  --vx-content: 1320px;
+
+  --background: var(--vx-paper);
+  --foreground: var(--vx-ink);
+  --card: var(--vx-surface);
+  --card-foreground: var(--vx-ink);
+  --popover: var(--vx-surface);
+  --popover-foreground: var(--vx-ink);
+  --primary: var(--vx-brand);
+  --primary-foreground: var(--vx-surface);
+  --secondary: var(--vx-surface);
+  --secondary-foreground: var(--vx-brand);
+  --muted: var(--vx-surface-soft);
+  --muted-foreground: var(--vx-muted);
+  --accent: var(--vx-brand-tint);
+  --accent-foreground: var(--vx-brand-deep);
+  --destructive: var(--vx-rose);
+  --destructive-foreground: var(--vx-surface);
+  --border: var(--vx-line);
+  --input: var(--vx-line-strong);
+  --ring: var(--vx-brand);
+  --radius: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+:focus-visible {
+  outline: 3px solid var(--vx-brand);
+  outline-offset: 2px;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
 }
