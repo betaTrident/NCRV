@@ -18,7 +18,7 @@ function PageHeader({ eyebrow, title, description, action }: PageHeaderProps) {
         <p className="font-mono text-[11px] font-medium tracking-[0.12em] text-[var(--vx-brand)] uppercase">
           {eyebrow}
         </p>
-        <h1 className="text-[28px] leading-tight font-extrabold text-[var(--vx-ink)] sm:text-[32px]">
+        <h1 className="text-[31px] leading-tight font-bold text-[var(--vx-ink)] sm:text-[32px]">
           {title}
         </h1>
         <p className="max-w-prose text-sm text-[var(--vx-muted)]">
