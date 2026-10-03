@@ -1,0 +1,19 @@
+---
+description: Voyix Shift visual and copy rules for any UI change
+globs:
+  - web/src/**/*.tsx
+  - web/src/app/globals.css
+alwaysApply: false
+---
+
+Follow DESIGN.md and 07-SETUP-PLAN.md.
+
+Use the Voyix tokens in web/src/app/globals.css. Do not introduce fonts, hex values, gradients, or radii outside that file.
+
+Compose pages from the product components. Do not nest panels. Do not put an icon tile above a heading.
+
+Pair every status color with words. Call money an estimate. Do not imply payroll approval.
+
+Motion stays under 280 ms and honors prefers-reduced-motion. Taste dials for this product: variance 3, motion 2, density 6 on ledgers and 4 on auth.
+
+Before a new screen, read the matching section in 05-USER-INTERFACE.md and check Mobbin only for structure. Reject payroll-console and marketing-site patterns.
