@@ -6,7 +6,7 @@
   "tailwind": {
     "config": "",
     "css": "src/app/globals.css",
-    "baseColor": "voyix",
+    "baseColor": "mauve",
     "cssVariables": true,
     "prefix": ""
   },
