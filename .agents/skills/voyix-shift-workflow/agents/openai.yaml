@@ -1,0 +1,7 @@
+interface:
+  display_name: "Voyix Shift workflow"
+  short_description: "Product loop for Voyix Shift UI, engine, schema, and auth"
+  brand_color: "#5F249F"
+  default_prompt: "Use $voyix-shift-workflow before implementing. Pick the surface, load only matching skills, and do not invent payroll rules."
+policy:
+  allow_implicit_invocation: true

@@ -1,0 +1,13 @@
+---
+description: Supabase schema, RLS, and CLI rules for Voyix Shift
+globs: supabase/**/*.sql,supabase/config.toml,web/src/lib/supabase/**/*.ts,web/src/server/actions/**/*.ts
+alwaysApply: false
+---
+
+Read `04-DATA-MODEL.md` and the Supabase data model in `07-SETUP-PLAN.md`. Load skills `supabase` and `supabase-postgres-best-practices`.
+
+Create migrations with `supabase migration new`. Always pass `--agent no` to the CLI.
+
+RLS on every app table. Policies use `(select auth.uid())`. No `anon` grants. No `security definer` in `public`. Do not authorize from `user_metadata`.
+
+Do not seed holidays or payroll periods. Do not invent ADP codes. Hosted project ref is `dvfxyrcxxktjgutpgcyw`.

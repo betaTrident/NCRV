@@ -66,6 +66,11 @@ is:
   `07-SETUP-PLAN.md`                  Application foundation: stack,
                                       file structure, design system,
                                       and component library
+
+  `AGENTS.md`                         Cross-tool agent contract
+                                      (Cursor, Codex, Gemini)
+
+  `DESIGN.md`                         Visual system and copy rules
   -----------------------------------------------------------------------
 
 ## Source Basis

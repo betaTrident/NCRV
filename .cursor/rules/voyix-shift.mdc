@@ -1,0 +1,14 @@
+---
+description: Voyix Shift product and stack rules for every session
+alwaysApply: true
+---
+
+Voyix Shift is a private employee night-differential shiftbook in `web/`. Specs live at the repo root. Follow `AGENTS.md`.
+
+Do not invent ADP codes, holiday dates, or money formulas. TBD stays TBD. No manager or admin accounts.
+
+Authorize with `employees.id = auth.users.id` and `(select auth.uid())`. Never `user_metadata`. `proxy.ts` refreshes cookies only.
+
+Brand purple is `#5F249F`. Type is Manrope + IBM Plex Mono. Motion is CSS, ≤280 ms, with `prefers-reduced-motion`. No Framer Motion or GSAP.
+
+Load `.agents/skills/voyix-shift-workflow/SKILL.md` for feature work. Use `supabase --agent no`. Do not run `impeccable init`. Commit only when asked.

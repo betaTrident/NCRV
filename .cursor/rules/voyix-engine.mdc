@@ -1,0 +1,13 @@
+---
+description: Night-differential engine rules
+globs: web/src/engine/**/*.ts
+alwaysApply: false
+---
+
+Read `01-BUSINESS-RULES.md` through `03-CALCULATION-ENGINE.md` before changing `web/src/engine`.
+
+`calculateNd` is the only money/hours entry. Use decimal strings and integer centavos. Never binary floats for amounts.
+
+Only code 2211 has a confirmed money formula (10% of hourly wage per qualifying hour). Every other amount is an explicit TBD estimate.
+
+Do not invent ADP codes or percentages. Characterization case: 9pm–6am, break excluded → 7.00 hours, 2211, 14000 centavos at ₱200.

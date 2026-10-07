@@ -1,0 +1,7 @@
+interface:
+  display_name: "Apple Design"
+  short_description: "WWDC fluid-interface craft for the web, mapped onto Voyix CSS motion"
+  brand_color: "#5F249F"
+  default_prompt: "Use $apple-design for press feedback, spatial consistency, reduced-motion, and restraint. On Voyix Shift do not add Framer Motion or bounce springs."
+policy:
+  allow_implicit_invocation: true
