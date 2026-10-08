@@ -11,7 +11,7 @@ This document describes the visual language and page patterns used by the Voyix 
 - **Design movement:** Swiss editorial hierarchy paired with the legibility of industrial timekeeping instruments.
 - **Core principles:**
   1. **Scan first:** short headings, compact labels and consistent page landmarks make every screen easy to read quickly.
-  2. **Show the work:** time, overlap, break subtraction, final ND hours and wage-code status are presented as a trace, not a black-box total.
+  2. **Show the work:** elapsed and worked time, schedule threshold, overtime status, ND overlap, break treatment, final ND hours and wage-code status are presented as a trace, not a black-box total.
   3. **Private and calm:** warm paper-like surfaces, restrained motion and a clear personal-record frame avoid the feel of a payroll operations console.
   4. **Do not overclaim:** estimate, pending and TBD states are explicit and are never styled as confirmed outcomes.
 - **Brand voice:** plain, concise and non-authoritative about payroll. Example lines: “Your night hours, accounted for.” and “Estimate only — confirm your payroll rule before relying on this amount.”
@@ -106,9 +106,9 @@ Semantic status color is separate from brand color. **Green is reserved for posi
 | Route / page | Layout and emphasis | Key visual states |
 | --- | --- | --- |
 | `/login` — Employee sign in | Split composition: deep-purple story panel on the left, restrained form panel on the right. On mobile, stack the brand/story above the form. | Password reveal control, sign-in pending, validation/error feedback, privacy note. |
-| `/signup` — Create profile | Reuse the auth shell; keep the form as the primary focus and registration copy clear that this does not verify employment. | Required name/employee ID/password; optional email and hourly rate; pending and validation feedback. |
+| `/signup` — Create profile | Reuse the auth shell; keep the form as the primary focus and registration copy clear that this does not verify employment. | Required name/employee ID/password; optional email and monthly basic salary; derived factor-261 rate explanation; pending and validation feedback. |
 | `/` — Overview | Page heading and Add shift action; prominent payroll-period banner; three metric cards; recent-shift ledger; estimate disclaimer. | Configured vs not-configured period; loading; recent shifts vs empty ledger; estimate vs missing data. |
-| `/shift/new` — Add shift | Desktop split: shift form at left, calculation preview at right. Stack on tablet/mobile. The timeline and number strip anchor the result. | Pre-calculation placeholder; live calculation; cross-date confirmation; code/threshold TBD; save pending/saved; inline error. |
+| `/shift/new` — Add shift | Desktop split: shift form at left, calculation preview at right. Stack on tablet/mobile. The timeline and number strip anchor the result. | Standard or approved-CWW schedule; employee-recorded overtime approval; worked/regular/extra-hour trace; pre-calculation placeholder; live calculation; cross-date confirmation; code/threshold TBD; save pending/saved; inline error. |
 | `/records` — My records | Filter toolbar, optional custom dates, payroll-period subheading and compact ledger table. | Week/period/month/custom range; missing period notice; populated table; empty/loading state; pending code labels. |
 | `/records/:id` — Record detail | Calculation trace in the wide panel; estimate and wage-type summary in the aside. Stack into a single column on mobile. | Saved snapshot, cross-date confirmation/pending, configured wage lines, unresolved candidates, missing record. |
 | `/calendar` — Calendar | Two peer panels for holiday references and payroll periods, each with list/empty state followed by an add form. | Clear warning that dates are not fabricated; empty and populated lists; saved feedback. |

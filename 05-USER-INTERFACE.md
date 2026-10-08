@@ -7,6 +7,14 @@ seconds.
 
 There are no manager or admin accounts.
 
+Signup and profile settings accept an optional **Monthly basic salary**.
+Do not ask the employee to enter an hourly rate. When salary is present,
+show the derived computational rate and its basis:
+
+``` text
+(Monthly basic salary x 12) / 261 / 8
+```
+
 ## Main Navigation
 
 Keep navigation minimal:
@@ -87,8 +95,19 @@ Break included in Night Differential?
 Default unpaid break:
 1 hour
 
+Scheduled regular hours
+[ 8.00 ]
+
+Was overtime agreed or approved?
+[ No ]
+
 [ CALCULATE ]
 ```
+
+Use 8 scheduled regular hours by default. A different value is valid
+only when the employee is recording an approved compressed-workweek
+schedule. The overtime answer is the employee's personal record, not an
+approval performed by the app.
 
 ## Day Classification
 
@@ -127,6 +146,9 @@ Break included in ND?
 Yes / No
 ```
 
+This selection changes only ND overlap. The 1-hour unpaid break always
+reduces elapsed shift time when the app calculates worked hours.
+
 ------------------------------------------------------------------------
 
 # 4. Calculation Result
@@ -138,6 +160,21 @@ NIGHT DIFFERENTIAL RESULT
 
 Shift
 9:00 PM – 6:00 AM
+
+Elapsed
+9.00 hrs
+
+Worked after unpaid break
+8.00 hrs
+
+Scheduled regular hours
+8.00 hrs
+
+Potential overtime
+0.00 hrs
+
+Overtime recorded as approved
+No
 
 ND Window
 10:00 PM – 6:00 AM
@@ -160,6 +197,10 @@ Regular Work Day
 
 Then show applicable wage type lines.
 
+If allocation of ND between regular and approved-overtime portions is
+required, display that allocation as TBD. Do not automatically select
+code 2252 from the shift duration.
+
 ------------------------------------------------------------------------
 
 # 5. Wage Type Results
@@ -176,10 +217,12 @@ If multiple codes apply:
 
   Code   Category       Hours   Rate   Amount
   ------ ------------ ------- ------ --------
-  XXXX   Category A      X.XX    XX%     ₱XXX
-  YYYY   Category B      X.XX    XX%     ₱XXX
+  XXXX   Category A      X.XX    XX%      TBD
+  YYYY   Category B      X.XX    XX%      TBD
 
 The employee should be able to see exactly which codes were selected.
+Only code 2211 has a confirmed money formula. Every non-2211 amount,
+including code 2252, must display as TBD rather than a currency value.
 
 ------------------------------------------------------------------------
 
@@ -228,6 +271,15 @@ Shift
 
 Day Classification
 Regular Work Day
+
+Elapsed
+9.00 hrs
+
+Worked after unpaid break
+8.00 hrs
+
+Potential Overtime
+0.00 hrs
 
 Potential ND
 8.00 hrs
@@ -280,7 +332,16 @@ MY PROFILE
 
 Name
 Employee ID
-Hourly Rate
+Monthly Basic Salary (optional)
+
+Derived Computational Hourly Rate
+(Monthly Basic Salary x 12) / 261 / 8
+
+Approved Compressed Workweek
+No
+
+Scheduled Regular Hours
+8 hours
 
 COMPUTATION
 
@@ -297,3 +358,6 @@ Default Unpaid Break
 The employee can view configured wage types and holiday information.
 
 The first version does not need an admin configuration panel.
+
+Factor 365 may be explained as monthly-paid employment context, but it
+must not appear as a selectable or computed engine divisor.

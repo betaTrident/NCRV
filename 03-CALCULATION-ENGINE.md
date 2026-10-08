@@ -18,7 +18,9 @@ shift_start
 shift_end
 day_classification
 break_included_in_nd
-employee_hourly_rate
+monthly_basic_salary
+scheduled_regular_hours
+overtime_approved
 ```
 
 The break duration is configured by the system and defaults to:
@@ -26,6 +28,14 @@ The break duration is configured by the system and defaults to:
 ``` text
 1 hour
 ```
+
+`scheduled_regular_hours` defaults to 8. It may differ only for an
+approved compressed-workweek schedule, where it must be between 8 and
+12 hours inclusive. NCR Voyix's standard context is 40 hours per week;
+for example, an approved CWW may configure 10 hours across 4 days.
+`overtime_approved` is the
+employee's record that extra work was agreed or approved; it is not an
+approval performed by this application.
 
 ## Step 1 --- Normalize the Shift
 
@@ -38,6 +48,20 @@ Example:
 Start: October 1, 9:00 PM
 End:   October 2, 6:00 AM
 ```
+
+Calculate elapsed and worked hours before overtime:
+
+``` text
+elapsed_hours = duration(shift interval)
+worked_hours = max(0, elapsed_hours - 1 hour unpaid break)
+potential_overtime_hours =
+    max(0, worked_hours - scheduled_regular_hours)
+approved_overtime_hours =
+    overtime_approved ? potential_overtime_hours : 0
+```
+
+The unpaid break always reduces worked hours. A 9-hour elapsed shift is
+8 worked hours; a 10-hour elapsed shift is 9 worked hours.
 
 ## Step 2 --- Build the ND Window
 
@@ -79,6 +103,9 @@ Potential ND Hours
 The employee only selects whether the break was included. No break
 timestamps are entered.
 
+This option changes only ND overlap. It does not change `worked_hours`,
+`potential_overtime_hours`, or the schedule threshold.
+
 ## Step 5 --- Determine Day Classification
 
 Use the employee's per-shift classification and holiday calendar.
@@ -98,18 +125,30 @@ DOUBLE_REGULAR_HOLIDAY
 DOUBLE_REGULAR_HOLIDAY_REST_DAY
 ```
 
-## Step 6 --- Determine Hours Category
+## Step 6 --- Determine Schedule and Overtime
+
+Use 8 worked hours as the standard threshold. For an approved CWW, use
+the employee's configured `scheduled_regular_hours` instead. Reject an
+approved-CWW value below 8 or above 12. The schedule validation does not
+invent a wage-code mapping or resolve the ND regular/overtime split.
+
+Potential overtime is the worked time above that threshold. Count it as
+approved overtime only when `overtime_approved` is true. Do not create a
+manager or admin approval workflow.
+
+## Step 7 --- Determine Hours Category
 
 The wage type table distinguishes:
 
 -   First 8 hours
 -   Excess of the first 8 hours
 
-The final implementation must define exactly how the 8-hour threshold is
-applied to the applicable payroll case. Do not assume a rule where the
-source does not specify one.
+The schedule threshold determines potential overtime, but it does not
+by itself determine which ND minutes belong to regular versus overtime
+wage-type lines. That ND allocation remains TBD. In particular, do not
+select code 2252 merely because worked hours exceeded eight.
 
-## Step 7 --- Find Applicable Wage Types
+## Step 8 --- Find Applicable Wage Types
 
 Query the wage type configuration using:
 
@@ -122,14 +161,29 @@ is_nd = true
 Return **all applicable matching wage type rules**, not only the first
 match.
 
-## Step 8 --- Calculate Amount
+## Step 9 --- Calculate Amount
 
 The ordinary ND rule states 10% of regular wage for each qualifying
 hour.
 
+Derive the computational rate from monthly basic salary:
+
+``` text
+daily_rate = (monthly_basic_salary x 12) / 261
+hourly_rate = daily_rate / 8
+ordinary_nd_amount = hourly_rate x qualifying_nd_hours x 10 percent
+```
+
+Factor 365 is monthly-paid employment context only and must never be an
+engine divisor. Do not round the daily rate before deriving the hourly
+rate; preserve decimal precision and round only the final monetary
+estimate to centavos.
+
 For other wage type categories, use the configured payroll formula
 associated with the wage type. Do not automatically treat every "TOTAL %
 to be added" value as a standalone ND percentage.
+
+Code 2252 and every non-2211 monetary formula remain TBD.
 
 ## Example
 
@@ -146,6 +200,9 @@ Break duration: 1 hour
 Result:
 
 ``` text
+Elapsed:       9 hours
+Worked:        8 hours
+Potential OT:  0 hours
 Potential ND: 8 hours
 Break:         1 hour
 Final ND:      7 hours
@@ -178,6 +235,20 @@ function calculateND(input):
         input.shift_end
     )
 
+    elapsed_hours = duration(shift)
+    worked_hours = max(
+        0,
+        elapsed_hours - default_break_duration
+    )
+    potential_overtime_hours = max(
+        0,
+        worked_hours - input.scheduled_regular_hours
+    )
+    approved_overtime_hours =
+        input.overtime_approved
+            ? potential_overtime_hours
+            : 0
+
     nd_window = buildNDWindow(
         input.work_date,
         22:00,
@@ -199,7 +270,7 @@ function calculateND(input):
         input.day_classification
 
     hours_categories =
-        determineApplicableHoursCategories(...)
+        determineApplicableHoursCategoriesOrTbd(...)
 
     wage_type_lines =
         findAllWageTypes(
@@ -210,12 +281,21 @@ function calculateND(input):
 
     amounts =
         calculateConfiguredAmounts(
-            input.hourly_rate,
+            deriveHourlyRate(
+                input.monthly_basic_salary,
+                annual_months = 12,
+                workdays_factor = 261,
+                rate_hours_per_day = 8
+            ),
             nd_hours,
             wage_type_lines
         )
 
     return {
+        elapsed_hours,
+        worked_hours,
+        potential_overtime_hours,
+        approved_overtime_hours,
         nd_hours,
         day_category,
         wage_type_lines,
@@ -229,6 +309,16 @@ Every saved result should preserve enough information to explain the
 calculation later:
 
 ``` text
+Monthly basic salary
+Annual rate factor (261)
+Derived daily rate
+Derived hourly rate
+Elapsed hours
+Worked hours after unpaid break
+Scheduled regular hours
+Potential overtime hours
+Overtime recorded as approved
+Approved overtime hours
 ND window
 Potential ND hours
 Break duration
@@ -239,3 +329,6 @@ Applicable wage type lines
 Configured percentage
 Calculated amount
 ```
+
+The saved rate inputs are snapshots. Later salary or schedule changes
+must not rewrite the explanation for an existing record.

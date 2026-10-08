@@ -86,6 +86,22 @@ Therefore, the application should preserve this meaning and use the
 configured payroll formula rather than automatically interpreting every
 value as a simple ND percentage.
 
+Only code `2211` at 10 percent has a confirmed monetary formula. Its
+estimate uses the computational hourly rate derived from monthly basic
+salary:
+
+``` text
+((monthly basic salary x 12) / 261 / 8) x qualifying hours x 10 percent
+```
+
+Factor 365 is not used by the calculation engine. Code `2252` and all
+other monetary formulas remain explicit TBD results.
+
+The source does not define how qualifying ND overlap is allocated
+between regular and approved-overtime portions. Do not select code 2252
+or split ND hours merely because worked hours exceeded eight. Preserve
+that allocation as TBD until confirmed.
+
 ## Multiple Wage Types
 
 The database must support:

@@ -192,6 +192,28 @@
                   <p class="text-[13px] text-muted mt-1 leading-snug" data-sd-id="61">Default unpaid break is 1 hour. Start and end of the break are not collected.</p>
                 </div>
 
+                <div class="grid grid-cols-2 gap-4" data-sd-id="127">
+                  <div class="flex flex-col gap-1.5" data-sd-id="128">
+                    <label class="text-[13px] font-medium text-ink-soft" data-sd-id="129">Work schedule</label>
+                    <select class="w-full h-[42px] px-3 border border-line-strong rounded-lg bg-white text-[14px] text-ink focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 transition-shadow appearance-none" data-sd-id="130">
+                      <option selected="" data-sd-id="131">Standard</option>
+                      <option data-sd-id="132">Approved CWW</option>
+                    </select>
+                  </div>
+                  <div class="flex flex-col gap-1.5" data-sd-id="133">
+                    <label class="text-[13px] font-medium text-ink-soft" data-sd-id="134">Scheduled regular hours</label>
+                    <input type="text" value="8.00" class="w-full h-[42px] px-3 border border-line-strong rounded-lg bg-white text-[14px] font-mono text-ink focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 transition-shadow" readonly="" data-sd-id="135">
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap-1.5" data-sd-id="136">
+                  <label class="text-[13px] font-medium text-ink-soft" data-sd-id="137">Overtime agreed or approved?</label>
+                  <div class="flex items-center gap-4" data-sd-id="138">
+                    <span class="font-mono text-[13px] text-ink" data-sd-id="139">No</span>
+                    <span class="text-[12px] text-muted" data-sd-id="140">Recorded by you; Voyix Shift does not approve overtime.</span>
+                  </div>
+                </div>
+
                 <div class="pt-4 flex items-center gap-3" data-sd-id="62">
                   <button type="button" class="h-[42px] px-6 bg-brand text-white font-semibold rounded-lg text-[14px] hover:bg-brand/90 transition-colors" data-sd-id="63">Calculate shift</button>
                   <button type="button" class="h-[42px] px-4 text-brand font-semibold rounded-lg text-[14px] hover:bg-brand-tint transition-colors" data-sd-id="64">Cancel</button>
@@ -256,6 +278,34 @@
                   </div>
                 </div>
 
+                <!-- Duty and overtime trace -->
+                <div class="grid grid-cols-3 gap-px overflow-hidden rounded-lg border border-line bg-line" data-sd-id="141">
+                  <div class="bg-surface-soft p-3" data-sd-id="142">
+                    <span class="block font-mono text-[9px] uppercase tracking-wider text-muted mb-1" data-sd-id="143">Elapsed</span>
+                    <span class="font-mono tabular-nums text-[13px] text-ink" data-sd-id="144">9.00 hrs</span>
+                  </div>
+                  <div class="bg-surface-soft p-3" data-sd-id="145">
+                    <span class="block font-mono text-[9px] uppercase tracking-wider text-muted mb-1" data-sd-id="146">Worked</span>
+                    <span class="font-mono tabular-nums text-[13px] text-ink" data-sd-id="147">8.00 hrs</span>
+                  </div>
+                  <div class="bg-surface-soft p-3" data-sd-id="148">
+                    <span class="block font-mono text-[9px] uppercase tracking-wider text-muted mb-1" data-sd-id="149">Regular</span>
+                    <span class="font-mono tabular-nums text-[13px] text-ink" data-sd-id="150">8.00 hrs</span>
+                  </div>
+                  <div class="bg-surface-soft p-3" data-sd-id="151">
+                    <span class="block font-mono text-[9px] uppercase tracking-wider text-muted mb-1" data-sd-id="152">Potential OT</span>
+                    <span class="font-mono tabular-nums text-[13px] text-ink" data-sd-id="153">0.00 hrs</span>
+                  </div>
+                  <div class="bg-surface-soft p-3" data-sd-id="154">
+                    <span class="block font-mono text-[9px] uppercase tracking-wider text-muted mb-1" data-sd-id="155">Approved OT</span>
+                    <span class="font-mono tabular-nums text-[13px] text-ink" data-sd-id="156">0.00 hrs</span>
+                  </div>
+                  <div class="bg-surface-soft p-3" data-sd-id="157">
+                    <span class="block font-mono text-[9px] uppercase tracking-wider text-muted mb-1" data-sd-id="158">Unapproved extra</span>
+                    <span class="font-mono tabular-nums text-[13px] text-ink" data-sd-id="159">0.00 hrs</span>
+                  </div>
+                </div>
+
                 <!-- Number Strip -->
                 <div class="flex items-center justify-between bg-surface-soft p-4 rounded-lg border border-line" data-sd-id="93">
                   <div class="flex flex-col" data-sd-id="94">
@@ -303,7 +353,7 @@
                     </table>
                   </div>
                   <p class="text-[12px] text-muted mt-3 leading-relaxed" data-sd-id="123">
-                    10% of a saved hourly rate of ₱200.00 for each qualifying hour. Estimate only — confirm your payroll rule before relying on this amount.
+                    10% of the derived ₱200.00 hourly rate for each qualifying hour. Rate basis: (₱34,800.00 monthly basic salary × 12) ÷ 261 ÷ 8. Estimate only — confirm your payroll rule before relying on this amount.
                   </p>
                 </div>
 

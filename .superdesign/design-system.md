@@ -9,7 +9,7 @@
 **Core principles:**
 
 1. Scan first. Short headings, compact labels, consistent landmarks.
-2. Show the work. Time, overlap, break subtraction, final ND hours, and wage-code status appear as a trace, never as a black-box total.
+2. Show the work. Elapsed and worked time, schedule threshold, overtime status, ND overlap, break treatment, final ND hours, and wage-code status appear as a trace, never as a black-box total.
 3. Private and calm. Warm paper surfaces, restrained motion, a personal-record frame.
 4. Do not overclaim. Estimate, pending, and TBD states stay explicit and are never styled as confirmed payroll outcomes.
 
@@ -75,6 +75,8 @@ Fields the employee actually provides:
 - Day classification: Regular Work Day. Options exist but are not all open: Regular Work Day, Rest Day, Special Public Holiday, Special Public Holiday + Rest Day, Regular/Public Holiday, Regular/Public Holiday + Rest Day, Double Regular Holiday, Double Regular Holiday + Rest Day.
 - Break included in Night Differential? No.
 - Helper under the break field: “Default unpaid break is 1 hour. Start and end of the break are not collected.”
+- Work schedule: Standard, 8 regular hours. Approved CWW is the other option and uses its configured scheduled regular hours.
+- Overtime agreed or approved? No. This is an employee-recorded fact; the app does not approve overtime.
 
 Primary button: “Calculate shift”. Quiet action: “Cancel”.
 
@@ -85,10 +87,11 @@ A one-line note under the form: “This does not submit anything to payroll.”
 Show the trace for the sample above.
 
 - Night-window timeline from 9:00 PM to 6:00 AM. Label the configured window 10:00 PM–6:00 AM. Purple marks the qualifying ND segment. Lighter lavender marks potential overlap. Amber hatching marks the excluded 1-hour break. Legend repeats those meanings in text.
+- Duty trace, in mono: Elapsed 9.00 hrs, Worked 8.00 hrs, Regular 8.00 hrs, Potential overtime 0.00 hrs, Approved overtime 0.00 hrs, Unapproved extra 0.00 hrs.
 - Number strip, in mono: Potential ND 8.00 hrs, Break 1.00 hr excluded, Final ND 7.00 hrs. Final ND is the emphasis.
 - Amber status line with the words “ESTIMATE ONLY”.
 - Wage-type table with columns Code, Category, Hours, Rate, Amount. One row: `2211`, “Ordinary day — night shift, first 8 hours”, `7.00`, `10%`, and the amount `₱140.00`.
-- Helper under the amount: “10% of a saved hourly rate of ₱200.00 for each qualifying hour. Estimate only — confirm your payroll rule before relying on this amount.”
+- Helper under the amount: “10% of the derived ₱200.00 hourly rate for each qualifying hour. Rate basis: (₱34,800.00 monthly basic salary × 12) ÷ 261 ÷ 8. Estimate only — confirm your payroll rule before relying on this amount.”
 - Do not show a second invented wage code. Do not show break start or break end. Do not style 2211 as payroll-approved. The chip for 2211 is pale purple with purple mono text.
 
 Primary save action sits with the preview: “Save entry”. Secondary: “Cancel”. There is no approval step.

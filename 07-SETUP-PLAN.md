@@ -13,12 +13,14 @@
 These apply to every task. Values are copied from the product documents.
 
 - The product is a private employee shiftbook for night differential. It is not an employer payroll system. There are no manager or admin accounts and no approval workflow.
-- Night differential window default: 10:00 PM to 6:00 AM the next day. Default unpaid break: 1 hour. The employee records only whether that break was included in ND.
+- Night differential window default: 10:00 PM to 6:00 AM the next day. The 1-hour unpaid break always reduces elapsed time to worked time. The employee separately records whether that break was included in ND; that answer changes only ND overlap.
 - A 9:00 PM–6:00 AM shift has 8 potential ND hours. Final ND is 7 when the break is excluded and 8 when it is included. That clarified rule is authoritative.
 - Saturday and Sunday are not rest days. Day classification is chosen per shift.
+- Monthly basic salary is the source value. Derive the computational rate as `(monthly basic salary x 12) / 261 / 8`. Factor 365 is context only and is never an engine divisor.
+- Standard scheduled regular hours are 8. An approved CWW may exceed 8 but must stay between 8 and 12 hours inclusive. NCR Voyix's normal context remains 40 hours per week, such as an approved 10-hour-by-4-day CWW. Potential overtime is worked hours above the configured schedule and counts as approved overtime only when the employee records that it was agreed or approved; the app performs no approval and the schedule constraint invents no wage-code mapping.
 - One calculation may produce many wage-type lines. Wage types are data, not `if` statements. Do not invent ADP codes or percentages that are absent from `02-WAGE-TYPES.md`.
 - The ADP column means `TOTAL % to be added`. Only the ordinary-day 10% case has a confirmed money formula: 10% of the regular hourly wage for each qualifying hour. Every other amount stays an explicit TBD estimate state until a formula is confirmed.
-- Overnight shifts that cross a holiday or day classification, and the exact first-8-hours split when categories differ inside one shift, stay configurable TBD. The UI says so in words.
+- Overnight shifts that cross a holiday or day classification, the allocation of ND between regular and approved-overtime portions, and code 2252 remain configurable TBD. The UI says so in words.
 - Brand purple is exactly `#5F249F`. Deep structural purple is exactly `#341A4B`. Do not add a second brand hue, a purple-to-blue gradient, or a dark-mode palette in version 1.
 - Green is only for saved, private, or confirmed states, and it is always paired with words or an icon. Amber means estimate, pending, or TBD. Rose means error.
 - Interface type is Manrope. Time, dates, hours, employee codes, and money are IBM Plex Mono with tabular figures. Currency is PHP, grouped, two decimals, prefixed with ₱.
@@ -436,17 +438,22 @@ export type DayClassification =
 
 export type HoursCategory = "FIRST_8" | "EXCESS"
 
+export type WorkScheduleType = "STANDARD" | "APPROVED_CWW"
+
 export type ShiftInput = {
   workDate: string
   shiftStart: string
   shiftEnd: string
   dayClassification: DayClassification
-  breakIncludedInNd: boolean
-  hourlyRate: string | null
+  monthlyBasicSalary: string | null
   timeZone: string
   ndStart: string
   ndEnd: string
   breakHours: string
+  breakIncludedInNd: boolean
+  scheduleType: WorkScheduleType
+  scheduledRegularHours: string
+  overtimeApproved: boolean
 }
 
 export type WageTypeRule = {
@@ -455,7 +462,17 @@ export type WageTypeRule = {
   category: DayClassification
   hoursCategory: HoursCategory
   percentage: string
+  isNd: boolean
   description: string
+}
+
+export type RateBasis = {
+  monthlyBasicSalary: string
+  annualMonths: "12"
+  workdaysFactor: "261"
+  rateHoursPerDay: "8"
+  dailyRate: string
+  hourlyRate: string
 }
 
 export type AmountLine =
@@ -470,12 +487,20 @@ export type AmountLine =
   | {
       status: "tbd"
       code: string
-      hours: string
+      hours: string | null
       percentage: string
       reason: string
     }
 
 export type NdResult = {
+  rateBasis: RateBasis | null
+  elapsedHours: string
+  workedHours: string
+  scheduledRegularHours: string
+  regularHours: string
+  potentialOvertimeHours: string
+  approvedOvertimeHours: string
+  unapprovedExtraHours: string
   potentialNdHours: string
   breakHours: string
   breakIncludedInNd: boolean
@@ -494,9 +519,15 @@ export function calculateNd(
 
 Hours are decimal strings with two fraction digits (`"7.00"`). Money inside the engine is integer centavos. `format.php` turns centavos into `₱140.00` with `Intl.NumberFormat("en-PH", { style: "currency", currency: "PHP" })`.
 
-`ordinary_nd_10_percent` applies only when the matched rule is code `2211` at 10% and `hourlyRate` is present: rate × hours × 0.10. A missing rate, a missing rule, an excess-hours case, or any other code produces `status: "tbd"` and a specific `reason`. The function returns every matching rule, not the first.
+The engine derives the computational hourly rate as `(monthlyBasicSalary x 12) / 261 / 8`. Factor 365 is never an engine divisor. Preserve decimal precision through the rate derivation and round only the final money result to centavos.
+
+`ordinary_nd_10_percent` applies only when the matched rule is code `2211` at 10% and monthly basic salary is present. A missing salary, a missing rule, code 2252, an unresolved regular/overtime allocation, or any other code produces `status: "tbd"` with a specific `reason`. The function returns every matching rule, not the first.
 
 ---
+
+The nullable `hours` on a TBD line represents unresolved allocation. An
+estimated line always has non-null hours; the engine must not manufacture
+hours simply to populate a TBD result.
 
 ## Supabase data model
 
@@ -510,13 +541,18 @@ Extends `04-DATA-MODEL.md` with the columns required to enforce ownership and to
 - `name text not null`
 - `employee_id text not null unique`
 - `email text not null`
-- `hourly_rate numeric(12,2)`
+- `monthly_basic_salary numeric(12,2)`
+- `work_schedule_type text not null default 'STANDARD' check (work_schedule_type in ('STANDARD', 'APPROVED_CWW'))`
+- `scheduled_regular_hours numeric(4,2) not null default 8`
 - `time_zone text not null default 'Asia/Manila'`
 - `nd_start time not null default '22:00'`
 - `nd_end time not null default '06:00'`
 - `break_hours numeric(4,2) not null default 1`
 - `created_at timestamptz not null default now()`
 - `updated_at timestamptz not null default now()`
+
+Employee schedule validation requires exactly 8 hours for `STANDARD`
+and 8 through 12 hours inclusive for `APPROVED_CWW`.
 
 `shifts`
 
@@ -527,7 +563,13 @@ Extends `04-DATA-MODEL.md` with the columns required to enforce ownership and to
 - `shift_end timestamptz not null`
 - `day_classification text not null`
 - `break_included_in_nd boolean not null`
+- `work_schedule_type text not null`
+- `scheduled_regular_hours numeric(4,2) not null`
+- `overtime_approved boolean not null default false`
 - `created_at`, `updated_at`
+
+Shift snapshots enforce the same schedule rule: `STANDARD` is exactly
+8 hours; `APPROVED_CWW` is between 8 and 12 hours inclusive.
 
 No `break_start` or `break_end`.
 
@@ -535,16 +577,55 @@ No `break_start` or `break_end`.
 
 - `id uuid primary key`
 - `shift_id uuid not null unique references shifts(id) on delete cascade`
+- `calculation_version smallint default 2`
 - `potential_nd_hours numeric(6,2) not null`
 - `break_hours numeric(4,2) not null`
 - `break_included_in_nd boolean not null`
 - `nd_hours numeric(6,2) not null`
+- `elapsed_hours numeric(6,2)`
+- `worked_hours numeric(6,2)`
+- `regular_hours numeric(6,2)`
+- `work_schedule_type text`
+- `scheduled_regular_hours numeric(4,2)`
+- `potential_overtime_hours numeric(6,2)`
+- `overtime_approved boolean`
+- `approved_overtime_hours numeric(6,2)`
+- `unapproved_extra_hours numeric(6,2)`
+- `monthly_basic_salary numeric(12,2)`
+- `annual_months numeric(4,2)`
+- `workdays_factor numeric(6,2)`
+- `rate_hours_per_day numeric(4,2)`
+- `derived_daily_rate numeric(18,8)`
+- `derived_hourly_rate numeric(18,8)`
 - `nd_start time not null`
 - `nd_end time not null`
 - `time_zone text not null`
 - `created_at`, `updated_at`
 
-The window columns freeze the settings that were used at save time.
+The window, schedule, salary, factor, and rate columns freeze the inputs
+and derivation used at save time. The unpaid break always reduces
+elapsed hours to worked hours; `break_included_in_nd` changes only ND
+overlap.
+
+The added snapshot columns are nullable only so pre-migration records
+remain valid. `calculation_version` is null for a legacy record and
+defaults to `2` for new records in the current snapshot format. The
+groups are all-or-none:
+
+- A legacy row has a null version and all added schedule, duty-hour,
+  approval, and rate-basis snapshot columns are null.
+- A version 2 row has every schedule, duty-hour, and approval snapshot
+  value populated.
+- Its rate-basis group is either entirely null when monthly salary is
+  absent or entirely populated with salary, annual months, workdays
+  factor, rate hours per day, and both derived rates.
+
+Version 2 schedule snapshots also require exactly 8 hours for
+`STANDARD` or 8 through 12 hours for `APPROVED_CWW`.
+
+Version 2 duty snapshots enforce
+`worked_hours = max(elapsed_hours - break_hours, 0)` and
+`regular_hours = min(worked_hours, scheduled_regular_hours)`.
 
 `nd_wage_type_lines`
 
@@ -554,7 +635,7 @@ The window columns freeze the settings that were used at save time.
 - `wage_type_code text not null`
 - `category text not null`
 - `hours_category text not null`
-- `applicable_hours numeric(6,2) not null`
+- `applicable_hours numeric(6,2)`
 - `percentage numeric(7,2) not null`
 - `amount_status text not null check (amount_status in ('estimated', 'tbd'))`
 - `calculated_amount numeric(14,2)`
@@ -562,6 +643,9 @@ The window columns freeze the settings that were used at save time.
 - `created_at timestamptz not null default now()`
 
 `calculated_amount` is null when `amount_status` is `tbd`.
+`applicable_hours` may be null only for a TBD line with unresolved hour
+allocation. Estimated lines require non-null, non-negative applicable
+hours; TBD hours must not be guessed.
 
 `wage_types`
 
@@ -1105,11 +1189,11 @@ In `(app)/layout.tsx`, call `getClaims()` and `redirect("/login")` when the sess
 
 - [ ] **Step 3: Add signup and login actions**
 
-`signUp` collects name, employee ID, email, password, and optional hourly rate.
+`signUp` collects name, employee ID, email, password, and optional monthly basic salary.
 
 - Password length is at least 12 characters.
 - Employee ID is trimmed and required.
-- Hourly rate, when present, is a decimal with at most two fraction digits.
+- Monthly basic salary, when present, is a non-negative decimal with at most two fraction digits. Hourly rate is derived and is not entered by the employee.
 - The action calls `supabase.auth.signUp`, then inserts the `employees` row with `id` set to the auth user id.
 - A duplicate employee ID returns a field error on that input. It does not create a second profile.
 - `signIn` accepts email and password.
@@ -1173,6 +1257,7 @@ const ordinaryFirstEight = {
   category: "REGULAR_WORK_DAY" as const,
   hoursCategory: "FIRST_8" as const,
   percentage: "10",
+  isNd: true,
   description: "Ordinary day, night shift, first 8 hours",
 }
 
@@ -1185,7 +1270,10 @@ describe("calculateNd", () => {
         shiftEnd: "2026-10-02T06:00:00",
         dayClassification: "REGULAR_WORK_DAY",
         breakIncludedInNd: false,
-        hourlyRate: "200.00",
+        monthlyBasicSalary: "34800.00",
+        scheduleType: "STANDARD",
+        scheduledRegularHours: "8",
+        overtimeApproved: false,
         timeZone: "Asia/Manila",
         ndStart: "22:00",
         ndEnd: "06:00",
@@ -1194,6 +1282,13 @@ describe("calculateNd", () => {
       [ordinaryFirstEight],
     )
 
+    expect(result.elapsedHours).toBe("9.00")
+    expect(result.workedHours).toBe("8.00")
+    expect(result.regularHours).toBe("8.00")
+    expect(result.potentialOvertimeHours).toBe("0.00")
+    expect(result.approvedOvertimeHours).toBe("0.00")
+    expect(result.unapprovedExtraHours).toBe("0.00")
+    expect(result.rateBasis?.workdaysFactor).toBe("261")
     expect(result.potentialNdHours).toBe("8.00")
     expect(result.ndHours).toBe("7.00")
     expect(result.lines).toEqual([
@@ -1220,9 +1315,9 @@ Expected: FAIL because `calculateNd` is not implemented.
 
 - [ ] **Step 4: Implement the one confirmed case**
 
-Implement `calculateNd` for the ordinary 9:00 PM–6:00 AM path described in `03-CALCULATION-ENGINE.md`: normalize an overnight end, intersect the Manila interval with 22:00–06:00, subtract the break unless it is included, and floor the result at 0. Apply `ordinary_nd_10_percent` only for rule `2211`. Any other matched rule returns `status: "tbd"` with the reason `Money formula is not confirmed for this wage type.`
+Implement `calculateNd` for the ordinary 9:00 PM–6:00 AM path described in `03-CALCULATION-ENGINE.md`: normalize an overnight end, subtract the 1-hour unpaid break from elapsed time to obtain worked hours, compute potential overtime above scheduled regular hours, then intersect the shift with the Manila 22:00–06:00 ND window. Apply `breakIncludedInNd` only to ND overlap. Derive the hourly rate from monthly salary with factor 261 and apply `ordinary_nd_10_percent` only for rule `2211`. Any other matched rule returns `status: "tbd"` with the reason `Money formula is not confirmed for this wage type.`
 
-Leave holiday crossing and the first-8-hours split as `unresolved` entries when the input needs them. Do not guess those rules in order to make a test pass.
+Leave holiday crossing, allocation of ND between regular and approved-overtime portions, and code 2252 as `unresolved` entries when the input needs them. Do not guess those rules in order to make a test pass.
 
 `formatPhp(centavos: number): string` returns the `en-PH` currency string.
 
@@ -1241,7 +1336,7 @@ git add web
 git commit -m "Add the night-differential calculation entry point."
 ```
 
-The rest of the cases in `06-IMPLEMENTATION-PLAN.md` (break included, 11 PM–7 AM, daytime, weekend classification, multiple lines) belong to the next plan. Add them as further tests in `calculate-nd.test.ts` when that work starts.
+The rest of the cases in `06-IMPLEMENTATION-PLAN.md` (break included, 10-hour elapsed shift, approved CWW, 11 PM–7 AM, daytime, weekend classification, multiple lines) belong to the next plan. Add them as further tests in `calculate-nd.test.ts` when that work starts.
 
 ### Task 8: Continuous integration and Vercel
 
@@ -1280,7 +1375,7 @@ git commit -m "Run lint, types, tests, and the Next.js build in CI."
 
 Build in the order from `06-IMPLEMENTATION-PLAN.md`, using the library and the design workflow above.
 
-1. Finish the calculation tests: break included, partial overlap, daytime, rotational Saturday as a regular day, Saturday as a rest day, multiple matching wage lines, TBD when the formula is unknown.
+1. Finish the calculation tests: break included only in ND, unpaid-break worked hours, standard and approved-CWW schedule thresholds, approved versus unapproved potential overtime, factor-261 rate derivation, partial overlap, daytime, rotational Saturday as a regular day, Saturday as a rest day, multiple matching wage lines, and TBD when ND allocation or a money formula is unknown.
 2. Save a shift from `/shift/new` by running `calculateNd` on the server and writing `shifts`, `nd_records`, and `nd_wage_type_lines` in one transaction. The timeline and number strip show the trace. The amount note uses the estimate sentence from `DESIGN.md`.
 3. Overview reads the current personal payroll period, three metrics, and the recent ledger.
 4. Records filters use search params: this week, this payroll period, this month, custom range. Detail reads the saved snapshot, not a fresh calculation that could change history.
