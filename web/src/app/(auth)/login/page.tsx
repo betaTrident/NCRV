@@ -1,8 +1,6 @@
 import { AuthSplit } from "@/components/shell/auth-split"
 import { PageHeader } from "@/components/shell/page-header"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { LoginForm } from "./login-form"
 
 export default function LoginPage() {
   return (
@@ -14,47 +12,9 @@ export default function LoginPage() {
         <PageHeader
           eyebrow="SIGN IN"
           title="Employee sign in"
-          description="Sign in with your employee ID to see your private shift history."
+          description="Sign in with your email to see your private shift history."
         />
-        <form className="flex flex-col gap-4" noValidate>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="login-employee-id">Employee ID or email</Label>
-            <Input
-              id="login-employee-id"
-              name="employeeId"
-              type="text"
-              autoComplete="username"
-              className="h-11"
-            />
-          </div>
-          <div className="flex flex-col gap-1.5">
-            <Label htmlFor="login-password">Password</Label>
-            <Input
-              id="login-password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              className="h-11"
-            />
-          </div>
-          <div className="flex flex-col gap-2 pt-2">
-            <Button
-              type="submit"
-              disabled
-              aria-disabled="true"
-              aria-describedby="login-connection-helper"
-              className="w-full"
-            >
-              Sign in
-            </Button>
-            <p
-              id="login-connection-helper"
-              className="text-xs text-[var(--vx-muted)]"
-            >
-              The account connection is not ready.
-            </p>
-          </div>
-        </form>
+        <LoginForm />
         <p className="text-sm text-[var(--vx-muted)]">
           New here?{" "}
           <a
