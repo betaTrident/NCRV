@@ -3,7 +3,7 @@ description: Voyix Workspace product and stack rules for every session
 alwaysApply: true
 ---
 
-Voyix Workspace is a private employee night-differential shiftbook in `web/`. Specs live at the repo root. Follow `AGENTS.md`.
+Voyix Workspace is a private employee night-differential shiftbook in `web/`. Specs live in `docs/`. `PRODUCT.md` and `DESIGN.md` stay at the repo root. Follow `AGENTS.md`.
 
 Do not invent ADP codes, holiday dates, or money formulas. TBD stays TBD. No manager or admin accounts.
 

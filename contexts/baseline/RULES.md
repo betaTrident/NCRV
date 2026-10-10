@@ -1,6 +1,6 @@
 # Rules
 
-Canonical copy: repository root `AGENTS.md` and `RULES.md`. This file keeps plugin-format pointers in sync with Voyix Workspace.
+Canonical copy: repository root `AGENTS.md` and `docs/RULES.md`. This file keeps plugin-format pointers in sync with Voyix Workspace.
 
 ## Must always
 
@@ -16,7 +16,7 @@ Canonical copy: repository root `AGENTS.md` and `RULES.md`. This file keeps plug
 - Invent payroll rules, ADP codes, or holiday calendars.
 - Bypass RLS, authorize from `user_metadata`, or grant `anon` on app tables.
 - Ship UI without a browser check of the changed flow.
-- Use `python-reviewer` or `seo-specialist` on this repo.
+- Add a Python reviewer or an SEO specialist. This product has neither.
 
 ## Agent format
 

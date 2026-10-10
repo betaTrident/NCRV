@@ -5,7 +5,7 @@ Team-facing home for Voyix Workspace agent assets. Runtime skills stay in `.agen
 ## Layout
 
 - `agents/` — human-maintained agent prompts (Codex/Gemini; Cursor mirrors the Voyix set under `.cursor/agents/`)
-- `rules/` — reusable guidance by stack. Voyix overrides live at the top of web/testing/design files.
+- `rules/` — guidance for this TypeScript app. Voyix overrides live at the top of the web, testing, and design files. There is no Python rule pack.
 - `baseline/` — product context for this repo (not the plugin's sample app)
 
 ## This product

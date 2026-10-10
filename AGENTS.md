@@ -6,7 +6,7 @@ This file is the operating contract for **Cursor**, **Codex**, and **Gemini**. `
 
 ## Product
 
-- Runtime is `web/`. Product specs stay at the repository root. Vercel root directory is `web`.
+- Runtime is `web/`. Product specs live in `docs/`. `PRODUCT.md` and `DESIGN.md` stay at the repository root. Vercel root directory is `web`.
 - Stack: Next.js 16 App Router (`src/`), React 19, TypeScript strict, Tailwind 4, shadcn/ui on Radix, Supabase Auth + Postgres + RLS, Server Actions. No separate API service. No Edge Functions in v1.
 - `web/src/proxy.ts` refreshes cookies only. Layouts, Server Actions, and RLS authorize.
 - Brand purple is `#5F249F`. Deep structural purple is `#341A4B`. Type is Manrope + IBM Plex Mono. Light paper canvas. No dark-mode palette in v1.
@@ -16,9 +16,9 @@ This file is the operating contract for **Cursor**, **Codex**, and **Gemini**. `
 | Surface | Read first |
 | --- | --- |
 | Any work | `PRODUCT.md`, this file, `.agents/skills/voyix-shift-workflow/SKILL.md` |
-| UI | `DESIGN.md`, `07-SETUP-PLAN.md`, `.superdesign/design-system.md`, `05-USER-INTERFACE.md` |
-| Engine | `01-BUSINESS-RULES.md` through `03-CALCULATION-ENGINE.md` |
-| Schema / Auth | `04-DATA-MODEL.md`, `07-SETUP-PLAN.md` (Supabase data model) |
+| UI | `DESIGN.md`, `docs/07-SETUP-PLAN.md`, `.superdesign/design-system.md`, `docs/05-USER-INTERFACE.md` |
+| Engine | `docs/01-BUSINESS-RULES.md` through `docs/03-CALCULATION-ENGINE.md` |
+| Schema / Auth | `docs/04-DATA-MODEL.md`, `docs/07-SETUP-PLAN.md` (Supabase data model) |
 
 ## Hard constraints
 
@@ -76,8 +76,8 @@ Apple Design on this product means press-down feedback, spatial consistency, res
 | `voyix-build-fixer` / `build-error-resolver` | Typecheck or build failures |
 | `impeccable-*` | Impeccable design pipeline only |
 
-Do not use `python-reviewer` or `seo-specialist` on this repo.
+This repo has no Python or SEO agent. Do not add one.
 
 ## Git
 
-Do not skip hooks. Do not commit secrets. Leave `package-lock.json` at the repo root untracked unless the user asks to add it.
+Do not skip hooks. Do not commit secrets. Install from `web/` with pnpm. Do not add a root `package-lock.json`.

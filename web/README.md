@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Voyix Workspace
 
-## Getting Started
+Private employee night-differential shiftbook. Product specs live in `../docs/`. `../AGENTS.md`, `../PRODUCT.md`, and `../DESIGN.md` stay at the repository root. Read `../AGENTS.md` before changing behavior.
 
-First, run the development server:
+## Run
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
+From this folder:
+
+```powershell
 pnpm dev
-# or
-bun dev
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The dev server is http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Source
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Path | Role |
+| --- | --- |
+| `src/app` | Routes. `(auth)` is signed out. `(app)` is signed in. |
+| `src/components/ui` | shadcn primitives. Recolor only through tokens. |
+| `src/components/shell` | Chrome shared by signed-in pages. |
+| `src/components/forms` | Field wiring. |
+| `src/engine` | Calculation only. No React and no Supabase. |
+| `src/lib` | Formatters and Supabase clients. |
+| `src/server/actions` | Mutations. |
+| `src/proxy.ts` | Cookie refresh only. |
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+`src/components/shift`, `src/components/records`, and `src/server/queries` are the homes for the next screens. Create them when those screens are built.

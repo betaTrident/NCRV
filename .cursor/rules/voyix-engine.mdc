@@ -4,7 +4,7 @@ globs: web/src/engine/**/*.ts
 alwaysApply: false
 ---
 
-Read `01-BUSINESS-RULES.md` through `03-CALCULATION-ENGINE.md` before changing `web/src/engine`.
+Read `docs/01-BUSINESS-RULES.md` through `docs/03-CALCULATION-ENGINE.md` before changing `web/src/engine`.
 
 `calculateNd` is the only money/hours entry. Use decimal strings and integer centavos. Never binary floats for amounts.
 

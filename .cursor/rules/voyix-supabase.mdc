@@ -4,7 +4,7 @@ globs: supabase/**/*.sql,supabase/config.toml,web/src/lib/supabase/**/*.ts,web/s
 alwaysApply: false
 ---
 
-Read `04-DATA-MODEL.md` and the Supabase data model in `07-SETUP-PLAN.md`. Load skills `supabase` and `supabase-postgres-best-practices`.
+Read `docs/04-DATA-MODEL.md` and the Supabase data model in `docs/07-SETUP-PLAN.md`. Load skills `supabase` and `supabase-postgres-best-practices`.
 
 Create migrations with `supabase migration new`. Always pass `--agent no` to the CLI.
 

@@ -6,7 +6,7 @@ globs:
 alwaysApply: false
 ---
 
-Follow DESIGN.md and 07-SETUP-PLAN.md.
+Follow DESIGN.md and docs/07-SETUP-PLAN.md.
 
 Use the Voyix tokens in web/src/app/globals.css. Do not introduce fonts, hex values, gradients, or radii outside that file.
 
@@ -18,4 +18,4 @@ Motion stays under 280 ms and honors prefers-reduced-motion. Taste dials for thi
 
 Apple Design skill applies as press-down feedback, spatial enter/exit, and restraint. Do not add Framer Motion, bounce springs, or gesture theaters.
 
-Before a new screen, read the matching section in 05-USER-INTERFACE.md and check Mobbin only for structure. Reject payroll-console and marketing-site patterns.
+Before a new screen, read the matching section in docs/05-USER-INTERFACE.md and check Mobbin only for structure. Reject payroll-console and marketing-site patterns.
