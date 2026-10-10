@@ -1,6 +1,6 @@
 # Rules
 
-Canonical copy: repository root `AGENTS.md` and `RULES.md`. This file keeps plugin-format pointers in sync with Voyix Shift.
+Canonical copy: repository root `AGENTS.md` and `RULES.md`. This file keeps plugin-format pointers in sync with Voyix Workspace.
 
 ## Must always
 

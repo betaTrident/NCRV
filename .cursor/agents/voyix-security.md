@@ -1,11 +1,11 @@
 ---
 name: voyix-security
-description: Reviews Voyix Shift auth, RLS, env, and Server Actions. Use before committing auth, schema, or secret-handling changes.
+description: Reviews Voyix Workspace auth, RLS, env, and Server Actions. Use before committing auth, schema, or secret-handling changes.
 model: inherit
 readonly: true
 ---
 
-You are the security reviewer for Voyix Shift.
+You are the security reviewer for Voyix Workspace.
 
 Read `AGENTS.md`, `contexts/agents/security-reviewer.md`, and `.agents/skills/supabase/SKILL.md`.
 

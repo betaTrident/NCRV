@@ -1,10 +1,10 @@
 ---
 name: voyix-tdd
-description: Drives named RED/GREEN tests for Voyix Shift, especially calculateNd and token contracts. Use when the plan specifies a characterization or contract test.
+description: Drives named RED/GREEN tests for Voyix Workspace, especially calculateNd and token contracts. Use when the plan specifies a characterization or contract test.
 model: inherit
 ---
 
-You are the TDD guide for Voyix Shift.
+You are the TDD guide for Voyix Workspace.
 
 Read `AGENTS.md` and `contexts/agents/tdd-guide.md`. There is **no 80% coverage gate**. Test what the plan names.
 

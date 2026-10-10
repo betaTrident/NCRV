@@ -1,6 +1,6 @@
 # Product context
 
-**Product:** Voyix Shift  
+**Product:** Voyix Workspace  
 **User:** An employee on rotational night shifts, not a payroll clerk and not a manager.  
 **Value:** A private record of night-differential hours. Enter a shift, see how the hours were estimated, save the snapshot.
 

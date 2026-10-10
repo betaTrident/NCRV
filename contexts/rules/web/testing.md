@@ -1,6 +1,6 @@
 > This file extends [common/testing.md](../common/testing.md) with web-specific testing content.
 
-**Voyix Shift override:** Verify changed UI in the browser at 1440 and 375, including empty and error states. Keyboard and `prefers-reduced-motion` matter. Do not require visual regression of marketing heroes or dual themes (v1 is light-only).
+**Voyix Workspace override:** Verify changed UI in the browser at 1440 and 375, including empty and error states. Keyboard and `prefers-reduced-motion` matter. Do not require visual regression of marketing heroes or dual themes (v1 is light-only).
 
 # Web Testing Rules
 

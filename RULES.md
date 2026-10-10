@@ -4,7 +4,7 @@ Canonical operating instructions: [AGENTS.md](./AGENTS.md). Product voice: [PROD
 
 ## Must always
 
-- Treat Voyix Shift as a private employee shiftbook, not employer payroll.
+- Treat Voyix Workspace as a private employee shiftbook, not employer payroll.
 - Read the docs for the surface you are changing before editing.
 - Keep unresolved wage rules as TBD. Do not invent ADP codes, holiday dates, or money formulas.
 - Authorize with `employees.id = auth.users.id` and `(select auth.uid())`. Never use `user_metadata`.

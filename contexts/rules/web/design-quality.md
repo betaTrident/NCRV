@@ -1,6 +1,6 @@
 > This file extends [common/patterns.md](../common/patterns.md) with web-specific design-quality guidance.
 
-**Voyix Shift override:** `DESIGN.md` and `.cursor/rules/voyix-design.mdc` win. Quiet paper canvas, purple rail, Manrope + IBM Plex Mono, tokens only in `globals.css`. Do not add grain, bento marketing layouts, extra palettes, or dark mode. Motion is CSS ≤280 ms. Apple Design is mapped to press feedback and restraint, not Framer Motion.
+**Voyix Workspace override:** `DESIGN.md` and `.cursor/rules/voyix-design.mdc` win. Quiet paper canvas, purple rail, Manrope + IBM Plex Mono, tokens only in `globals.css`. Do not add grain, bento marketing layouts, extra palettes, or dark mode. Motion is CSS ≤280 ms. Apple Design is mapped to press feedback and restraint, not Framer Motion.
 
 # Web Design Quality Standards
 

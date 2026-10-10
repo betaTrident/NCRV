@@ -1,7 +1,7 @@
 ---
 name: python-reviewer
-unused_on: "Voyix Shift — TypeScript Next.js app; do not invoke"
-description: Do not use on Voyix Shift. Python reviewer for PEP 8, type hints, and Pythonic review when a Python file actually exists.
+unused_on: "Voyix Workspace — TypeScript Next.js app; do not invoke"
+description: Do not use on Voyix Workspace. Python reviewer for PEP 8, type hints, and Pythonic review when a Python file actually exists.
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet
 ---

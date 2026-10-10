@@ -5,7 +5,7 @@ tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet
 ---
 
-**Voyix Shift:** Read root `AGENTS.md`. Flag invented wage rules, `user_metadata` authz, hex outside `globals.css`, and extra REST/admin layers. Do not demand 80% coverage.
+**Voyix Workspace:** Read root `AGENTS.md`. Flag invented wage rules, `user_metadata` authz, hex outside `globals.css`, and extra REST/admin layers. Do not demand 80% coverage.
 
 You are a senior code reviewer ensuring high standards of code quality and security.
 

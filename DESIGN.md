@@ -1,8 +1,8 @@
-# Voyix Shift — Design System
+# Voyix Workspace — Design System
 
 **Version:** 1.1 · **Brand accent:** Purple `#5F249F`
 
-This document describes the visual language and page patterns used by the Voyix Shift employee shiftbook. The interface is a private tracking and estimation tool, not an employer payroll system.
+This document describes the visual language and page patterns used by the Voyix Workspace employee shiftbook. The interface is a private tracking and estimation tool, not an employer payroll system.
 
 ## 1. Brand foundation
 
@@ -18,7 +18,7 @@ This document describes the visual language and page patterns used by the Voyix 
 
 ## 2. Color system
 
-Purple is the ownable Voyix Shift brand accent. The provided value is authoritative and must remain exact in primary actions and brand links.
+Purple is the ownable Voyix Workspace brand accent. The provided value is authoritative and must remain exact in primary actions and brand links.
 
 | Token | Hex | Intended use |
 | --- | --- | --- |
@@ -67,7 +67,7 @@ Semantic status color is separate from brand color. **Green is reserved for posi
 
 ### Navigation and brand
 
-- The custom crescent/clock-tick mark sits beside the lowercase `voyixshift` wordmark. The second word segment uses a light lavender accent on deep purple.
+- The custom crescent/clock-tick mark sits beside the lowercase `voyixworkspace` wordmark. The second word segment uses a light lavender accent on deep purple.
 - Desktop navigation includes Overview, My records, Calendar and Settings. The top bar carries the privacy indicator and Add shift action. Mobile uses the same destinations in a bottom bar plus a prominent Shift shortcut.
 - Active navigation uses a translucent purple field, a slim left indicator and a lighter icon; labels remain explicit.
 

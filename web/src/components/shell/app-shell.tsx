@@ -39,7 +39,7 @@ function AppShell({ children }: AppShellProps) {
       <div className={styles.shell}>
         <nav aria-label="Primary" className={styles.rail}>
           <div className={styles.railHeader}>
-            <Link href="/" aria-label="Voyix Shift, go to overview">
+            <Link href="/" aria-label="Voyix Workspace, go to overview">
               <Wordmark className={styles.railWordmark} />
             </Link>
           </div>

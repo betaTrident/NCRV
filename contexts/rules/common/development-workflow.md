@@ -1,6 +1,6 @@
 # Development Workflow
 
-**Voyix Shift override:** Follow root `AGENTS.md` and `.agents/skills/voyix-shift-workflow/SKILL.md`. Do not generate PRD/architecture doc trees for a named plan task. Do not search PyPI. Do not enforce 80% coverage. Commit only when asked.
+**Voyix Workspace override:** Follow root `AGENTS.md` and `.agents/skills/voyix-shift-workflow/SKILL.md`. Do not generate PRD/architecture doc trees for a named plan task. Do not search PyPI. Do not enforce 80% coverage. Commit only when asked.
 
 > This file extends [common/git-workflow.md](./git-workflow.md) with the full feature development process that happens before git operations.
 

@@ -2,7 +2,7 @@
 
 Prompts live in `contexts/agents/`. Cursor copies of the Voyix set live in `.cursor/agents/`.
 
-## Use on Voyix Shift
+## Use on Voyix Workspace
 
 | Agent | Purpose | When |
 | --- | --- | --- |

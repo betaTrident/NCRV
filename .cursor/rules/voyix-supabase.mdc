@@ -1,5 +1,5 @@
 ---
-description: Supabase schema, RLS, and CLI rules for Voyix Shift
+description: Supabase schema, RLS, and CLI rules for Voyix Workspace
 globs: supabase/**/*.sql,supabase/config.toml,web/src/lib/supabase/**/*.ts,web/src/server/actions/**/*.ts
 alwaysApply: false
 ---

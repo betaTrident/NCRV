@@ -1,7 +1,7 @@
 ---
 name: seo-specialist
-unused_on: "Voyix Shift — private signed-in app; do not invoke"
-description: Do not use on Voyix Shift. SEO specialist for public marketing sites only.
+unused_on: "Voyix Workspace — private signed-in app; do not invoke"
+description: Do not use on Voyix Workspace. SEO specialist for public marketing sites only.
 tools: ["Read", "Grep", "Glob", "Bash", "WebSearch", "WebFetch"]
 model: sonnet
 ---

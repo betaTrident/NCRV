@@ -1,9 +1,9 @@
 ---
 name: voyix-shift-workflow
-description: Use when implementing, reviewing, or planning Voyix Shift work across UI, auth, Supabase, or the night-differential engine. Use at the start of a feature slice, when choosing which skills or agents to load, or when a generic plugin workflow (80% coverage, REST APIs, Python, SEO) would fight this product.
+description: Use when implementing, reviewing, or planning Voyix Workspace work across UI, auth, Supabase, or the night-differential engine. Use at the start of a feature slice, when choosing which skills or agents to load, or when a generic plugin workflow (80% coverage, REST APIs, Python, SEO) would fight this product.
 ---
 
-# Voyix Shift workflow
+# Voyix Workspace workflow
 
 One product loop for Cursor, Codex, and Gemini. Specs at the repo root. Runtime in `web/`.
 

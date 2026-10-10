@@ -1,6 +1,6 @@
-# Voyix Shift
+# Voyix Workspace
 
-Voyix Shift is a private shiftbook for employees who work rotational night shifts and want a personal record of night-differential hours.
+Voyix Workspace is a private shiftbook for employees who work rotational night shifts and want a personal record of night-differential hours.
 
 The person using it is an employee, not a payroll clerk and not a manager. They can spare a few seconds to enter a shift. They need to see how the hours were estimated.
 

@@ -21,6 +21,11 @@
   padding: 0 8px;
 }
 
+.railWordmark {
+  white-space: nowrap;
+  letter-spacing: -0.045em;
+}
+
 .railNav {
   display: flex;
   flex-direction: column;

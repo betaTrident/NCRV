@@ -1,8 +1,8 @@
-# Voyix Shift Foundation Implementation Plan
+# Voyix Workspace Foundation Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Stand up a serverless Voyix Shift app on Next.js, Supabase, and Vercel, with a token-driven component library and a design workflow that keeps the interface premium, quiet, and accessible.
+**Goal:** Stand up a serverless Voyix Workspace app on Next.js, Supabase, and Vercel, with a token-driven component library and a design workflow that keeps the interface premium, quiet, and accessible.
 
 **Architecture:** One Next.js App Router application in `web/` is the only runtime. Signed-in pages render on the server. Mutations go through Server Actions. The night-differential calculation is a pure TypeScript module imported by both the live preview and the save action, so the preview and the stored snapshot use the same math. Supabase provides Postgres, Auth, and row-level security. Vercel runs the Next.js server functions. There is no separate API service and no Supabase Edge Function in version 1. `src/proxy.ts` only refreshes the auth cookies. Layouts, Server Actions, and row-level security decide who may read or write.
 
@@ -31,7 +31,7 @@ These apply to every task. Values are copied from the product documents.
 
 ## What this plan produces
 
-A repository that builds, authenticates an employee, stores only that employee's rows, and renders the Voyix Shift shell with real tokens and empty page landmarks.
+A repository that builds, authenticates an employee, stores only that employee's rows, and renders the Voyix Workspace shell with real tokens and empty page landmarks.
 
 The calculation cases in `06-IMPLEMENTATION-PLAN.md` and the filled screens in `05-USER-INTERFACE.md` are the next plans. This plan creates the module boundaries those plans must use. It does not invent the unresolved payroll formulas.
 
@@ -53,7 +53,7 @@ The calculation cases in `06-IMPLEMENTATION-PLAN.md` and the filled screens in `
 | Component approach | shadcn/ui primitives are copied into the repo and recolored with Voyix tokens. Pages compose domain components. Pages do not restyle primitives with one-off hex values. |
 | Motion | CSS only. About 180 ms for controls, one 280 ms / 5 px page entrance. `prefers-reduced-motion: reduce` removes the entrance. No GSAP, no scroll timelines, no looping animation. |
 | Theme | Light paper canvas and a deep-purple rail. Dark mode is a later design project with its own contrast pass. |
-| Wordmark | Lowercase `voyixshift`. On the deep-purple rail, `shift` is `#C3A3E0`. Version 1 does not ship an invented logo, initials tile, or emoji mark. |
+| Wordmark | Lowercase `voyixworkspace`. On the deep-purple rail, `workspace` is `#C3A3E0`. Version 1 does not ship an invented logo, initials tile, or emoji mark. |
 | Button height | 44 px minimum. This meets the touch target in `DESIGN.md` and WCAG 2.2 target size. |
 | Region | Supabase and Vercel both in Singapore, the closest region to the Philippines. |
 
@@ -867,7 +867,7 @@ If the scaffold added `web/src/middleware.ts` or `web/middleware.ts`, rename the
 Create `web/AGENTS.md` with this body:
 
 ```md
-# Voyix Shift web app
+# Voyix Workspace web app
 
 Product rules, wage types, calculation, data model, screens, and visual design live at the repository root, not in this folder.
 
@@ -917,9 +917,9 @@ Reload Cursor after the install so the project skills are picked up.
 Impeccable’s `/impeccable init` writes this file interactively and may also rewrite `DESIGN.md`. Do not run `init` against this repo. Write `PRODUCT.md` directly:
 
 ```md
-# Voyix Shift
+# Voyix Workspace
 
-Voyix Shift is a private shiftbook for employees who work rotational night shifts and want a personal record of night-differential hours.
+Voyix Workspace is a private shiftbook for employees who work rotational night shifts and want a personal record of night-differential hours.
 
 The person using it is an employee, not a payroll clerk and not a manager. They can spare a few seconds to enter a shift. They need to see how the hours were estimated.
 
@@ -936,7 +936,7 @@ Unresolved wage rules stay visible as TBD. The app must not present an estimate 
 
 ```md
 ---
-description: Voyix Shift visual and copy rules for any UI change
+description: Voyix Workspace visual and copy rules for any UI change
 globs:
   - web/src/**/*.tsx
   - web/src/app/globals.css
@@ -960,7 +960,7 @@ Before a new screen, read the matching section in 05-USER-INTERFACE.md and check
 
 ```powershell
 git add PRODUCT.md .cursor
-git commit -m "Add the Voyix Shift design gate for UI work."
+git commit -m "Add the Voyix Workspace design gate for UI work."
 ```
 
 ### Task 3: Theme and primitives
@@ -1012,7 +1012,7 @@ pnpm --dir web dlx shadcn@latest init -d --base radix
 pnpm --dir web dlx shadcn@latest add button input label select separator table
 ```
 
-Paste the token block from the Design system section into `globals.css`, and map the generated `@theme inline` colors to those variables. Load Manrope and IBM Plex Mono in `layout.tsx` through `next/font/google`. Set the document title to “Voyix Shift”.
+Paste the token block from the Design system section into `globals.css`, and map the generated `@theme inline` colors to those variables. Load Manrope and IBM Plex Mono in `layout.tsx` through `next/font/google`. Set the document title to “Voyix Workspace”.
 
 Retheme `button` to the three variants and a 44 px min-height. Remove any zinc, neutral, or default purple the generator introduced.
 
@@ -1029,7 +1029,7 @@ Expected: PASS, typecheck exit 0.
 
 ```powershell
 git add web
-git commit -m "Theme the primitive layer with the Voyix Shift tokens."
+git commit -m "Theme the primitive layer with the Voyix Workspace tokens."
 ```
 
 ### Task 4: Build the shell and page landmarks
@@ -1086,7 +1086,7 @@ Expected: no matches.
 
 ```powershell
 git add web/src
-git commit -m "Add the Voyix Shift shell and empty page landmarks."
+git commit -m "Add the Voyix Workspace shell and empty page landmarks."
 ```
 
 ### Task 5: Create the Supabase project locally

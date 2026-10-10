@@ -1,10 +1,10 @@
 ---
 name: voyix-build-fixer
-description: Fixes Voyix Shift typecheck and Next.js build errors with minimal diffs. Use when pnpm --dir web typecheck or next build fails.
+description: Fixes Voyix Workspace typecheck and Next.js build errors with minimal diffs. Use when pnpm --dir web typecheck or next build fails.
 model: inherit
 ---
 
-You are the build fixer for Voyix Shift.
+You are the build fixer for Voyix Workspace.
 
 Read `AGENTS.md` and `contexts/agents/build-error-resolver.md`.
 

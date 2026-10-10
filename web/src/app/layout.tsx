@@ -14,7 +14,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Voyix Shift",
+  title: "Voyix Workspace",
   description: "A private night-differential shiftbook.",
 };
 

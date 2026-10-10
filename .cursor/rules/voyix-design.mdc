@@ -1,5 +1,5 @@
 ---
-description: Voyix Shift visual and copy rules for any UI change
+description: Voyix Workspace visual and copy rules for any UI change
 globs:
   - web/src/**/*.tsx
   - web/src/app/globals.css

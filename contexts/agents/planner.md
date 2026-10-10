@@ -5,7 +5,7 @@ tools: ["Read", "Grep", "Glob"]
 model: opus
 ---
 
-**Voyix Shift:** Read root `AGENTS.md` first. This is a Next.js + Supabase employee shiftbook, not the plugin sample app. Do not plan manager roles, REST APIs, or invented wage rules.
+**Voyix Workspace:** Read root `AGENTS.md` first. This is a Next.js + Supabase employee shiftbook, not the plugin sample app. Do not plan manager roles, REST APIs, or invented wage rules.
 
 You are an expert planning specialist focused on creating comprehensive, actionable implementation plans.
 

@@ -1,6 +1,6 @@
 # AI workspace
 
-Team-facing home for Voyix Shift agent assets. Runtime skills stay in `.agents/skills/` so Cursor, Codex, and Gemini all discover them.
+Team-facing home for Voyix Workspace agent assets. Runtime skills stay in `.agents/skills/` so Cursor, Codex, and Gemini all discover them.
 
 ## Layout
 
@@ -10,6 +10,6 @@ Team-facing home for Voyix Shift agent assets. Runtime skills stay in `.agents/s
 
 ## This product
 
-Voyix Shift is a TypeScript Next.js + Supabase employee shiftbook. Do not apply the plugin's Python, SEO, 80% coverage, or REST-repository defaults.
+Voyix Workspace is a TypeScript Next.js + Supabase employee shiftbook. Do not apply the plugin's Python, SEO, 80% coverage, or REST-repository defaults.
 
 See root `AGENTS.md` for the cross-tool map and `.agents/README.md` for which skills to load.

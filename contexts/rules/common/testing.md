@@ -1,6 +1,6 @@
 # Testing Requirements
 
-**Voyix Shift override:** There is no 80% coverage gate. Test what the plan names (engine characterization, token contracts, RLS proofs, browser checks). Do not add a coverage theater suite.
+**Voyix Workspace override:** There is no 80% coverage gate. Test what the plan names (engine characterization, token contracts, RLS proofs, browser checks). Do not add a coverage theater suite.
 
 ## Plugin default (do not apply as a gate)
 

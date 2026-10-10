@@ -13,7 +13,7 @@ export default function CalendarPage() {
       />
       <EmptyState
         title="No holiday references or payroll periods yet"
-        description="Add your payroll period schedule in Settings so Voyix Shift can group your records."
+        description="Add your payroll period schedule in Settings so Voyix Workspace can group your records."
         action={
           <Button asChild variant="outline">
             <Link href="/settings">Go to settings</Link>

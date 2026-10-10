@@ -1,6 +1,6 @@
-# Voyix Shift — Design System
+# Voyix Workspace — Design System
 
-**Product:** Voyix Shift, a private employee shiftbook for night-differential (ND) hours. It is a personal tracking and estimation tool. It is not an employer payroll system, and it has no manager or admin accounts.
+**Product:** Voyix Workspace, a private employee shiftbook for night-differential (ND) hours. It is a personal tracking and estimation tool. It is not an employer payroll system, and it has no manager or admin accounts.
 
 **Personality:** precise, steady, human. Swiss editorial hierarchy paired with the legibility of industrial timekeeping instruments.
 
@@ -50,7 +50,7 @@ Green is not a second brand color. Amber means estimate or unresolved. Never com
 ## Layout
 
 - Desktop shell: fixed 244 px left navigation rail in `#341A4B`, sticky 65 px top bar, content max-width 1320 px, page padding 40 px.
-- Wordmark: lowercase `voyixshift`. On the deep-purple rail, `shift` is `#C3A3E0`. No invented logo, initials, or emoji mark. There is no brand-asset file in this repo yet.
+- Wordmark: lowercase `voyixworkspace`. On the deep-purple rail, `workspace` is `#C3A3E0`. No invented logo, initials, or emoji mark. There is no brand-asset file in this repo yet.
 - Desktop nav labels: Overview, My records, Calendar, Settings. Active item: translucent purple field, slim left indicator, lighter icon, explicit label. Add shift is the current page, so the top-bar action can read as the current context rather than a second primary button.
 - Top bar: a small privacy indicator, “Saved privately”, with a success dot and the words. Do not use a payroll or employer badge.
 - Surfaces: off-white panels, 1 px `#E8E4EB` borders, modest shadow, 14 px corner radius. Deep purple is for the rail and one high-emphasis summary only.

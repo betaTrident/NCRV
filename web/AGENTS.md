@@ -1,4 +1,4 @@
-# Voyix Shift web app
+# Voyix Workspace web app
 
 Product rules, wage types, calculation, data model, screens, and visual design live at the repository root, not in this folder.
 

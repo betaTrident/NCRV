@@ -5,7 +5,7 @@ type WordmarkProps = {
 }
 
 /**
- * `voyix` in off-white, `shift` in the light brand lavender. Intended for
+ * `voyix` in off-white, `workspace` in the light brand lavender. Intended for
  * placement on the deep-purple navigation and auth surfaces.
  */
 function Wordmark({ className }: WordmarkProps) {
@@ -17,7 +17,7 @@ function Wordmark({ className }: WordmarkProps) {
       )}
     >
       <span className="text-[var(--vx-on-deep)]">voyix</span>
-      <span className="text-[var(--vx-brand-light)]">shift</span>
+      <span className="text-[var(--vx-brand-light)]">workspace</span>
     </span>
   )
 }

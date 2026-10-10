@@ -8,7 +8,7 @@ export default function AddShiftPage() {
       <PageHeader
         eyebrow="ADD A SHIFT"
         title="Calculate this shift"
-        description="Enter the start, end, and any break so Voyix Shift can estimate your night-differential hours."
+        description="Enter the start, end, and any break so Voyix Workspace can estimate your night-differential hours."
       />
       <EmptyState
         title="The shift form isn't wired up yet"
