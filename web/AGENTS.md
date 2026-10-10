@@ -1,9 +1,9 @@
 # Voyix Workspace web app
 
-Product rules, wage types, calculation, data model, screens, and visual design live at the repository root, not in this folder.
+Product specs live in `../docs/`. `../AGENTS.md`, `../PRODUCT.md`, and `../DESIGN.md` stay at the repository root.
 
-Read `../AGENTS.md` first, then `../DESIGN.md`, `../07-SETUP-PLAN.md`, and `../.superdesign/design-system.md` before changing UI.
-Read `../01-BUSINESS-RULES.md` through `../03-CALCULATION-ENGINE.md` before changing `src/engine`.
+Read `../AGENTS.md` first, then `../DESIGN.md`, `../docs/07-SETUP-PLAN.md`, and `../.superdesign/design-system.md` before changing UI.
+Read `../docs/01-BUSINESS-RULES.md` through `../docs/03-CALCULATION-ENGINE.md` before changing `src/engine`.
 
 Do not invent ADP codes, holiday dates, or money formulas. Unresolved rules render as TBD.
 

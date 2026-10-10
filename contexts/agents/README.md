@@ -6,4 +6,4 @@ Every agent here must obey root `AGENTS.md`. Product context is `contexts/baseli
 
 **Use:** planner, tdd-guide, code-reviewer, typescript-reviewer, security-reviewer, build-error-resolver, code-explorer, silent-failure-hunter, doc-updater.
 
-**Do not use unless asked:** python-reviewer, seo-specialist, comment-analyzer, performance-optimizer, refactor-cleaner, code-simplifier, code-architect, architect, docs-lookup (prefer Context7 / Supabase MCP).
+Plugin roles that are not part of this product (Python review, SEO, generic architecture) are not kept here. Prefer Context7 or the Supabase docs for library lookup.

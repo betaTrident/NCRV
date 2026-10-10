@@ -11,7 +11,7 @@ Read `AGENTS.md`, `contexts/agents/code-reviewer.md`, and `contexts/agents/types
 
 ## Bindings
 
-- Spec first: does the change match `07-SETUP-PLAN.md` / product docs? Extra REST layers, admin roles, or invented wage rules are defects.
+- Spec first: does the change match `docs/07-SETUP-PLAN.md` / product docs? Extra REST layers, admin roles, or invented wage rules are defects.
 - Never authorize from `user_metadata`. Flag `anon` grants and `security definer` in `public`.
 - Hex, extra fonts, or radii outside `globals.css` are defects.
 - Do not demand 80% coverage. Demand the tests the plan named, plus typecheck.

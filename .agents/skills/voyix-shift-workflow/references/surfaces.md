@@ -2,7 +2,7 @@
 
 ## UI
 
-Docs: `DESIGN.md`, `07-SETUP-PLAN.md`, `.superdesign/design-system.md`, `05-USER-INTERFACE.md`
+Docs: `DESIGN.md`, `docs/07-SETUP-PLAN.md`, `.superdesign/design-system.md`, `docs/05-USER-INTERFACE.md`
 
 Skills: `design-taste-frontend`, `minimalist-ui`, `shadcn`, `apple-design`, `accessibility`, `browser-qa`
 
@@ -14,7 +14,7 @@ Canonical taste skills are `design-taste-frontend` and `minimalist-ui`. Skip `ta
 
 ## Engine
 
-Docs: `01-BUSINESS-RULES.md`, `02-WAGE-TYPES.md`, `03-CALCULATION-ENGINE.md`
+Docs: `docs/01-BUSINESS-RULES.md`, `docs/02-WAGE-TYPES.md`, `docs/03-CALCULATION-ENGINE.md`
 
 Skills: `tdd-workflow`, `verification-loop`
 
@@ -24,7 +24,7 @@ Cursor rule: `.cursor/rules/voyix-engine.mdc`
 
 ## Schema
 
-Docs: `04-DATA-MODEL.md`, `07-SETUP-PLAN.md` (Supabase data model)
+Docs: `docs/04-DATA-MODEL.md`, `docs/07-SETUP-PLAN.md` (Supabase data model)
 
 Skills: `supabase`, `supabase-postgres-best-practices`
 
@@ -34,7 +34,7 @@ Hosted project: `dvfxyrcxxktjgutpgcyw`. Always `supabase --agent no`.
 
 ## Auth
 
-Docs: `07-SETUP-PLAN.md` Task 6 / client rules
+Docs: `docs/07-SETUP-PLAN.md` Task 6 / client rules
 
 Skills: `supabase`, `security-review`
 
@@ -42,6 +42,6 @@ No manager accounts. Email + password. Employee ID is a profile field. Password 
 
 ## Ship
 
-Docs: `07-SETUP-PLAN.md` Task 8
+Docs: `docs/07-SETUP-PLAN.md` Task 8
 
 Vercel root `web`, region Singapore when creating a new project. Env names only: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`.

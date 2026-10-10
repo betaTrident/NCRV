@@ -1,4 +1,4 @@
-# Night Differential Platform --- Documentation
+# Voyix Workspace --- Documentation
 
 ## Purpose
 
@@ -43,6 +43,8 @@ is:
 -   Break start/end entry
 -   Full employee scheduling system
 
+Numbered specifications and `RULES.md` live in this folder. `AGENTS.md`, `PRODUCT.md`, and `DESIGN.md` stay at the repository root.
+
 ## Documentation Map
 
   -----------------------------------------------------------------------
@@ -67,11 +69,35 @@ is:
                                       file structure, design system,
                                       and component library
 
+  `08-NEXT-IMPLEMENTATION-PLAN.md`    Next build: engine cases, then
+                                      screens, in dependency order
+
   `AGENTS.md`                         Cross-tool agent contract
                                       (Cursor, Codex, Gemini)
 
   `DESIGN.md`                         Visual system and copy rules
   -----------------------------------------------------------------------
+
+## Repository layout
+
+```text
+AGENTS.md, PRODUCT.md, DESIGN.md
+docs/              00-README.md through 08-NEXT-IMPLEMENTATION-PLAN.md, RULES.md
+supabase/          migrations, seed, local config
+web/               Next.js app (Vercel root)
+  src/app          routes
+  src/components   ui, shell, forms; shift and records arrive with those screens
+  src/engine       calculation only
+  src/lib          formatters and Supabase clients
+  src/server       actions now; queries when screens read data
+  src/proxy.ts     cookie refresh only
+.github/workflows  CI
+.agents/skills     skill library
+.cursor            Cursor rules and Voyix agents
+contexts           Codex and Gemini prompts
+```
+
+Runtime dependencies install from `web/` with pnpm. There is no root `package.json`.
 
 ## Source Basis
 

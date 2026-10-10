@@ -17,13 +17,9 @@ Prompts live in `contexts/agents/`. Cursor copies of the Voyix set live in `.cur
 | doc-updater | Docs | Only when the user asked for docs |
 | impeccable-* | Design pipeline | Impeccable passes only |
 
-## Do not use here
+## Not in this repo
 
-| Agent | Why |
-| --- | --- |
-| python-reviewer | No Python application code |
-| seo-specialist | Signed-in private app; no marketing site |
-| architect / code-architect | Use planner unless the user asks for an architecture review |
+Do not add a Python reviewer, an SEO specialist, or a second architecture agent. Planning goes to `planner`.
 
 ## Immediate routing
 

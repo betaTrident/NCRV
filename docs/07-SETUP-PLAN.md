@@ -39,7 +39,7 @@ The calculation cases in `06-IMPLEMENTATION-PLAN.md` and the filled screens in `
 
 | Topic | Decision |
 | --- | --- |
-| App location | `web/`. Product specs stay at the repository root. Vercel root directory is `web`. |
+| App location | `web/`. Product specs live in `docs/`. `PRODUCT.md` and `DESIGN.md` stay at the repository root. Vercel root directory is `web`. |
 | Repo shape | One package. No Turborepo, no shared UI package, no separate component registry service. |
 | Rendering | Signed-in routes are dynamic server renders. Cache Components stay off. Private records must not be statically cached. |
 | Session | Supabase Auth, email and password, cookie session via `@supabase/ssr`. `web/src/proxy.ts` refreshes cookies. It is not the authorization boundary. |
@@ -75,9 +75,12 @@ These are common additions that this product does not need yet.
 
 ```text
 VoyixNDX/
-  00-README.md … 07-SETUP-PLAN.md
+  AGENTS.md
   DESIGN.md
   PRODUCT.md                          durable product facts for Impeccable
+  docs/
+    00-README.md … 08-NEXT-IMPLEMENTATION-PLAN.md
+    RULES.md
   .cursor/rules/voyix-design.mdc      design gate for every UI change
   .superdesign/design-system.md       existing Add Shift screen spec
   supabase/
@@ -85,7 +88,7 @@ VoyixNDX/
     migrations/<timestamp>_foundation.sql
     seed.sql
   web/
-    AGENTS.md                         short pointer to the root specs
+    AGENTS.md                         pointer to the root contract and docs/
     components.json
     next.config.ts
     package.json
@@ -119,7 +122,7 @@ VoyixNDX/
 
 `src/proxy.ts` is the Next.js 16 request interceptor. With `--src-dir`, that is the correct path. Do not add `middleware.ts`. The proxy refreshes Supabase cookies and does nothing else. Next.js 16 treats this file as a network boundary, and a proxy redirect is not sufficient protection.
 
-Domain components live beside the feature that uses them. Shared visual pieces that appear on more than one route live in `shell/` or `forms/`. A file exports one component.
+Domain components live beside the feature that uses them. Shared visual pieces that appear on more than one route live in `shell/` or `forms/`. A file exports one component. `components/shift/`, `components/records/`, and `server/queries/` are created when those screens are built.
 
 ---
 
@@ -258,7 +261,7 @@ These are the tells this codebase refuses, including ones that conflict with gen
 
 Use this order. Skip none of it when the screen is new.
 
-1. Read `DESIGN.md`, `05-USER-INTERFACE.md`, and, for Add Shift, `.superdesign/design-system.md`.
+1. Read `DESIGN.md`, `docs/05-USER-INTERFACE.md`, and, for Add Shift, `.superdesign/design-system.md`.
 2. Search Mobbin for the reference type below. Save the useful structural idea in the implementation notes for that screen. Copy the rhythm, not the chrome.
 3. Shape the screen with `/impeccable shape` against the existing tokens. If Impeccable proposes a new palette or a new font, reject it.
 4. Build from the component library in this document.
@@ -869,10 +872,10 @@ Create `web/AGENTS.md` with this body:
 ```md
 # Voyix Workspace web app
 
-Product rules, wage types, calculation, data model, screens, and visual design live at the repository root, not in this folder.
+Product specs live in `../docs/`. `../AGENTS.md`, `../PRODUCT.md`, and `../DESIGN.md` stay at the repository root.
 
-Read `../DESIGN.md`, `../07-SETUP-PLAN.md`, and `../.superdesign/design-system.md` before changing UI.
-Read `../01-BUSINESS-RULES.md` through `../03-CALCULATION-ENGINE.md` before changing `src/engine`.
+Read `../AGENTS.md` first, then `../DESIGN.md`, `../docs/07-SETUP-PLAN.md`, and `../.superdesign/design-system.md` before changing UI.
+Read `../docs/01-BUSINESS-RULES.md` through `../docs/03-CALCULATION-ENGINE.md` before changing `src/engine`.
 
 Do not invent ADP codes, holiday dates, or money formulas. Unresolved rules render as TBD.
 ```
@@ -943,7 +946,7 @@ globs:
 alwaysApply: false
 ---
 
-Follow DESIGN.md and 07-SETUP-PLAN.md.
+Follow DESIGN.md and docs/07-SETUP-PLAN.md.
 
 Use the Voyix tokens in web/src/app/globals.css. Do not introduce fonts, hex values, gradients, or radii outside that file.
 
@@ -953,7 +956,7 @@ Pair every status color with words. Call money an estimate. Do not imply payroll
 
 Motion stays under 280 ms and honors prefers-reduced-motion. Taste dials for this product: variance 3, motion 2, density 6 on ledgers and 4 on auth.
 
-Before a new screen, read the matching section in 05-USER-INTERFACE.md and check Mobbin only for structure. Reject payroll-console and marketing-site patterns.
+Before a new screen, read the matching section in docs/05-USER-INTERFACE.md and check Mobbin only for structure. Reject payroll-console and marketing-site patterns.
 ```
 
 - [ ] **Step 4: Commit**

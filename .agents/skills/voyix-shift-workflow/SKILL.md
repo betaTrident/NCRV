@@ -5,7 +5,7 @@ description: Use when implementing, reviewing, or planning Voyix Workspace work 
 
 # Voyix Workspace workflow
 
-One product loop for Cursor, Codex, and Gemini. Specs at the repo root. Runtime in `web/`.
+One product loop for Cursor, Codex, and Gemini. Specs in `docs/`. `PRODUCT.md` and `DESIGN.md` stay at the repo root. Runtime in `web/`.
 
 ## 1. Pick the surface
 
@@ -31,7 +31,7 @@ Apple Design on Voyix: press-down feedback, 44 px targets, spatial enter/exit, r
 
 Use planner (`contexts/agents/planner.md` or Cursor `voyix-planner`). Plans must not invent ADP codes, holiday dates, or money formulas. TBD stays TBD.
 
-Follow `07-SETUP-PLAN.md` / `06-IMPLEMENTATION-PLAN.md` when the work is still on those tasks. Do not restart a task the SDD ledger already marked complete.
+Follow `docs/07-SETUP-PLAN.md` / `docs/06-IMPLEMENTATION-PLAN.md` when the work is still on those tasks. Do not restart a task the SDD ledger already marked complete.
 
 ## 4. Implement
 
