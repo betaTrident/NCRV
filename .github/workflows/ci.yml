@@ -40,7 +40,7 @@ jobs:
         run: pnpm lint
 
       - name: Typecheck
-        run: pnpm typecheck
+        run: pnpm exec next typegen && pnpm typecheck
 
       - name: Test
         run: pnpm test
