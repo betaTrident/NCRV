@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Voyix Shift is a private employee night-differential shiftbook. It is not employer payroll. There are no manager or admin accounts.
+Voyix Workspace is a private employee night-differential shiftbook. It is not employer payroll. There are no manager or admin accounts.
 
 This file is the operating contract for **Cursor**, **Codex**, and **Gemini**. `GEMINI.md`, `CLAUDE.md`, and `web/AGENTS.md` point here.
 
