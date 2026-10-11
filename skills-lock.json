@@ -28,6 +28,12 @@
       "license": "MIT",
       "url": "https://github.com/emilkowalski/skills/tree/main/skills/apple-design"
     },
+    "logo-design": {
+      "source": "kaankiziltug/logo-design-skill",
+      "sourceType": "github",
+      "skillPath": "skills/logo-design/SKILL.md",
+      "url": "https://github.com/kaankiziltug/logo-design-skill/tree/main/skills/logo-design"
+    },
     "voyix-shift-workflow": {
       "source": "local",
       "sourceType": "local",

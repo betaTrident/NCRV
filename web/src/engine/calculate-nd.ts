@@ -151,14 +151,32 @@ function deriveRateBasis(monthlyBasicSalary: string | null): {
   }
 }
 
+function lineIdentity(rule: WageTypeRule) {
+  return {
+    wageTypeId: rule.id,
+    category: rule.category,
+    hoursCategory: rule.hoursCategory,
+    description: rule.description,
+  }
+}
+
 function tbdLine(rule: WageTypeRule, reason: string, hours: string | null): AmountLine {
   return {
     status: "tbd",
+    ...lineIdentity(rule),
     code: rule.code,
     hours,
     percentage: rule.percentage,
     reason,
   }
+}
+
+function isoOrThrow(value: DateTime, label: string): string {
+  const iso = value.toISO()
+  if (iso === null) {
+    throw new Error(`${label} must serialize to an ISO date-time with offset.`)
+  }
+  return iso
 }
 
 export function calculateNd(input: ShiftInput, rules: WageTypeRule[]): NdResult {
@@ -180,6 +198,8 @@ export function calculateNd(input: ShiftInput, rules: WageTypeRule[]): NdResult 
   }
 
   const shift = normalizeShift(input)
+  const normalizedShiftStart = isoOrThrow(shift.start, "Normalized shift start")
+  const normalizedShiftEnd = isoOrThrow(shift.end, "Normalized shift end")
   const elapsedHours = durationHours(shift.start.toMillis(), shift.end.toMillis())
   const workedHours = Decimal.max(0, elapsedHours.minus(breakHours))
   const regularHours = Decimal.min(workedHours, scheduledRegularHours)
@@ -280,6 +300,7 @@ export function calculateNd(input: ShiftInput, rules: WageTypeRule[]): NdResult 
 
     return {
       status: "estimated",
+      ...lineIdentity(rule),
       code: rule.code,
       hours: fixedHours(ndHours),
       percentage: rule.percentage,
@@ -302,6 +323,8 @@ export function calculateNd(input: ShiftInput, rules: WageTypeRule[]): NdResult 
     breakIncludedInNd: input.breakIncludedInNd,
     ndHours: fixedHours(ndHours),
     dayClassification: input.dayClassification,
+    normalizedShiftStart,
+    normalizedShiftEnd,
     hoursCategories,
     lines,
     unresolved,

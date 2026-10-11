@@ -1,24 +1,26 @@
-import { Button } from "@/components/ui/button"
-import { EmptyState } from "@/components/shell/empty-state"
+import { StatusLine } from "@/components/forms/status-line"
 import { PageHeader } from "@/components/shell/page-header"
+import { loadShiftConfiguration } from "@/server/queries/shift-configuration"
 
-export default function AddShiftPage() {
+import { ShiftForm } from "./shift-form"
+
+export default async function AddShiftPage() {
+  const configuration = await loadShiftConfiguration()
+
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
         eyebrow="ADD A SHIFT"
         title="Calculate this shift"
-        description="Enter the start, end, and any break so Voyix Workspace can estimate your night-differential hours."
+        description="Your night hours, accounted for."
       />
-      <EmptyState
-        title="The shift form isn't wired up yet"
-        description="The entry form and the live calculation preview arrive in a later task."
-        action={
-          <Button disabled aria-disabled="true">
-            Save shift
-          </Button>
-        }
-      />
+      {configuration ? (
+        <ShiftForm profile={configuration} rules={configuration.rules} />
+      ) : (
+        <StatusLine tone="error">
+          Could not load your calculation settings. Try again.
+        </StatusLine>
+      )}
     </div>
   )
 }

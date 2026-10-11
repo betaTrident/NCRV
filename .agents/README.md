@@ -35,6 +35,12 @@ Use `design-taste-frontend` and `minimalist-ui` (locked in `skills-lock.json`). 
 
 `python-patterns`, `python-testing`, `seo`, `brutalist-skill`, `soft-skill`, `imagegen-frontend-mobile`, `docker-patterns` as a default architecture, `backend-patterns` / `api-design` when they push a public REST API, `redesign-skill` / `stitch-skill` / `image-to-code-skill` except as explicit design exploration.
 
+## Available on request
+
+| Skill | When |
+| --- | --- |
+| `logo-design` | Logo, wordmark, brand-mark, favicon, or identity-system work explicitly requested by the user. It does not override Voyix's established brand constraints. |
+
 ## Adding a skill
 
 Put it in `.agents/skills/<name>/` with `SKILL.md`. Add `agents/openai.yaml` if Codex should show it in the skill picker. Record source in `skills-lock.json` when it came from GitHub.

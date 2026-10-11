@@ -62,7 +62,11 @@ describe("calculateNd", () => {
     expect(result.lines).toEqual([
       {
         status: "estimated",
+        wageTypeId: "wt-2211",
         code: "2211",
+        category: "REGULAR_WORK_DAY",
+        hoursCategory: "FIRST_8",
+        description: "Ordinary day, night shift, first 8 hours",
         hours: "7.00",
         percentage: "10",
         centavos: 14000,
@@ -133,7 +137,11 @@ describe("calculateNd", () => {
     expect(result.unapprovedExtraHours).toBe("0.00")
     expect(result.lines).toContainEqual({
       status: "tbd",
+      wageTypeId: "wt-2252",
       code: "2252",
+      category: "REGULAR_WORK_DAY",
+      hoursCategory: "EXCESS",
+      description: "Ordinary day, night shift, excess of the first 8 hours",
       hours: null,
       percentage: "138",
       reason:

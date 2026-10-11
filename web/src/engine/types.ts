@@ -50,7 +50,11 @@ export type RateBasis = {
 export type AmountLine =
   | {
       status: "estimated"
+      wageTypeId: string
       code: string
+      category: DayClassification
+      hoursCategory: HoursCategory
+      description: string
       hours: string
       percentage: string
       centavos: number
@@ -58,7 +62,11 @@ export type AmountLine =
     }
   | {
       status: "tbd"
+      wageTypeId: string
       code: string
+      category: DayClassification
+      hoursCategory: HoursCategory
+      description: string
       hours: string | null
       percentage: string
       reason: string
@@ -78,6 +86,8 @@ export type NdResult = {
   breakIncludedInNd: boolean
   ndHours: string
   dayClassification: DayClassification
+  normalizedShiftStart: string
+  normalizedShiftEnd: string
   hoursCategories: HoursCategory[]
   lines: AmountLine[]
   unresolved: string[]

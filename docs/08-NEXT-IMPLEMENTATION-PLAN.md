@@ -324,7 +324,7 @@ Reference checked during planning: <https://supabase.com/docs/guides/database/po
 
 ### 7.3 Integer-centavo schema preflight
 
-The current `nd_wage_type_lines.calculated_amount` column is `numeric(14,2)`, while the current contract says persisted money is integer centavos. Resolve this before the first application record is saved.
+The wage-line money column is `calculated_amount_centavos bigint` (integer centavos, null when tbd). Resolve this before the first application record is saved.
 
 Implementation sequence:
 

@@ -641,11 +641,12 @@ Version 2 duty snapshots enforce
 - `applicable_hours numeric(6,2)`
 - `percentage numeric(7,2) not null`
 - `amount_status text not null check (amount_status in ('estimated', 'tbd'))`
-- `calculated_amount numeric(14,2)`
+- `calculated_amount_centavos bigint`
 - `unresolved_reason text`
 - `created_at timestamptz not null default now()`
 
-`calculated_amount` is null when `amount_status` is `tbd`.
+`calculated_amount_centavos` is integer centavos and is null when
+`amount_status` is `tbd`.
 `applicable_hours` may be null only for a TBD line with unresolved hour
 allocation. Estimated lines require non-null, non-negative applicable
 hours; TBD hours must not be guessed.

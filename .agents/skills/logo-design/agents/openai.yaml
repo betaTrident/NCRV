@@ -1,0 +1,6 @@
+interface:
+  display_name: "Logo Design"
+  short_description: "Design, critique, and deliver production-ready logo systems"
+  default_prompt: "Use $logo-design for logo, wordmark, brand-mark, favicon, and identity-system work while preserving the project's established brand constraints."
+policy:
+  allow_implicit_invocation: true

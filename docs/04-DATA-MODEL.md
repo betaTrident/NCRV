@@ -168,7 +168,7 @@ hours_category
 applicable_hours
 percentage
 amount_status
-calculated_amount
+calculated_amount_centavos
 unresolved_reason
 
 created_at
@@ -191,6 +191,9 @@ Only actual applicable rules should be stored.
 be allocated under the confirmed rules. Every `estimated` line requires
 non-null, non-negative applicable hours. A nullable TBD value must not
 be replaced with guessed hours.
+
+`calculated_amount_centavos` is integer centavos for an estimated line
+and null when `amount_status` is `tbd`.
 
 ------------------------------------------------------------------------
 
