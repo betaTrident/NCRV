@@ -12,7 +12,7 @@ export default function SignupPage() {
         <PageHeader
           eyebrow="NEW ACCOUNT"
           title="Create profile"
-          description="Name, employee ID, email, and password are required. Monthly basic salary is optional."
+          description="Name, email, and password are required. Monthly basic salary is optional."
         />
         <SignupForm />
         <p className="text-sm text-[var(--vx-muted)]">

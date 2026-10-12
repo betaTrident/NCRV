@@ -9,19 +9,19 @@ values
   ('123e4567-e89b-12d3-a456-426614174000', 'user1@test.com'),
   ('987fcdeb-51a2-43d7-9012-345678901234', 'user2@test.com');
 
-insert into public.employees (id, name, employee_id, email)
+insert into public.employees (id, name, email, terms_accepted_at)
 values
   (
     '123e4567-e89b-12d3-a456-426614174000',
     'Ada',
-    'EMP-ADA',
-    'user1@test.com'
+    'user1@test.com',
+    now()
   ),
   (
     '987fcdeb-51a2-43d7-9012-345678901234',
     'Ben',
-    'EMP-BEN',
-    'user2@test.com'
+    'user2@test.com',
+    now()
   );
 
 insert into public.wage_types (

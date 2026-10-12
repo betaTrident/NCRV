@@ -1,7 +1,9 @@
 "use client"
 
 import { useActionState } from "react"
+import Link from "next/link"
 import { Field } from "@/components/forms/field"
+import { PasswordInput } from "@/components/forms/password-input"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { signUp, type AuthActionState } from "@/server/actions/auth"
@@ -26,19 +28,6 @@ function SignupForm() {
         />
       </Field>
       <Field
-        label="Employee ID"
-        htmlFor="signup-employee-id"
-        error={state.fieldErrors.employeeId}
-      >
-        <Input
-          id="signup-employee-id"
-          name="employeeId"
-          type="text"
-          autoComplete="off"
-          className="h-11"
-        />
-      </Field>
-      <Field
         label="Email"
         htmlFor="signup-email"
         helper="Only used to sign back in. Creating a profile does not verify employment."
@@ -58,14 +47,52 @@ function SignupForm() {
         helper="Use at least 12 characters."
         error={state.fieldErrors.password}
       >
-        <Input
-          id="signup-password"
-          name="password"
-          type="password"
-          autoComplete="new-password"
-          className="h-11"
-        />
+        <PasswordInput name="password" autoComplete="new-password" />
       </Field>
+      <div className="flex flex-col gap-1.5">
+        <div className="flex min-h-11 items-center gap-3">
+          <input
+            id="signup-terms"
+            name="termsAccepted"
+            type="checkbox"
+            className="size-4 shrink-0 accent-[var(--vx-brand)]"
+            aria-invalid={state.fieldErrors.termsAccepted ? true : undefined}
+            aria-describedby={
+              state.fieldErrors.termsAccepted
+                ? "signup-terms-error"
+                : undefined
+            }
+          />
+          <label
+            htmlFor="signup-terms"
+            className="text-sm text-[var(--vx-ink)]"
+          >
+            I agree to the{" "}
+            <Link
+              href="/terms"
+              className="font-medium text-[var(--vx-brand)] underline-offset-2 hover:underline"
+            >
+              Terms
+            </Link>
+            {" and "}
+            <Link
+              href="/privacy"
+              className="font-medium text-[var(--vx-brand)] underline-offset-2 hover:underline"
+            >
+              Privacy Notice
+            </Link>{"."}
+          </label>
+        </div>
+        {state.fieldErrors.termsAccepted ? (
+          <p
+            id="signup-terms-error"
+            className="text-xs text-[var(--vx-rose)]"
+            role="alert"
+          >
+            {state.fieldErrors.termsAccepted}
+          </p>
+        ) : null}
+      </div>
       <Field
         label="Monthly basic salary"
         htmlFor="signup-monthly-basic-salary"
@@ -81,6 +108,14 @@ function SignupForm() {
           className="h-11"
         />
       </Field>
+      {state.formNotice ? (
+        <p
+          className="rounded-[var(--vx-radius-control)] bg-[var(--vx-surface-soft)] px-3 py-2 text-sm text-[var(--vx-ink)]"
+          role="status"
+        >
+          {state.formNotice}
+        </p>
+      ) : null}
       {state.formError ? (
         <p className="text-xs text-[var(--vx-rose)]" role="alert">
           {state.formError}

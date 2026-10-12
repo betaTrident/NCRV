@@ -123,7 +123,7 @@ The next engine phase adds only missing direct characterizations. It must not re
 
 - Email and password are the sign-in credentials.
 - Passwords require at least 12 characters.
-- Employee ID is a profile field, not a login identifier.
+- There is no employee ID or other workplace identifier. A profile does not require one.
 - `employees.id` equals `auth.users.id`.
 - Layouts and every Server Action call `getClaims()`.
 - `web/src/proxy.ts` refreshes cookies only; it does not authorize.
@@ -823,7 +823,7 @@ Connect personal profile and computation settings while displaying the seeded wa
 
 #### Done means
 
-- The employee can update name, employee ID, optional salary, schedule type/hours, ND window, and default break within the existing constraints.
+- The employee can update name, optional salary, schedule type/hours, ND window, and default break within the existing constraints.
 - There is no hourly-rate input.
 - There is no fixed rest-day setting.
 - There is no manager/admin control or wage-catalog editor.
@@ -1121,7 +1121,7 @@ Use these decisions instead of stale text in older plans:
 - Use `Overview`, not the older `Dashboard` navigation label.
 - Use the lowercase `voyixworkspace` wordmark. The older `voyixshift` component-table reference is stale.
 - Use 44 px minimum controls. This overrides older 42 px button wording.
-- Email is required for Supabase Auth; employee ID remains a required profile field.
+- Email is required for Supabase Auth; there is no employee ID or other workplace identifier.
 - The formatter is `formatPhp`, not `format.php`.
 - The generic TDD skill’s 80% target is overridden by the repository’s no-percentage-gate policy.
 - Do not run `impeccable init`.

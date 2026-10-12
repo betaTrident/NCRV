@@ -38,7 +38,7 @@ Docs: `docs/07-SETUP-PLAN.md` Task 6 / client rules
 
 Skills: `supabase`, `security-review`
 
-No manager accounts. Email + password. Employee ID is a profile field. Password ≥ 12. Duplicate employee ID is a field error.
+No manager accounts. Email + password only; there is no employee ID or other workplace identifier. Password ≥ 12. Signup requires Terms acceptance, recorded as `employees.terms_accepted_at`.
 
 ## Ship
 

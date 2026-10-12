@@ -1,3 +1,4 @@
+import { cache } from "react"
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 
@@ -10,7 +11,7 @@ function getPublicSupabaseConfig() {
   return { url, publishableKey }
 }
 
-async function createClient() {
+const createClient = cache(async () => {
   const { url, publishableKey } = getPublicSupabaseConfig()
   const cookieStore = await cookies()
 
@@ -30,6 +31,11 @@ async function createClient() {
       },
     },
   })
-}
+})
 
-export { createClient }
+const getRequestClaims = cache(async () => {
+  const supabase = await createClient()
+  return supabase.auth.getClaims()
+})
+
+export { createClient, getRequestClaims }

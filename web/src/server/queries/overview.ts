@@ -11,7 +11,7 @@ import {
   type SummaryLine,
   type SummaryRecord,
 } from "@/lib/record-summary"
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getRequestClaims } from "@/lib/supabase/server"
 
 const MANILA = "Asia/Manila"
 
@@ -344,7 +344,7 @@ function toLedgerRow(item: CollectedRecord): OverviewLedgerRow {
 
 async function loadOverview(): Promise<OverviewResult> {
   const supabase = await createClient()
-  const { data: claimData } = await supabase.auth.getClaims()
+  const { data: claimData } = await getRequestClaims()
   const sub = claimData?.claims?.sub
   if (typeof sub !== "string" || sub.length === 0) {
     return { status: "signed-out" }

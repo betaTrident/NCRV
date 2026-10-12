@@ -43,7 +43,7 @@ The calculation cases in `06-IMPLEMENTATION-PLAN.md` and the filled screens in `
 | Repo shape | One package. No Turborepo, no shared UI package, no separate component registry service. |
 | Rendering | Signed-in routes are dynamic server renders. Cache Components stay off. Private records must not be statically cached. |
 | Session | Supabase Auth, email and password, cookie session via `@supabase/ssr`. `web/src/proxy.ts` refreshes cookies. It is not the authorization boundary. |
-| Sign-in identifier | Email is required because Supabase Auth uses it. Employee ID is a required unique profile field. The signup copy says the email is only for signing back in, and that registration does not verify employment. |
+| Sign-in identifier | Email is required because Supabase Auth uses it. There is no employee ID or other workplace identifier; a profile does not require or expose one. The signup copy says the email is only for signing back in, and that registration does not verify employment. |
 | Email confirmation | Off for version 1 so the profile row can be saved in the same step as signup. Password reset stays available. |
 | Authorization | `employees.id` equals `auth.users.id`. Policies use that id. Never authorize from `user_metadata`. |
 | Reference data | Seeded wage types are read-only to the client. Holidays and payroll periods the employee adds are personal rows. Shared seed rows have no owner. |
@@ -542,7 +542,6 @@ Extends `04-DATA-MODEL.md` with the columns required to enforce ownership and to
 
 - `id uuid primary key references auth.users(id) on delete cascade`
 - `name text not null`
-- `employee_id text not null unique`
 - `email text not null`
 - `monthly_basic_salary numeric(12,2)`
 - `work_schedule_type text not null default 'STANDARD' check (work_schedule_type in ('STANDARD', 'APPROVED_CWW'))`
@@ -551,8 +550,11 @@ Extends `04-DATA-MODEL.md` with the columns required to enforce ownership and to
 - `nd_start time not null default '22:00'`
 - `nd_end time not null default '06:00'`
 - `break_hours numeric(4,2) not null default 1`
+- `terms_accepted_at timestamptz not null`
 - `created_at timestamptz not null default now()`
 - `updated_at timestamptz not null default now()`
+
+There is no `employee_id` or other workplace identifier; a profile does not require or expose one.
 
 Employee schedule validation requires exactly 8 hours for `STANDARD`
 and 8 through 12 hours inclusive for `APPROVED_CWW`.
@@ -764,6 +766,11 @@ Commit `web/.env.example` with those names and empty values. Do not commit `.env
 | --- | --- | --- |
 | `/login` | `(auth)` | Employee sign in |
 | `/signup` | `(auth)` | Create profile |
+| `/forgot-password` | `(auth)` | Request a password reset |
+| `/auth/confirm` | top-level route handler | Exchanges the password-reset email code for a session, then forwards to `/reset-password` |
+| `/reset-password` | top-level | Set a new password; kept outside `(auth)` so a recovery session is not redirected away |
+| `/terms` | top-level | Terms of Use |
+| `/privacy` | top-level | Privacy Notice |
 | `/` | `(app)` | Overview |
 | `/shift/new` | `(app)` | Add a shift |
 | `/records` | `(app)` | My records |
@@ -1193,13 +1200,12 @@ In `(app)/layout.tsx`, call `getClaims()` and `redirect("/login")` when the sess
 
 - [ ] **Step 3: Add signup and login actions**
 
-`signUp` collects name, employee ID, email, password, and optional monthly basic salary.
+`signUp` collects name, email, password, acceptance of the Terms and Privacy Notice, and optional monthly basic salary. There is no employee ID or other workplace identifier.
 
 - Password length is at least 12 characters.
-- Employee ID is trimmed and required.
+- Terms acceptance is required and is recorded as `employees.terms_accepted_at`.
 - Monthly basic salary, when present, is a non-negative decimal with at most two fraction digits. Hourly rate is derived and is not entered by the employee.
 - The action calls `supabase.auth.signUp`, then inserts the `employees` row with `id` set to the auth user id.
-- A duplicate employee ID returns a field error on that input. It does not create a second profile.
 - `signIn` accepts email and password.
 - `signOut` clears the session and redirects to `/login`.
 

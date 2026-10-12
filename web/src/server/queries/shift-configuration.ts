@@ -1,7 +1,7 @@
 import Decimal from "decimal.js"
 
 import type { DayClassification, HoursCategory, WageTypeRule } from "@/engine/types"
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getRequestClaims } from "@/lib/supabase/server"
 import { DAY_CLASSIFICATIONS, type ShiftProfile } from "@/server/shift/parse-shift-entry"
 
 type ShiftConfiguration = ShiftProfile & { rules: WageTypeRule[] }
@@ -60,7 +60,7 @@ function mapRule(row: WageTypeRow): WageTypeRule | null {
 
 async function loadShiftConfiguration(): Promise<ShiftConfiguration | null> {
   const supabase = await createClient()
-  const { data: claimData } = await supabase.auth.getClaims()
+  const { data: claimData } = await getRequestClaims()
   const userId = claimData?.claims?.sub
   if (typeof userId !== "string" || userId.length === 0) {
     return null

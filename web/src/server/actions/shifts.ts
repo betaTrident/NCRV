@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache"
 
 import { calculateNd } from "@/engine/calculate-nd"
 import { toShiftSnapshot } from "@/engine/snapshot"
-import { createClient } from "@/lib/supabase/server"
+import { createClient, getRequestClaims } from "@/lib/supabase/server"
 import { loadShiftConfiguration } from "@/server/queries/shift-configuration"
 import { saveShift, type SaveShiftResult } from "@/server/shift/save-shift"
 
@@ -71,7 +71,7 @@ async function saveShiftAction(
   formData: FormData,
 ): Promise<ShiftActionState> {
   const supabase = await createClient()
-  const { data: claimData } = await supabase.auth.getClaims()
+  const { data: claimData } = await getRequestClaims()
   const sub = claimData?.claims?.sub
   const claims = typeof sub === "string" && sub.length > 0 ? { sub } : null
   const profile = await loadShiftConfiguration()

@@ -1,60 +1,14 @@
 "use client"
 
-import { useActionState, useState } from "react"
-import { Eye, EyeOff } from "lucide-react"
+import { useActionState } from "react"
+import Link from "next/link"
 import { Field } from "@/components/forms/field"
+import { PasswordInput } from "@/components/forms/password-input"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { signIn, type AuthActionState } from "@/server/actions/auth"
 
 const initialState: AuthActionState = { fieldErrors: {} }
-
-function PasswordInput({
-  id,
-  name,
-  autoComplete,
-  "aria-invalid": ariaInvalid,
-  "aria-describedby": ariaDescribedBy,
-}: {
-  id?: string
-  name: string
-  autoComplete: string
-  "aria-invalid"?: boolean | "true" | "false" | "grammar" | "spelling"
-  "aria-describedby"?: string
-}) {
-  const [passwordVisible, setPasswordVisible] = useState(false)
-
-  return (
-    <div className="relative">
-      <Input
-        id={id}
-        name={name}
-        type={passwordVisible ? "text" : "password"}
-        autoComplete={autoComplete}
-        aria-invalid={ariaInvalid}
-        aria-describedby={ariaDescribedBy}
-        className="h-11 pr-12"
-      />
-      <Button
-        type="button"
-        variant="quiet"
-        size="icon"
-        className="absolute inset-y-0 right-0"
-        aria-label={passwordVisible ? "Hide password" : "Show password"}
-        aria-pressed={passwordVisible}
-        onClick={() => {
-          setPasswordVisible((visible) => !visible)
-        }}
-      >
-        {passwordVisible ? (
-          <EyeOff size={18} aria-hidden="true" />
-        ) : (
-          <Eye size={18} aria-hidden="true" />
-        )}
-      </Button>
-    </div>
-  )
-}
 
 function LoginForm() {
   const [state, formAction, pending] = useActionState(
@@ -77,13 +31,21 @@ function LoginForm() {
           className="h-11"
         />
       </Field>
-      <Field
-        label="Password"
-        htmlFor="login-password"
-        error={state.fieldErrors.password}
-      >
-        <PasswordInput name="password" autoComplete="current-password" />
-      </Field>
+      <div className="relative">
+        <Field
+          label="Password"
+          htmlFor="login-password"
+          error={state.fieldErrors.password}
+        >
+          <PasswordInput name="password" autoComplete="current-password" />
+        </Field>
+        <Link
+          href="/forgot-password"
+          className="absolute top-0 right-0 z-10 text-sm font-medium text-[var(--vx-brand)] underline-offset-2 hover:underline"
+        >
+          Forgot password?
+        </Link>
+      </div>
       {state.formError ? (
         <p className="text-xs text-[var(--vx-rose)]" role="alert">
           {state.formError}

@@ -34,7 +34,7 @@ Settings
 ``` text
 NIGHT DIFF TRACKER
 
-Employee ID / Email
+Email
 [________________]
 
 Password
@@ -331,7 +331,6 @@ Keep settings small:
 MY PROFILE
 
 Name
-Employee ID
 Monthly Basic Salary (optional)
 
 Derived Computational Hourly Rate

@@ -28,13 +28,17 @@ needed.
 ``` text
 id
 name
-employee_id
 monthly_basic_salary (optional)
 scheduled_regular_hours (default 8)
 work_schedule_type (STANDARD or APPROVED_CWW)
+terms_accepted_at
 created_at
 updated_at
 ```
+
+There is no employee ID or other workplace identifier on this table.
+The employee signs in with email and password only, so a profile does
+not require or expose a workplace-issued identifier.
 
 Do **not** store a fixed regular rest day.
 
