@@ -311,13 +311,15 @@ If multiple codes apply, display all of them.
 
 # 9. Calendar
 
-Use the supplied company calendar as the initial holiday reference.
+Personal holiday references and payroll periods. Version 1 does not seed
+a company calendar, and saving a date does not change a shift's
+classification.
 
 Show:
 
 -   Regular holidays
 -   Special non-working holidays
--   Payroll dates/cutoffs where available
+-   Payroll dates/cutoffs the employee entered
 
 Do not make Saturday or Sunday automatically mean rest day.
 

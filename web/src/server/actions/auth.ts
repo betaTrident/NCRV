@@ -263,8 +263,15 @@ async function signIn(
     }
   }
 
+  const userId = claimData.claims.sub
+  const { data: employee } = await supabase
+    .from("employees")
+    .select("id")
+    .eq("id", userId)
+    .maybeSingle()
+
   revalidatePath("/", "layout")
-  redirect("/")
+  redirect(employee ? "/" : "/settings")
 }
 
 async function signOut() {

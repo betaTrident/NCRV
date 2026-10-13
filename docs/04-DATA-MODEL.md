@@ -224,6 +224,7 @@ This table contains the ADP configuration.
 
 ``` text
 id
+owner_id
 date
 name
 holiday_type
@@ -231,7 +232,9 @@ year
 active
 ```
 
-The 2026 company holiday calendar can be seeded from the supplied PDF.
+Version 1 does not seed holiday dates. A row is a personal note the
+employee adds. `owner_id` null is reserved for a future shared calendar
+and is not fabricated.
 
 ------------------------------------------------------------------------
 
@@ -239,6 +242,7 @@ The 2026 company holiday calendar can be seeded from the supplied PDF.
 
 ``` text
 id
+owner_id
 period_start
 period_end
 pay_date
@@ -247,7 +251,8 @@ cutoff_time
 active
 ```
 
-This supports the tracking of ND records by payroll period.
+This supports the tracking of ND records by payroll period. Version 1
+does not seed payroll periods.
 
 ------------------------------------------------------------------------
 

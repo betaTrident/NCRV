@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "targets": {
+    "/signup": {
+      "targetKind": "existing-ui",
+      "projectId": "6358f71c-4d44-4b34-af4c-7f3b564f82bf",
+      "baselineDraftId": "d63f0613-d7b0-4254-97fa-f74bbe46b570",
+      "activeDraftId": "d63f0613-d7b0-4254-97fa-f74bbe46b570",
+      "designSystemPath": ".superdesign/design-system.md",
+      "referenceIds": [
+        "523250c0-3ef5-48a3-b326-656ae7d7fee5",
+        "4943f8b4-74bf-4b97-b513-fa5d98bddc42",
+        "d6314946-da59-4dcc-9231-102d663758d4"
+      ],
+      "contextFiles": [
+        "PRODUCT.md",
+        "DESIGN.md",
+        ".superdesign/design-system.md",
+        "web/src/app/globals.css",
+        "web/src/components/shell/auth-split.tsx",
+        "web/src/app/(auth)/signup/signup-form.tsx",
+        "web/src/app/terms/page.tsx"
+      ],
+      "fingerprints": {
+        "PRODUCT.md": "e073f9e84feb846287cf012efa3b80feb584b08c145fd7e34e852397459da3b7",
+        "DESIGN.md": "b08d236205cd0a51b295b8ad812b83fb96ecd5329f45db8fa00be0feb9d3db27",
+        ".superdesign/design-system.md": "86a461dd52c850d31de6b9f10984ec3ccb6f1be9e4e348d2a9a11b5a4d934535",
+        "web/src/app/globals.css": "1423dc50743784be4696dbbcb44ef61821d6425612ca2857c9fc452de82b27c3",
+        "web/src/components/shell/auth-split.tsx": "b035c9ebd53813662dbd55b6beb2af8a7162b9fa428ce54f07492a19b24d786b",
+        "web/src/app/(auth)/signup/signup-form.tsx": "1d846301256b7eac61b79521c780ff41bd4984cd753745fb40b71e73cc477ab9",
+        "web/src/app/terms/page.tsx": "79b83ad35f9483fba948841b415c0e2497619b256a9ab73f7a98ba8ca3ff0583"
+      },
+      "components": [
+        {
+          "name": "AuthSplit",
+          "id": "2fbb6e1e-ad97-44e0-8d81-63a73ed7b6f0",
+          "sourcePath": "web/src/components/shell/auth-split.tsx"
+        },
+        {
+          "name": "AppShell",
+          "id": "69471fa2-8ad3-4865-9359-2b457c8b7cf4",
+          "sourcePath": "web/src/components/shell/app-shell.tsx"
+        },
+        {
+          "name": "PageHeader",
+          "id": "e555fe8b-eb5c-4c97-b93f-7c3c31e7385d",
+          "sourcePath": "web/src/components/shell/page-header.tsx"
+        },
+        {
+          "name": "Panel",
+          "id": "d0fefb73-77cf-4ad0-85e2-90796d2bc40b",
+          "sourcePath": "web/src/components/shell/panel.tsx"
+        },
+        {
+          "name": "VoyixButton",
+          "id": "5cba0757-c201-44fa-880f-edcf4a3c0f7f",
+          "sourcePath": "web/src/components/ui/button.tsx"
+        },
+        {
+          "name": "FormField",
+          "id": "834d0aed-c1e9-40f4-bc7a-c899c8d1292a",
+          "sourcePath": "web/src/components/forms/field.tsx"
+        }
+      ],
+      "drafts": {
+        "d63f0613-d7b0-4254-97fa-f74bbe46b570": {
+          "title": "Current signup - faithful reproduction",
+          "visualDirection": "current Voyix signup baseline",
+          "currentVersion": 2
+        },
+        "2efca117-2a28-4665-b786-3b1e330d95eb": {
+          "title": "Direction A - Editorial Night Ledger",
+          "visualDirection": "deep-purple editorial split with accessible review-only legal modal",
+          "parentDraftId": "d63f0613-d7b0-4254-97fa-f74bbe46b570",
+          "currentVersion": 2
+        },
+        "6db8da93-9b42-4eb0-8648-f5f6ae55de0f": {
+          "title": "Direction B - Quiet Personal Register",
+          "visualDirection": "light editorial register with private-record aside and accessible review-only legal modal",
+          "parentDraftId": "d63f0613-d7b0-4254-97fa-f74bbe46b570",
+          "currentVersion": 3
+        }
+      },
+      "updatedAt": "2026-10-14T03:02:36.6172371+08:00"
+    }
+  }
+}

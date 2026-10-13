@@ -1,0 +1,231 @@
+# Theme
+
+## Compact token summary
+
+- **Framework/style:** Tailwind CSS 4 via `@tailwindcss/postcss`; shadcn radix-nova setup, CSS variables enabled. No Tailwind config file is present.
+- **Palette:** `--vx-brand #5f249f`, hover `#531f8c`, deep `#341a4b`, light `#c3a3e0`, tint `#f1e9f8`; ink `#211e25`, soft `#4c4651`, muted `#706a75`; paper `#f5f2f6`, surface `#fffefa`, soft surface `#fbf9fc`, line `#e8e4eb`, strong line `#d8d1de`; success `#356d5b/#e7f2ec`, amber `#a86c2e/#fbf3e8`, rose `#a75143/#f8ebe8`.
+- **Typography:** Manrope (interface/headings) and IBM Plex Mono (times, dates, hours, codes, money); loaded in root layout as `--font-sans` and `--font-mono`.
+- **Geometry:** control radius 8px; panel radius 14px; content max 1320px; rail 244px / 215px tablet / 74px icon; top bar 65px; mobile header 54px; bottom nav 63px; horizontal padding 40px / 28px / 16px / 12px.
+- **Breakpoints:** 1120px narrows rail/gutters; 900px icon rail; 640px mobile shell; 370px minimum gutters. Motion is a 280ms page entrance and reduced-motion override; focus is a 3px brand outline.
+
+## Raw source dumps
+
+### `web/src/app/globals.css`
+
+```css
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --vx-brand: #5f249f;
+  --vx-brand-hover: #531f8c;
+  --vx-brand-deep: #341a4b;
+  --vx-brand-light: #c3a3e0;
+  --vx-brand-tint: #f1e9f8;
+  --vx-ink: #211e25;
+  --vx-ink-soft: #4c4651;
+  --vx-muted: #706a75;
+  --vx-paper: #f5f2f6;
+  --vx-surface: #fffefa;
+  --vx-surface-soft: #fbf9fc;
+  --vx-line: #e8e4eb;
+  --vx-line-strong: #d8d1de;
+  --vx-success: #356d5b;
+  --vx-success-bg: #e7f2ec;
+  --vx-amber: #a86c2e;
+  --vx-amber-bg: #fbf3e8;
+  --vx-rose: #a75143;
+  --vx-rose-bg: #f8ebe8;
+  --vx-on-deep: #fffefa;
+  --vx-radius-control: 8px;
+  --vx-radius-panel: 14px;
+  --vx-rail: 244px;
+  --vx-rail-tablet: 215px;
+  --vx-rail-icon: 74px;
+  --vx-topbar: 65px;
+  --vx-header-mobile: 54px;
+  --vx-bottom-nav: 63px;
+  --vx-content: 1320px;
+  --vx-pad-desktop: 40px;
+  --vx-pad-tablet: 28px;
+  --vx-pad-mobile: 16px;
+  --vx-pad-xs: 12px;
+
+  --background: var(--vx-paper);
+  --foreground: var(--vx-ink);
+  --card: var(--vx-surface);
+  --card-foreground: var(--vx-ink);
+  --popover: var(--vx-surface);
+  --popover-foreground: var(--vx-ink);
+  --primary: var(--vx-brand);
+  --primary-foreground: var(--vx-surface);
+  --secondary: var(--vx-surface);
+  --secondary-foreground: var(--vx-brand);
+  --muted: var(--vx-surface-soft);
+  --muted-foreground: var(--vx-muted);
+  --accent: var(--vx-brand-tint);
+  --accent-foreground: var(--vx-brand-deep);
+  --destructive: var(--vx-rose);
+  --destructive-foreground: var(--vx-surface);
+  --border: var(--vx-line);
+  --input: var(--vx-line-strong);
+  --ring: var(--vx-brand);
+  --radius: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .vx-page-enter {
+    animation: none !important;
+  }
+}
+
+:focus-visible {
+  outline: 3px solid var(--vx-brand);
+  outline-offset: 2px;
+}
+
+@keyframes vx-page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.vx-page-enter {
+  animation: vx-page-enter 280ms ease-out both;
+}
+
+.vx-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.vx-skip-link:focus,
+.vx-skip-link:focus-visible {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 50;
+  width: auto;
+  height: auto;
+  padding: 0.5rem 1rem;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: nowrap;
+  border-radius: 8px;
+  background: var(--vx-brand);
+  color: var(--vx-on-deep);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+```
+
+### `web/next.config.ts`
+
+```ts
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  /* config options here */
+  reactCompiler: true,
+};
+
+export default nextConfig;
+
+```
+
+### `web/components.json`
+
+```json
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "radix-nova",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "src/app/globals.css",
+    "baseColor": "mauve",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "iconLibrary": "lucide",
+  "rtl": false,
+  "aliases": {
+    "components": "@/components",
+    "utils": "@/lib/utils",
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "hooks": "@/hooks"
+  },
+  "menuColor": "default",
+  "menuAccent": "subtle",
+  "registries": {}
+}
+
+```
+

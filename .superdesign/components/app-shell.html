@@ -1,0 +1,19 @@
+<div class="min-h-screen bg-[#F5F2F6] text-[#211E25] lg:grid lg:grid-cols-[244px_minmax(0,1fr)]">
+  <aside class="hidden min-h-screen bg-[#341A4B] px-4 py-6 text-[#FFFEFA] lg:flex lg:flex-col">
+    <a :href="overviewHref" class="px-3 text-lg font-bold tracking-[-0.03em]" aria-label="Voyix Workspace overview"><span>voyix</span><span class="text-[#C3A3E0]">workspace</span></a>
+    <nav class="mt-12 flex flex-1 flex-col gap-1" aria-label="Primary navigation">
+      <a :href="overviewHref" :class="{ 'bg-white/12 text-white': activeItem === 'overview' }" class="rounded-lg px-3 py-3 text-sm text-[#D8C9E4]">Overview</a>
+      <a :href="recordsHref" :class="{ 'bg-white/12 text-white': activeItem === 'records' }" class="rounded-lg px-3 py-3 text-sm text-[#D8C9E4]">My records</a>
+      <a :href="calendarHref" :class="{ 'bg-white/12 text-white': activeItem === 'calendar' }" class="rounded-lg px-3 py-3 text-sm text-[#D8C9E4]">Calendar</a>
+      <a :href="settingsHref" :class="{ 'bg-white/12 text-white': activeItem === 'settings' }" class="rounded-lg px-3 py-3 text-sm text-[#D8C9E4]">Settings</a>
+    </nav>
+    <p class="px-3 text-xs leading-5 text-[#C3A3E0]">Private employee record<br />Not employer payroll</p>
+  </aside>
+  <div class="min-w-0">
+    <header class="flex h-[65px] items-center justify-between border-b border-[#E8E4EB] bg-[#FFFEFA] px-4 sm:px-7 lg:px-10">
+      <p class="font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-[#706A75]">PRIVATE WORKSPACE</p>
+      <a :href="addShiftHref" class="rounded-lg bg-[#5F249F] px-4 py-3 text-sm font-semibold text-white">Add shift</a>
+    </header>
+    <main data-slot="content" class="mx-auto w-full max-w-[1320px] px-4 py-8 sm:px-7 lg:px-10"></main>
+  </div>
+</div>
