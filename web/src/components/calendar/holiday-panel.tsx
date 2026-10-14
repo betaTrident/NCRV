@@ -8,13 +8,7 @@ import { StatusLine } from "@/components/forms/status-line"
 import { Panel } from "@/components/shell/panel"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Select } from "@/components/ui/select"
 import {
   addHoliday,
   type CalendarActionState,
@@ -109,29 +103,20 @@ function HolidayPanel({ holidays }: HolidayPanelProps) {
           <Input id="holiday-name" name="name" type="text" className="h-11" />
         </Field>
 
-        <Select
-          value={holidayType}
-          onValueChange={(value) => setHolidayType(value as HolidayType)}
+        <Field
+          label="Holiday type"
+          htmlFor="holiday-type"
+          helper="A Saturday or Sunday stays the type you choose. It is not turned into a rest day."
+          error={state.fieldErrors.holidayType}
         >
-          <Field
-            label="Holiday type"
-            htmlFor="holiday-type"
-            helper="A Saturday or Sunday stays the type you choose. It is not turned into a rest day."
-            error={state.fieldErrors.holidayType}
-          >
-            <SelectTrigger id="holiday-type" className="min-h-11 w-full">
-              <SelectValue />
-            </SelectTrigger>
-          </Field>
-          <SelectContent>
-            {HOLIDAY_TYPE_OPTIONS.map((option) => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <input type="hidden" name="holidayType" value={holidayType} />
+          <Select
+            id="holiday-type"
+            name="holidayType"
+            value={holidayType}
+            options={HOLIDAY_TYPE_OPTIONS.map((option) => ({ ...option }))}
+            onValueChange={(value) => setHolidayType(value as HolidayType)}
+          />
+        </Field>
 
         {pending ? <StatusLine tone="pending">this holiday</StatusLine> : null}
         {!pending && state.formError ? (

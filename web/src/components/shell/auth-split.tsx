@@ -14,11 +14,14 @@ type AuthSplitProps = {
  */
 function AuthSplit({ title, description, children }: AuthSplitProps) {
   return (
-    <div className="flex min-h-dvh flex-col lg:flex-row">
-      <div className="flex flex-col justify-between gap-10 bg-[var(--vx-brand-deep)] px-6 py-10 sm:px-10 lg:w-[42%] lg:px-14 lg:py-16">
+    <div className="relative flex min-h-dvh flex-col lg:flex-row">
+      <a href="#auth-content" className="vx-sr-only vx-skip-link">
+        Skip to content
+      </a>
+      <div className="flex flex-col justify-between gap-4 bg-[var(--vx-brand-deep)] px-6 py-6 sm:px-10 sm:py-10 lg:w-[36%] lg:px-12 lg:py-14">
         <Wordmark />
         <div className="flex max-w-sm flex-col gap-3">
-          <p className="text-xl font-semibold text-[var(--vx-on-deep)] sm:text-2xl">
+          <p className="text-lg font-semibold text-[var(--vx-on-deep)] sm:text-2xl">
             {title}
           </p>
           <p className="text-sm text-[var(--vx-brand-light)]">{description}</p>
@@ -27,9 +30,9 @@ function AuthSplit({ title, description, children }: AuthSplitProps) {
           A private record, not a payroll system.
         </p>
       </div>
-      <div className="flex flex-1 items-center justify-center px-6 py-10 sm:px-10 lg:px-16">
+      <main id="auth-content" tabIndex={-1} className="flex flex-1 items-center justify-center px-6 py-10 sm:px-10 lg:px-16">
         <div className="w-full max-w-sm">{children}</div>
-      </div>
+      </main>
     </div>
   )
 }

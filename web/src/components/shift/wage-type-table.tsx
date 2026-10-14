@@ -83,7 +83,7 @@ function WageTypeTable({ rows }: WageTypeTableProps) {
               <TableCell
                 className={
                   row.amountStatus === "tbd"
-                    ? "text-right font-mono font-medium tabular-nums text-[var(--vx-amber)]"
+                    ? "text-right font-mono font-medium tabular-nums text-[var(--vx-amber-ink)]"
                     : "text-right font-mono tabular-nums text-[var(--vx-ink)]"
                 }
               >

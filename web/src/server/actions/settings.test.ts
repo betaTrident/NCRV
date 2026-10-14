@@ -86,6 +86,7 @@ function thenable<T>(result: T) {
 function mockLoadClient(options: {
   employee: { data: unknown; error: { message: string } | null }
   wages: { data: unknown; error: { message: string } | null }
+  sourceAvailable?: boolean
 }) {
   const employeeSelect = vi.fn()
   const employeeEq = vi.fn()
@@ -103,7 +104,12 @@ function mockLoadClient(options: {
   wageSelect.mockReturnValue(wageBuilder)
   order.mockReturnValue(wageBuilder)
 
+  const sourceResult = options.sourceAvailable === false ? {data:null,error:{message:"unavailable"}} : {data:{code_file:"Expectations.pdf",code_page:3},error:null}
+  const sourceRows = {data:[{code:"2251",category:"Ordinary Day",hours_category:"Excess",percentage:125}],error:null}
   const from = vi.fn((table: string) => {
+    if (table === "calendar_sources") return {select: () => ({eq: () => ({maybeSingle: async () => sourceResult})})}
+    if (table === "reference_codes") return {select: () => ({eq: () => ({order: async () => options.sourceAvailable === false ? {data:[],error:{message:"unavailable"}} : sourceRows})})}
+
     if (table === "employees") {
       return { select: employeeSelect }
     }
@@ -276,4 +282,28 @@ describe("loadSettings", () => {
     expect(excess?.percentage).toBe("138.00")
     expect(result.profile.displayedHourlyRate).toBe("200.00000000")
   })
+  it("reads sourced reference rows without activating their formulas", async () => {
+    mockClaims(ownerId)
+    mockLoadClient({employee:{data:employeeRow,error:null},wages:{data:wageRows,error:null}})
+    const result = await loadSettings()
+    expect(result.status).toBe("ready")
+    if (result.status !== "ready") return
+    expect(result.codeSource?.rows).toEqual([{code:"2251",category:"Ordinary Day",hours:"Excess",percentage:"125"}])
+    expect(result.wages.some(row => row.code === "2251")).toBe(false)
+  })
+  it("preserves configured settings when the optional source catalog is unavailable", async () => {
+    mockClaims(ownerId)
+    mockLoadClient({employee:{data:employeeRow,error:null},wages:{data:wageRows,error:null},sourceAvailable:false})
+    const result = await loadSettings()
+    expect(result.status).toBe("ready")
+    if (result.status === "ready") expect(result.codeSource).toBeNull()
+  })
+  it.each([{is_nd:false},{category:"REST_DAY"},{hours_category:"EXCESS"},{percentage:20},{active:false}])("does not confirm a mismatched 2211 reference %o", async (override) => {
+    mockClaims(ownerId)
+    mockLoadClient({employee:{data:employeeRow,error:null},wages:{data:[{...wageRows[0],...override}],error:null}})
+    const result = await loadSettings()
+    if(result.status !== "ready") throw new Error("Expected ready settings")
+    expect(result.wages[0].formulaLabel).toBe("Formula TBD")
+  })
+
 })

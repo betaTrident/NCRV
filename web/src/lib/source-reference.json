@@ -1,0 +1,540 @@
+{
+  "sourceId": "ncr-voyix-cebu-2026",
+  "site": "Cebu",
+  "year": 2026,
+  "calendarFile": "2026_NCRV_Cebu Calendar.pdf",
+  "calendarSha256": "f229a4efdde407f2a17efe44102b71d5d6ee65c8c639024f62f9e18d38eadf09",
+  "codeFile": "New Hire - Setting of Expectations (1).pdf",
+  "codePage": 3,
+  "codeSha256": "ffde16184f5e545b4203dcddacd4c2ff0de27d14a1345fdc8075e22e221d440c",
+  "events": [
+    {
+      "date": "2026-01-01",
+      "label": "New Year's Day",
+      "kind": "holiday",
+      "classification": "regular"
+    },
+    {
+      "date": "2026-01-06",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-01-15",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-01-21",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-01-30",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-02-04",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-02-13",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-02-17",
+      "label": "Chinese New Year",
+      "kind": "holiday",
+      "classification": "special"
+    },
+    {
+      "date": "2026-02-18",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-02-24",
+      "label": "Cebu Charter day",
+      "kind": "holiday",
+      "classification": "special"
+    },
+    {
+      "date": "2026-02-27",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-03-04",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-03-13",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-03-20",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-03-31",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-04-02",
+      "label": "Maundy Thursday",
+      "kind": "holiday",
+      "classification": "regular"
+    },
+    {
+      "date": "2026-04-03",
+      "label": "Good Friday",
+      "kind": "holiday",
+      "classification": "regular"
+    },
+    {
+      "date": "2026-04-04",
+      "label": "Black Saturday",
+      "kind": "holiday",
+      "classification": "special"
+    },
+    {
+      "date": "2026-04-06",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-04-09",
+      "label": "Araw ng Kagitingan",
+      "kind": "holiday",
+      "classification": "regular"
+    },
+    {
+      "date": "2026-04-15",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-04-21",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-04-30",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-05-01",
+      "label": "Labor Day",
+      "kind": "holiday",
+      "classification": "regular"
+    },
+    {
+      "date": "2026-05-05",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-05-15",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-05-20",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-05-29",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-06-04",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-06-12",
+      "label": "Independence Day",
+      "kind": "holiday",
+      "classification": "regular"
+    },
+    {
+      "date": "2026-06-15",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-06-19",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-06-30",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-07-06",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-07-15",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-07-21",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-07-31",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-08-05",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-08-06",
+      "label": "Provincial Charter Day",
+      "kind": "holiday",
+      "classification": "special"
+    },
+    {
+      "date": "2026-08-14",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-08-21",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-08-21",
+      "label": "Ninoy Aquino Day",
+      "kind": "holiday",
+      "classification": "special"
+    },
+    {
+      "date": "2026-08-28",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-08-31",
+      "label": "National Heroes Day",
+      "kind": "holiday",
+      "classification": "regular"
+    },
+    {
+      "date": "2026-09-04",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-09-09",
+      "label": "Osmeña Day",
+      "kind": "holiday",
+      "classification": "special"
+    },
+    {
+      "date": "2026-09-15",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-09-21",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-09-30",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-10-06",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-10-15",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-10-21",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-10-30",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-11-01",
+      "label": "All Saints Day",
+      "kind": "holiday",
+      "classification": "special"
+    },
+    {
+      "date": "2026-11-02",
+      "label": "All Souls Day",
+      "kind": "holiday",
+      "classification": "special"
+    },
+    {
+      "date": "2026-11-04",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-11-13",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-11-20",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-11-27",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-11-30",
+      "label": "Bonifacio Day",
+      "kind": "holiday",
+      "classification": "regular"
+    },
+    {
+      "date": "2026-12-04",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-12-08",
+      "label": "Immaculate Conception",
+      "kind": "holiday",
+      "classification": "special"
+    },
+    {
+      "date": "2026-12-15",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-12-21",
+      "label": "Payroll Cut-off",
+      "kind": "cutoff",
+      "classification": null
+    },
+    {
+      "date": "2026-12-24",
+      "label": "Christmas Eve",
+      "kind": "holiday",
+      "classification": "special"
+    },
+    {
+      "date": "2026-12-25",
+      "label": "Christmas Day",
+      "kind": "holiday",
+      "classification": "regular"
+    },
+    {
+      "date": "2026-12-29",
+      "label": "NCPI Pay Day",
+      "kind": "payday",
+      "classification": null
+    },
+    {
+      "date": "2026-12-30",
+      "label": "Rizal Day",
+      "kind": "holiday",
+      "classification": "regular"
+    },
+    {
+      "date": "2026-12-31",
+      "label": "Last Day of the Year",
+      "kind": "holiday",
+      "classification": "special"
+    }
+  ],
+  "referenceCodes": [
+    {
+      "code": "2251",
+      "category": "Ordinary Day",
+      "hours": "Excess of first 8 hours",
+      "percentage": "125",
+      "engineActive": false,
+      "formula": "TBD"
+    },
+    {
+      "code": "2301",
+      "category": "Rest Day",
+      "hours": "First 8 hours",
+      "percentage": "130",
+      "engineActive": false,
+      "formula": "TBD"
+    },
+    {
+      "code": "2215",
+      "category": "Special Public Holiday + Rest Day",
+      "hours": "First 8 hours",
+      "percentage": "150",
+      "engineActive": false,
+      "formula": "TBD"
+    },
+    {
+      "code": "2235",
+      "category": "Special Public Holiday + Rest Day",
+      "hours": "Excess of first 8 hours",
+      "percentage": "195",
+      "engineActive": false,
+      "formula": "TBD"
+    },
+    {
+      "code": "2170",
+      "category": "Regular/Public Holiday",
+      "hours": "First 8 hours",
+      "percentage": "100",
+      "engineActive": false,
+      "formula": "TBD"
+    },
+    {
+      "code": "2226",
+      "category": "Regular/Public Holiday",
+      "hours": "Excess of first 8 hours",
+      "percentage": "260",
+      "engineActive": false,
+      "formula": "TBD"
+    },
+    {
+      "code": "2240",
+      "category": "Regular/Public Holiday + Rest Day",
+      "hours": "First 8 hours",
+      "percentage": "260",
+      "engineActive": false,
+      "formula": "TBD"
+    },
+    {
+      "code": "2246",
+      "category": "Regular/Public Holiday + Rest Day",
+      "hours": "Excess of first 8 hours",
+      "percentage": "338",
+      "engineActive": false,
+      "formula": "TBD"
+    },
+    {
+      "code": "2425",
+      "category": "Double Regular Holiday",
+      "hours": "First 8 hours",
+      "percentage": "200",
+      "engineActive": false,
+      "formula": "TBD"
+    },
+    {
+      "code": "2535",
+      "category": "Double Regular Holiday",
+      "hours": "Excess of first 8 hours",
+      "percentage": "390",
+      "engineActive": false,
+      "formula": "TBD"
+    },
+    {
+      "code": "2420",
+      "category": "Double Regular Holiday + Rest Day",
+      "hours": "First 8 hours",
+      "percentage": "390",
+      "engineActive": false,
+      "formula": "TBD"
+    },
+    {
+      "code": "2520",
+      "category": "Double Regular Holiday + Rest Day",
+      "hours": "Excess of first 8 hours",
+      "percentage": "507",
+      "engineActive": false,
+      "formula": "TBD"
+    },
+    {
+      "code": "2430",
+      "category": "Special Public Holiday",
+      "hours": "First 8 hours",
+      "percentage": "30",
+      "engineActive": false,
+      "formula": "TBD"
+    },
+    {
+      "code": "2233",
+      "category": "Special Public Holiday",
+      "hours": "Excess of first 8 hours",
+      "percentage": "169",
+      "engineActive": false,
+      "formula": "TBD"
+    }
+  ]
+}

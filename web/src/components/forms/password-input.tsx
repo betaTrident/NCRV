@@ -9,6 +9,7 @@ type PasswordInputProps = {
   id?: string
   name: string
   autoComplete: string
+  required?: boolean
   "aria-invalid"?: boolean | "true" | "false" | "grammar" | "spelling"
   "aria-describedby"?: string
 }
@@ -17,6 +18,7 @@ function PasswordInput({
   id,
   name,
   autoComplete,
+  required,
   "aria-invalid": ariaInvalid,
   "aria-describedby": ariaDescribedBy,
 }: PasswordInputProps) {
@@ -29,6 +31,7 @@ function PasswordInput({
         name={name}
         type={passwordVisible ? "text" : "password"}
         autoComplete={autoComplete}
+        required={required}
         aria-invalid={ariaInvalid}
         aria-describedby={ariaDescribedBy}
         className="h-11 pr-12"
@@ -37,7 +40,7 @@ function PasswordInput({
         type="button"
         variant="quiet"
         size="icon"
-        className="absolute inset-y-0 right-0"
+        style={{ position: "absolute", top: 0, right: 0, bottom: 0 }}
         aria-label={passwordVisible ? "Hide password" : "Show password"}
         aria-pressed={passwordVisible}
         onClick={() => {

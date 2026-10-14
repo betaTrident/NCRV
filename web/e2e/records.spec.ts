@@ -60,7 +60,7 @@ test("second user cannot open the first user's record URL", async ({
 
     await userA.page.goto(CUSTOM_RECORDS_URL)
     const ownerRecord = userA.page.getByRole("link", {
-      name: "Oct 1",
+      name: "View record for October 1, 2026",
       exact: true,
     })
     await expect(ownerRecord).toBeVisible()
@@ -80,7 +80,10 @@ test("second user cannot open the first user's record URL", async ({
 
     await userB.page.goto(CUSTOM_RECORDS_URL)
     await expect(
-      userB.page.getByRole("link", { name: "Oct 1", exact: true }),
+      userB.page.getByRole("link", {
+        name: "View record for October 1, 2026",
+        exact: true,
+      }),
     ).toHaveCount(0)
 
     expect(userA.pageErrors).toEqual([])
@@ -106,13 +109,13 @@ test("Saturday saved as Regular Work Day never renders as Rest Day", async ({
     await addLockedShift(session.page, "2026-10-03")
 
     await session.page.goto(CUSTOM_RECORDS_URL)
-    const saturdayRow = session.page.locator("tr").filter({
-      has: session.page.getByRole("link", { name: "Oct 3", exact: true }),
+    const saturdayRow = session.page.getByRole("row").or(session.page.getByRole("listitem")).filter({
+      has: session.page.getByRole("link", { name: "View record for October 3, 2026", exact: true }),
     })
     await expect(saturdayRow).toContainText("Regular Work Day")
     await expect(saturdayRow).not.toContainText("Rest Day")
 
-    await session.page.getByRole("link", { name: "Oct 3", exact: true }).click()
+    await session.page.getByRole("link", { name: "View record for October 3, 2026", exact: true }).click()
     await expect(
       session.page.getByRole("heading", { name: "October 3, 2026" }),
     ).toBeVisible()
@@ -139,16 +142,14 @@ test("table usable at 375 px", async ({ browser }, testInfo) => {
     await session.page.setViewportSize({ width: 375, height: 812 })
     await session.page.goto(CUSTOM_RECORDS_URL)
 
-    const oct3 = session.page.getByRole("link", { name: "Oct 3", exact: true })
-    await expect(oct3).toBeVisible()
-
-    const overflowParent = session.page
-      .locator(".overflow-x-auto")
-      .filter({ has: oct3 })
-    const box = await oct3.boundingBox()
-    const hasOverflowParent = (await overflowParent.count()) > 0
-    const boxInViewport = box !== null && box.x >= 0 && box.width > 0
-    expect(hasOverflowParent || boxInViewport).toBeTruthy()
+    const mobileRecord = session.page.getByRole("listitem").filter({ hasText: "Oct 3" })
+    await expect(mobileRecord).toContainText("Saturday")
+    await expect(mobileRecord).toContainText("9:00 PM–6:00 AM")
+    await expect(mobileRecord).toContainText("Regular Work Day")
+    await expect(mobileRecord).toContainText("7.00 h")
+    await expect(mobileRecord).toContainText("2211")
+    await expect(mobileRecord).toContainText("₱140.00")
+    await expect(session.page.getByRole("link", { name: "Open record for October 3, 2026" })).toBeVisible()
 
     expect(session.pageErrors).toEqual([])
   } finally {

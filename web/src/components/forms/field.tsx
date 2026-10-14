@@ -6,6 +6,7 @@ type FieldProps = {
   htmlFor: string
   helper?: string
   error?: string
+  required?: boolean
   children: ReactNode
 }
 
@@ -13,6 +14,7 @@ type DescribedControlProps = {
   id?: string
   "aria-invalid"?: boolean | "true" | "false" | "grammar" | "spelling"
   "aria-describedby"?: string
+  required?: boolean
 }
 
 function mergeDescribedBy(...ids: Array<string | undefined>) {
@@ -20,7 +22,7 @@ function mergeDescribedBy(...ids: Array<string | undefined>) {
   return merged.length > 0 ? merged : undefined
 }
 
-function Field({ label, htmlFor, helper, error, children }: FieldProps) {
+function Field({ label, htmlFor, helper, error, required = false, children }: FieldProps) {
   const helperId = helper ? `${htmlFor}-helper` : undefined
   const errorId = error ? `${htmlFor}-error` : undefined
   const describedBy = mergeDescribedBy(errorId, helperId)
@@ -28,6 +30,7 @@ function Field({ label, htmlFor, helper, error, children }: FieldProps) {
   const control = isValidElement<DescribedControlProps>(children)
     ? cloneElement(children, {
         id: children.props.id ?? htmlFor,
+        required: required || children.props.required,
         "aria-invalid": error ? true : children.props["aria-invalid"],
         "aria-describedby": mergeDescribedBy(
           describedBy,

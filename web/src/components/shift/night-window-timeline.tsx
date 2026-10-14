@@ -4,6 +4,10 @@ type TimelineSegment = {
   startLabel: string
   endLabel: string
   kind: "shift" | "overlap" | "qualifying" | "excluded-break"
+  hours?: number
+  track?: "shift" | "nd" | "potential" | "qualifying"
+  displayLabel?: string
+  displayValue?: string
 }
 
 type NightWindowTimelineProps = {
@@ -49,6 +53,16 @@ function NightWindowTimeline({
   const excludedBreaks = segments.filter(
     (segment) => segment.kind === "excluded-break",
   )
+  const tracks = (["shift", "nd", "potential", "qualifying"] as const).filter((track) =>
+    clockSegments.some((segment) => segment.track === track),
+  )
+  const renderTracks: ("shift" | "nd" | "potential" | "qualifying")[] = tracks.length > 0 ? tracks : ["shift"]
+
+  function trackSegments(track: "shift" | "nd" | "potential" | "qualifying") {
+    return clockSegments.filter((segment) =>
+      tracks.length === 0 ? true : segment.track === track,
+    )
+  }
 
   return (
     <div className="flex flex-col gap-3">
@@ -61,17 +75,39 @@ function NightWindowTimeline({
         </p>
       </div>
 
-      {clockSegments.length > 0 ? (
-        <div
-          className="flex h-2.5 overflow-hidden rounded-sm"
-          aria-hidden="true"
-        >
-          {clockSegments.map((segment, index) => (
-            <div
-              key={`${segment.kind}-${segment.startLabel}-${segment.endLabel}-${index}`}
-              className={cn("min-w-0 flex-1", BAR_TONE[segment.kind])}
-            />
-          ))}
+      {tracks.length > 0 ? <p className="text-xs text-[var(--vx-muted)]">Aggregate hours share one scale. These bars do not place the unpaid break on the clock.</p> : null}
+      {tracks.length > 0 ? (
+        <div className="flex flex-col gap-2" aria-hidden="true">
+          {renderTracks.map((track) => {
+            const row = trackSegments(track)
+            const total = row.reduce((sum, segment) => sum + (segment.hours ?? 1), 0)
+            const maxTotal = Math.max(
+              ...renderTracks.map((candidate) => trackSegments(candidate).reduce((sum, segment) => sum + (segment.hours ?? 1), 0)),
+              1,
+            )
+            return (
+              <div key={track} className="flex items-center gap-2">
+                <span className="w-16 shrink-0 font-mono text-[10px] tracking-[0.1em] text-[var(--vx-muted)] uppercase">
+                  {{shift:"Shift",nd:"Potential",potential:"Potential",qualifying:"Final ND"}[track]}
+                </span>
+                <div className="flex h-2.5 min-w-0 flex-1 overflow-hidden rounded-sm bg-[var(--vx-surface-soft)]">
+                  <div className="flex h-full min-w-0 overflow-hidden" style={{ width: `${(total / maxTotal) * 100}%` }}>
+                    {row.map((segment, index) => (
+                      <div
+                        key={`${segment.kind}-${segment.startLabel}-${segment.endLabel}-${index}`}
+                        className={cn("min-w-0", BAR_TONE[segment.kind])}
+                        style={{ flex: `${segment.hours ?? 1} 1 0%` }}
+                        title={`${segment.displayLabel ?? KIND_LABEL[segment.kind]} ${segment.displayValue ?? `${segment.startLabel} – ${segment.endLabel}`}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <span className="w-16 shrink-0 text-right font-mono text-[10px] tabular-nums text-[var(--vx-muted)]">
+                  {total.toFixed(2)} h
+                </span>
+              </div>
+            )
+          })}
         </div>
       ) : null}
 
@@ -82,9 +118,9 @@ function NightWindowTimeline({
               key={`label-${segment.kind}-${segment.startLabel}-${segment.endLabel}-${index}`}
               className="text-sm text-[var(--vx-ink-soft)]"
             >
-              <span>{KIND_LABEL[segment.kind]}</span>{" "}
+              <span>{segment.displayLabel ?? KIND_LABEL[segment.kind]}</span>{" "}
               <span className="font-mono tabular-nums text-[var(--vx-ink)]">
-                {segment.startLabel} – {segment.endLabel}
+                {segment.displayValue ?? `${segment.startLabel} – ${segment.endLabel}`}
               </span>
             </li>
           ))}
@@ -114,7 +150,7 @@ function NightWindowTimeline({
           <p
             key={`excluded-${segment.startLabel}-${segment.endLabel}-${index}`}
           >
-            {segment.startLabel} {segment.endLabel}
+            Break deduction: {segment.hours?.toFixed(2) ?? "—"} h · exact clock position not recorded.
           </p>
         ))}
       </div>

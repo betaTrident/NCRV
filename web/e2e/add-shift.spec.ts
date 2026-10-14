@@ -75,6 +75,7 @@ test("locked overnight sample estimates 2211 at ₱140.00 and saves privately", 
     "Estimate only — confirm your payroll rule before relying on this amount.",
   )
 
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
   await page.getByRole("button", { name: "Save entry" }).click()
   await expect(
     page.getByRole("status").filter({ hasText: "Saved privately" }),
@@ -109,4 +110,97 @@ test("locked overnight sample estimates 2211 at ₱140.00 and saves privately", 
 
   expect(pageErrors).toEqual([])
   expect(failedAppRequests).toEqual([])
+})
+
+test("save waits for a current preview and Week mode reviews selected days", async ({ page }) => {
+  await signUpEmployee(page, {
+    name: "Employee",
+    email: uniqueEmail("week-entry"),
+    monthlyBasicSalary: "34800",
+  })
+
+  await page.goto("/shift/new")
+  const save = page.getByRole("button", { name: "Save entry" })
+  await expect(save).toBeDisabled()
+
+  await page.getByLabel("Work date").fill("2026-10-01")
+  await page.getByLabel("Shift start").fill("21:00")
+  await page.getByLabel("Shift end").fill("06:00")
+  await page.getByRole("button", { name: "Calculate shift" }).click()
+  await expect(save).toBeEnabled()
+
+  await page.getByLabel("Shift start").fill("20:00")
+  await expect(save).toBeDisabled()
+  await expect(page.getByText(/Needs recalculation/)).toBeVisible()
+
+  await page.getByRole("button", { name: "Week" }).click()
+  await expect(page.getByRole("heading", { name: "Choose shifts for this week" })).toBeVisible()
+  await page.getByRole("button", { name: "Calculate selected days" }).click()
+  await expect(page.getByText(/Review: 5 shifts/)).toBeVisible()
+  const saveWeek = page.getByRole("button", { name: "Save reviewed entries" })
+  await expect(saveWeek).toBeEnabled()
+  await saveWeek.click()
+  await expect(page.getByRole("status").filter({ hasText: "5 entries saved privately" })).toBeVisible()
+  await saveWeek.click()
+  await expect(page.getByRole("status").filter({ hasText: "5 entries saved privately" })).toBeVisible()
+})
+
+test("Week entry keeps multiple shifts on one date as distinct rows", async ({ page }) => {
+  await signUpEmployee(page, {
+    name: "Employee",
+    email: uniqueEmail("week-multiple"),
+    monthlyBasicSalary: "34800",
+  })
+
+  await page.goto("/shift/new")
+  await page.getByRole("button", { name: "Week" }).click()
+  await page.getByRole("button", { name: "Add another shift" }).first().click()
+  await page.getByRole("button", { name: "Calculate selected days" }).click()
+  await expect(page.getByText(/Review: 6 shifts/)).toBeVisible()
+})
+
+test("Week draft recovery keeps reviewed input identity without saving a draft", async ({page}) => {
+  await signUpEmployee(page,{name:"Employee",email:uniqueEmail("draft-recovery"),monthlyBasicSalary:"34800"})
+  await page.goto("/shift/new")
+  await page.getByRole("button",{name:"Week",exact:true}).click()
+  await page.getByLabel("Start",{exact:true}).first().fill("20:30")
+  const priorKey=await page.locator('input[name="idempotencyKey"]').inputValue()
+  await page.reload()
+  await page.getByRole("button",{name:"Week",exact:true}).click()
+  await expect(page.getByRole("status").filter({hasText:"Recovered an unsaved draft"})).toBeVisible()
+  await expect(page.getByLabel("Start",{exact:true}).first()).toHaveValue("20:30")
+  await expect(page.locator('input[name="idempotencyKey"]')).toHaveValue(priorKey)
+  await expect(page.getByRole("button",{name:"Save reviewed entries"})).toBeDisabled()
+})
+
+test("keyboard traversal reaches classification, Calculate, and Save at every required width", async ({page}) => {
+  test.setTimeout(120_000)
+  await signUpEmployee(page,{name:"Employee",email:uniqueEmail("keyboard-entry"),monthlyBasicSalary:"34800"})
+  async function tabTo(target: ReturnType<Page['getByRole']>) {
+    for(let i=0;i<40;i++) {
+      if(await target.evaluate(element=>element === document.activeElement)) return
+      await page.keyboard.press("Tab")
+    }
+    throw new Error("Keyboard traversal did not reach the intended control")
+  }
+  for(const width of [320,375,768,900,1440]) {
+    await page.setViewportSize({width,height:900})
+    await page.goto("/shift/new")
+    await page.getByLabel("Work date").fill("2026-10-01")
+    await page.getByLabel("Shift start").fill("21:00")
+    await page.getByLabel("Shift end").fill("06:00")
+    const classification=page.getByRole("combobox",{name:"Day classification"})
+    await tabTo(classification)
+    await page.keyboard.press("ArrowDown")
+    await page.keyboard.press("Home")
+    await page.keyboard.press("Enter")
+    const calculate=page.getByRole("button",{name:"Calculate shift"})
+    await tabTo(calculate)
+    await page.keyboard.press("Enter")
+    await expect(page.getByRole("region",{name:"Calculation preview"})).toContainText("2211")
+    const save=page.getByRole("button",{name:"Save entry"})
+    await tabTo(save)
+    await page.keyboard.press("Enter")
+    await expect(page.getByRole("status").filter({hasText:"in your shiftbook"})).toBeVisible()
+  }
 })

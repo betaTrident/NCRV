@@ -1,6 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
 @theme inline {
   --color-background: var(--background);
@@ -49,6 +47,7 @@
   --vx-success: #356d5b;
   --vx-success-bg: #e7f2ec;
   --vx-amber: #a86c2e;
+  --vx-amber-ink: #87531e;
   --vx-amber-bg: #fbf3e8;
   --vx-rose: #a75143;
   --vx-rose-bg: #f8ebe8;
@@ -167,3 +166,18 @@
     @apply font-sans;
   }
 }
+.vx-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  min-height: 44px; padding: 8px 16px; border: 1px solid transparent;
+  border-radius: var(--vx-radius-control); font-weight: 600; font-size: 14px;
+  transition: background-color 180ms, border-color 180ms, transform 180ms;
+}
+.vx-button-primary { background: var(--vx-brand); color: var(--vx-surface); }
+.vx-button-primary:hover { background: var(--vx-brand-hover); color: var(--vx-surface); }
+.vx-button-outline { border-color: var(--vx-line-strong); color: var(--vx-brand); }
+.vx-button-outline:hover, .vx-button-quiet:hover { background: var(--vx-brand-tint); }
+.vx-button-quiet { color: var(--vx-ink-soft); }
+.vx-button:active { transform: translateY(1px); }
+.vx-button-icon { width: 44px; padding: 0; }
+.vx-button:disabled { opacity: .5; }
+.vx-input { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--vx-line-strong); border-radius: var(--vx-radius-control); padding: 8px 12px; background: var(--vx-surface); color: var(--vx-ink); }

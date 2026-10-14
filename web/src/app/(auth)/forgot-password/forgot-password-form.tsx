@@ -22,6 +22,7 @@ function ForgotPasswordForm() {
       <Field
         label="Email"
         htmlFor="forgot-email"
+        required
         error={state.fieldErrors.email}
       >
         <Input

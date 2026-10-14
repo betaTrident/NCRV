@@ -1,9 +1,7 @@
-import Link from "next/link"
-
 import { RecordDetail } from "@/components/records/record-detail"
 import { EmptyState } from "@/components/shell/empty-state"
 import { PageHeader } from "@/components/shell/page-header"
-import { Button } from "@/components/ui/button"
+import { ButtonLink } from "@/components/ui/button"
 import { loadRecordDetail } from "@/server/queries/records"
 
 type RecordDetailPageProps = {
@@ -22,9 +20,7 @@ function UnavailableRecord() {
         title="This record isn't available"
         description="That saved shift isn't in your shiftbook."
         action={
-          <Button asChild variant="outline">
-            <Link href="/records">Back to records</Link>
-          </Button>
+          <ButtonLink href="/records" variant="outline">Back to records</ButtonLink>
         }
       />
     </div>
@@ -47,12 +43,8 @@ function RecordLoadError({ id }: { id: string }) {
           Could not load this record.
         </p>
         <div className="flex flex-wrap gap-3">
-          <Button asChild variant="outline">
-            <Link href={`/records/${id}`}>Try again</Link>
-          </Button>
-          <Button asChild variant="outline">
-            <Link href="/records">Back to records</Link>
-          </Button>
+          <ButtonLink href={`/records/${id}`} variant="outline">Try again</ButtonLink>
+          <ButtonLink href="/records" variant="outline">Back to records</ButtonLink>
         </div>
       </div>
     </div>
@@ -79,9 +71,7 @@ export default async function RecordDetailPage({
             title={result.detail.workDateLabel}
             description="Saved snapshot for this shift. Nothing here is recalculated."
             action={
-              <Button asChild variant="outline">
-                <Link href="/records">Back to records</Link>
-              </Button>
+              <ButtonLink href="/records" variant="outline">Back to records</ButtonLink>
             }
           />
           <RecordDetail detail={result.detail} />

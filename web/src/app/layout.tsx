@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Manrope, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import { AntdRegistry } from "@ant-design/nextjs-registry";
+import { VoyixAntProvider } from "@/components/ui/voyix-ant-provider";
 
 const manrope = Manrope({
   variable: "--font-sans",
@@ -24,7 +26,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${manrope.variable} ${ibmPlexMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col"><AntdRegistry><VoyixAntProvider>{children}</VoyixAntProvider></AntdRegistry></body>
     </html>
   );
 }

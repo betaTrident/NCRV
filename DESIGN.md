@@ -132,3 +132,15 @@ Semantic status color is separate from brand color. **Green is reserved for posi
 ## 9. Implementation reference
 
 The application foundation, file paths, and component names are specified in `docs/07-SETUP-PLAN.md`. Palette and shared visual rules live in `web/src/app/globals.css`. Page composition lives under `web/src/app/(app)/`. The shell and wordmark live in `web/src/components/shell/`. The calculation timeline is `web/src/components/shift/night-window-timeline.tsx`. Version 1 uses the typographic wordmark. A crescent mark is added only when a real SVG asset exists. When adding a page, reuse `PageHeader`, `Panel`, `Field`, `StatusLine`, and the button variants before introducing a new visual primitive.
+
+## October 15, 2026 redesign execution contract
+
+The user authorized production implementation of Direction A — Editorial Night Ledger and approved the recommended Calendar/Week package: Day remains default; reviewed Week records save atomically with idempotent retries; Calendar uses Month, Week, and References; the read-only Cebu 2026 source is explicitly selected; non-ND codes remain reference-only; filing reminders are source-labelled guidance.
+
+Ant Design is the interaction primitive layer behind `web/src/components/ui/**`. `AntdRegistry` and the small `VoyixAntProvider` preserve the root Server Component. Product components, native date/time inputs, semantic record tables, Lucide icons, Server Actions/`useActionState`, and CSS tokens remain authoritative. Use explicit `Button` and `ButtonLink`; no polymorphic `asChild` contract, direct route-level Ant imports, Ant Form, Ant icons, default dashboard layout, GSAP, or Framer Motion. Controls are at least 44 px; control motion is 180 ms and the page entrance is 280 ms with reduced-motion support.
+
+Source data is separate from employee-owned facts and the active wage engine. No source date silently sets classification. Only ordinary-day code 2211 has a confirmed money formula; all others stay TBD. See `docs/SOURCE-REFERENCE-VERIFICATION.md` for independent PDF comparison and provenance. Source imports do not create personal payroll periods.
+
+Earlier statements that implementation is paused or that Radix/shadcn must remain the runtime primitive layer are superseded by this execution contract. Historical setup examples are retained for context. Commit/push/deployment remain separate user actions.
+
+Normal-sized warning and TBD text uses --vx-amber-ink (#87531E) on the existing amber surface. Keep --vx-amber for decorative status color; the darker text token passes the tested contrast contract.

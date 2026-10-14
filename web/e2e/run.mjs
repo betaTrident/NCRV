@@ -94,11 +94,11 @@ childEnv.E2E_SUPABASE_URL = apiUrl
 childEnv.E2E_SUPABASE_PUBLISHABLE_KEY = publishableKey
 
 const extraArgs = process.argv.slice(2)
-const child = spawn("pnpm", ["exec", "playwright", "test", ...extraArgs], {
+const child = spawn(process.execPath, [resolve(webRoot, "node_modules/@playwright/test/cli.js"), "test", ...extraArgs], {
   cwd: webRoot,
   env: childEnv,
   stdio: "inherit",
-  shell: process.platform === "win32",
+  shell: false,
 })
 
 child.on("error", (error) => {

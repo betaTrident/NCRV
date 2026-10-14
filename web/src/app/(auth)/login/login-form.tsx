@@ -21,6 +21,7 @@ function LoginForm() {
       <Field
         label="Email"
         htmlFor="login-email"
+        required
         error={state.fieldErrors.email}
       >
         <Input
@@ -35,6 +36,7 @@ function LoginForm() {
         <Field
           label="Password"
           htmlFor="login-password"
+          required
           error={state.fieldErrors.password}
         >
           <PasswordInput

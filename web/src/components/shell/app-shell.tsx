@@ -1,7 +1,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { CalendarDays, Home, Plus, Receipt, Settings } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ShiftShortcut } from "@/components/shell/shift-shortcut"
 import { NavLink } from "@/components/shell/nav-link"
 import { PrivacyIndicator } from "@/components/shell/privacy-indicator"
 import { Wordmark } from "@/components/shell/wordmark"
@@ -58,9 +58,7 @@ function AppShell({ children }: AppShellProps) {
         <div className={styles.main}>
           <header className={styles.topbar}>
             <PrivacyIndicator />
-            <Button asChild>
-              <Link href="/shift/new">Add shift</Link>
-            </Button>
+            <div className={styles.shiftAction}><ShiftShortcut /></div>
           </header>
           <main id="content" tabIndex={-1} className={styles.content}>
             {children}

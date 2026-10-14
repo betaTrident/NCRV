@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import { StatusLine } from "@/components/forms/status-line"
 import { EstimateNote } from "@/components/shift/estimate-note"
 import {
@@ -30,6 +31,8 @@ type CalculationPreviewProps = {
   ndHours: string
   rows: WageTypeTableRow[]
   unresolved: string[]
+  actions?: ReactNode
+  stale?: boolean
 }
 
 /**
@@ -54,6 +57,8 @@ function CalculationPreview({
   ndHours,
   rows,
   unresolved,
+  stale = false,
+  actions,
 }: CalculationPreviewProps) {
   const showEstimate = rows.some((row) => row.amountStatus === "estimated")
 
@@ -67,6 +72,11 @@ function CalculationPreview({
         <h2 className="text-[15px] font-semibold text-[var(--vx-ink)]">
           Night differential result
         </h2>
+        {stale ? (
+          <StatusLine tone="pending">
+            Needs recalculation — the form changed after this preview.
+          </StatusLine>
+        ) : null}
         {showEstimate ? (
           <StatusLine tone="estimate">Confirm the payroll rule before relying on this amount.</StatusLine>
         ) : null}
@@ -159,7 +169,7 @@ function CalculationPreview({
         <EstimateNote />
         {unresolved.length > 0 ? (
           <div className="flex flex-col gap-2">
-            <p className="font-mono text-[11px] font-medium tracking-[0.12em] text-[var(--vx-amber)] uppercase">
+            <p className="font-mono text-[11px] font-medium tracking-[0.12em] text-[var(--vx-amber-ink)] uppercase">
               Unresolved
             </p>
             <ul className="flex flex-col gap-1">
@@ -174,6 +184,7 @@ function CalculationPreview({
             </ul>
           </div>
         ) : null}
+        {actions}
       </section>
     </Panel>
   )

@@ -18,6 +18,34 @@ test("empty login shows email and password errors as words", async ({
   await expectVisibleWords(page, "Enter your password.")
 })
 
+test("signup exposes required semantics and keeps consent separate from legal documents", async ({
+  page,
+}) => {
+  await page.goto("/signup")
+
+  await expect(page.getByLabel("Full name")).toHaveAttribute("required", "")
+  await expect(page.getByLabel("Email")).toHaveAttribute("required", "")
+  await expect(page.getByLabel("Password", { exact: true })).toHaveAttribute("required", "")
+  const consent = page.getByRole("checkbox", { name: /I agree/i })
+  await expect(consent).toHaveAttribute("required", "")
+  await page.getByRole("button", { name: "Read Terms of Use" }).click()
+
+  await expect(page.getByRole("dialog")).toBeVisible()
+  await expect(page.getByRole("heading", { name: "Terms of Use" })).toBeVisible()
+  await expect(consent).not.toBeChecked()
+  await page.keyboard.press("Escape")
+  await expect(page.getByRole("button", { name: "Read Terms of Use" })).toBeFocused()
+  await expect(consent).not.toBeChecked()
+})
+
+test("standalone legal pages accept only the signup return path", async ({ page }) => {
+  await page.goto("/terms?returnTo=/signup")
+  await expect(page.getByRole("link", { name: "Back to create profile" })).toHaveAttribute("href", "/signup")
+
+  await page.goto("/privacy?returnTo=https://example.com")
+  await expect(page.getByRole("link", { name: "Back to sign in" })).toHaveAttribute("href", "/login")
+})
+
 test("signup rejects a password shorter than 12 characters", async ({
   page,
 }) => {

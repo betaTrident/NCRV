@@ -1,10 +1,9 @@
-import Link from "next/link"
 
 import { ComputationForm } from "@/components/settings/computation-form"
 import { ProfileForm } from "@/components/settings/profile-form"
 import { WageCatalog } from "@/components/settings/wage-catalog"
 import { PageHeader } from "@/components/shell/page-header"
-import { Button } from "@/components/ui/button"
+import { Button, ButtonLink } from "@/components/ui/button"
 import { signOut } from "@/server/actions/auth"
 import { loadSettings, type ProfileValues } from "@/server/queries/settings"
 
@@ -23,9 +22,7 @@ function UnavailableState() {
   return (
     <div className="flex flex-col items-start gap-3">
       <AlertMessage>Could not load your settings.</AlertMessage>
-      <Button asChild variant="outline">
-        <Link href="/settings">Try again</Link>
-      </Button>
+      <ButtonLink variant="outline" href="/settings">Try again</ButtonLink>
     </div>
   )
 }
@@ -63,7 +60,7 @@ async function SettingsBody() {
           <div className="grid items-start gap-6 lg:grid-cols-2">
             <ProfileForm mode="create" profile={blankProfile(result.email)} />
           </div>
-          <WageCatalog wages={result.wages} />
+          <WageCatalog wages={result.wages} source={result.codeSource} />
         </>
       )
     case "ready":
@@ -73,7 +70,7 @@ async function SettingsBody() {
             <ProfileForm profile={result.profile} />
             <ComputationForm computation={result.computation} />
           </div>
-          <WageCatalog wages={result.wages} />
+          <WageCatalog wages={result.wages} source={result.codeSource} />
         </>
       )
   }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { parseRecordFilter } from "./record-filters"
+import { parseRecordFilter, parseRecordPage, parseRecordSort } from "./record-filters"
 
 const tuesday = "2026-10-13"
 const tuesdayWeek = {
@@ -90,6 +90,12 @@ describe("parseRecordFilter", () => {
       range: "custom",
       from: "2026-09-01",
       to: "2026-09-01",
+    })
+  })
+
+  it("reveals an empty custom range without treating selection as invalid", () => {
+    expect(parseRecordFilter({ range: "custom" }, tuesday)).toEqual({
+      status: "custom-pending",
     })
   })
 
@@ -184,5 +190,41 @@ describe("parseRecordFilter", () => {
   it("defaults a missing, undefined, or empty range to this week", () => {
     expect(parseRecordFilter({ range: undefined }, tuesday)).toEqual(tuesdayWeek)
     expect(parseRecordFilter({ range: "" }, tuesday)).toEqual(tuesdayWeek)
+  })
+})
+
+describe("parseRecordPage", () => {
+  it("defaults a missing page to the first page", () => {
+    expect(parseRecordPage(undefined)).toEqual({ status: "ready", page: 1 })
+    expect(parseRecordPage("")).toEqual({ status: "ready", page: 1 })
+  })
+
+  it("accepts positive whole-number pages", () => {
+    expect(parseRecordPage("2")).toEqual({ status: "ready", page: 2 })
+    expect(parseRecordPage("40")).toEqual({ status: "ready", page: 40 })
+  })
+
+  it("rejects zero, negative, decimal, and non-numeric pages", () => {
+    for (const page of ["0", "-1", "1.5", "next", " 2"]) {
+      expect(parseRecordPage(page)).toEqual({
+        status: "invalid",
+        message: "Choose a valid records page.",
+      })
+    }
+  })
+})
+
+describe("parseRecordSort", () => {
+  it("defaults to newest and accepts the two supported date orders", () => {
+    expect(parseRecordSort(undefined)).toEqual({ status: "ready", sort: "newest" })
+    expect(parseRecordSort("newest")).toEqual({ status: "ready", sort: "newest" })
+    expect(parseRecordSort("oldest")).toEqual({ status: "ready", sort: "oldest" })
+  })
+
+  it("rejects unsupported sorting", () => {
+    expect(parseRecordSort("amount")).toEqual({
+      status: "invalid",
+      message: "Choose newest or oldest records first.",
+    })
   })
 })

@@ -173,3 +173,6 @@
     );
   }
 }
+@media (max-width: 639px) {
+  .shiftAction { display: none; }
+}

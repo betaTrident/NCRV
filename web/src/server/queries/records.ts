@@ -4,6 +4,8 @@ import { DateTime } from "luxon"
 import { formatPhp } from "@/lib/format"
 import {
   parseRecordFilter,
+  parseRecordPage,
+  parseRecordSort,
   type ParsedRecordFilter,
 } from "@/lib/record-filters"
 import {
@@ -13,6 +15,7 @@ import {
 import { createClient, getRequestClaims } from "@/lib/supabase/server"
 
 const MANILA = "Asia/Manila"
+export const RECORDS_PAGE_SIZE = 25
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -79,11 +82,15 @@ export type RecordListRow = {
   id: string
   workDate: string
   workDateLabel: string
+  workDateLongLabel: string
+  weekdayLabel: string
   shiftLabel: string
   dayLabel: string
   ndHours: string
   wageCodes: string
+  wageCodeItems: { code: string; tbd: boolean }[]
   amountLabel: string
+  amountState: "estimated" | "partial-tbd" | "tbd" | "none"
 }
 
 export type RecordsListResult =
@@ -92,11 +99,17 @@ export type RecordsListResult =
   | { status: "invalid"; message: string }
   | { status: "no-period" }
   | { status: "overlap" }
+  | { status: "custom-pending" }
   | {
       status: "ready"
       range: "week" | "month" | "custom" | "period"
       from: string
       to: string
+      page: number
+      pageSize: number
+      totalCount: number
+      totalPages: number
+      sort: "newest" | "oldest"
       rows: RecordListRow[]
     }
 
@@ -115,6 +128,8 @@ export type RecordDetailView = {
   id: string
   workDateLabel: string
   shiftLabel: string
+  shiftStartLabel: string
+  shiftEndLabel: string
   dayLabel: string
   elapsedHours: string | null
   workedHours: string | null
@@ -122,10 +137,10 @@ export type RecordDetailView = {
   potentialOvertimeHours: string | null
   approvedOvertimeHours: string | null
   unapprovedExtraHours: string | null
-  potentialNdHours: string
-  breakHours: string
-  breakIncludedLabel: "Yes" | "No"
-  ndHours: string
+  potentialNdHours: string | null
+  breakHours: string | null
+  breakIncludedLabel: "Yes" | "No" | null
+  ndHours: string | null
   scheduleLabel: string | null
   scheduledRegularHours: string | null
   overtimeApprovedLabel: "Yes" | "No" | null
@@ -388,6 +403,15 @@ function amountLabelOf(lines: ListLine[]): string | null {
   return hasTbd ? `${money} · TBD` : money
 }
 
+function amountStateOf(lines: ListLine[]): RecordListRow["amountState"] {
+  const hasEstimated = lines.some((line) => line.amountStatus === "estimated")
+  const hasTbd = lines.some((line) => line.amountStatus === "tbd")
+  if (hasEstimated && hasTbd) return "partial-tbd"
+  if (hasEstimated) return "estimated"
+  if (hasTbd) return "tbd"
+  return "none"
+}
+
 function mapListLine(row: unknown): ListLine | null {
   if (!isRecord(row) || typeof row.wage_type_code !== "string") {
     return null
@@ -431,8 +455,15 @@ function mapListNdRecord(
   }
 
   const workDateLabel = formatWorkDate(workDate, "MMM d")
+  const workDateLongLabel = formatWorkDate(workDate, "MMMM d, yyyy")
+  const weekdayLabel = formatWorkDate(workDate, "cccc")
   const amountLabel = amountLabelOf(lines)
-  if (workDateLabel === null || amountLabel === null) {
+  if (
+    workDateLabel === null ||
+    workDateLongLabel === null ||
+    weekdayLabel === null ||
+    amountLabel === null
+  ) {
     return null
   }
 
@@ -440,12 +471,24 @@ function mapListNdRecord(
     id: row.id,
     workDate,
     workDateLabel,
+    workDateLongLabel,
+    weekdayLabel,
     shiftLabel: `${formatClock(shiftStart)}–${formatClock(shiftEnd)}`,
     dayLabel: dayLabelOf(dayClassification),
     ndHours,
     wageCodes: lines.length === 0 ? "—" : lines.map((line) => line.code).join(", "),
+    wageCodeItems: lines.map((line) => ({
+      code: line.code,
+      tbd: line.amountStatus === "tbd",
+    })),
     amountLabel,
+    amountState: amountStateOf(lines),
   }
+}
+
+export function paginationWindow(page: number): { from: number; to: number } {
+  const from = (page - 1) * RECORDS_PAGE_SIZE
+  return { from, to: from + RECORDS_PAGE_SIZE - 1 }
 }
 
 export function mapRecordListRows(shifts: unknown): RecordListRow[] | null {
@@ -597,9 +640,9 @@ export function mapRecordDetail(row: unknown): RecordDetailView | null {
   }
 
   const workDateLabel = formatWorkDate(workDate, "MMMM d, yyyy")
-  const potentialNdHours = asHoursString(row.potential_nd_hours)
-  const breakHours = asHoursString(row.break_hours)
-  const ndHours = asHoursString(row.nd_hours)
+  const potentialNdHours = nullableHours(row.potential_nd_hours)
+  const breakHours = nullableHours(row.break_hours)
+  const ndHours = nullableHours(row.nd_hours)
   const elapsedHours = nullableHours(row.elapsed_hours)
   const workedHours = nullableHours(row.worked_hours)
   const regularHours = nullableHours(row.regular_hours)
@@ -608,16 +651,16 @@ export function mapRecordDetail(row: unknown): RecordDetailView | null {
   const unapprovedExtraHours = nullableHours(row.unapproved_extra_hours)
   const scheduledRegularHours = nullableHours(row.scheduled_regular_hours)
   const scheduleLabel = scheduleLabelOf(row.work_schedule_type)
-  const breakIncludedLabel = yesNo(row.break_included_in_nd)
+  const breakIncludedLabel = optionalYesNo(row.break_included_in_nd)
   const overtimeApprovedLabel = optionalYesNo(row.overtime_approved)
   const rates = mapRateLabels(row)
   const lineRows = asRows(row.nd_wage_type_lines)
 
   if (
     workDateLabel === null ||
-    potentialNdHours === null ||
-    breakHours === null ||
-    ndHours === null ||
+    potentialNdHours === undefined ||
+    breakHours === undefined ||
+    ndHours === undefined ||
     elapsedHours === undefined ||
     workedHours === undefined ||
     regularHours === undefined ||
@@ -655,6 +698,8 @@ export function mapRecordDetail(row: unknown): RecordDetailView | null {
     id: row.id,
     workDateLabel,
     shiftLabel: `${formatClock(shift.shift_start)} – ${formatClock(shift.shift_end)}`,
+    shiftStartLabel: formatClock(shift.shift_start),
+    shiftEndLabel: formatClock(shift.shift_end),
     dayLabel: dayLabelOf(shift.day_classification),
     elapsedHours,
     workedHours,
@@ -738,6 +783,8 @@ export async function loadRecords(params: {
   range?: string
   from?: string
   to?: string
+  page?: string
+  sort?: string
 }): Promise<RecordsListResult> {
   const supabase = await createClient()
   const { data: claimData } = await getRequestClaims()
@@ -754,6 +801,18 @@ export async function loadRecords(params: {
   const parsed: ParsedRecordFilter = parseRecordFilter(params, today)
   if (parsed.status === "invalid") {
     return { status: "invalid", message: parsed.message }
+  }
+  if (parsed.status === "custom-pending") {
+    return parsed
+  }
+
+  const parsedPage = parseRecordPage(params.page)
+  if (parsedPage.status === "invalid") {
+    return parsedPage
+  }
+  const parsedSort = parseRecordSort(params.sort)
+  if (parsedSort.status === "invalid") {
+    return parsedSort
   }
 
   let range: "week" | "month" | "custom" | "period"
@@ -774,16 +833,20 @@ export async function loadRecords(params: {
     to = parsed.to
   }
 
-  const { data: shiftRows, error: shiftError } = await supabase
+  const window = paginationWindow(parsedPage.page)
+  const ascending = parsedSort.sort === "oldest"
+  const { data: shiftRows, error: shiftError, count } = await supabase
     .from("shifts")
-    .select(SHIFT_SELECT)
+    .select(SHIFT_SELECT, { count: "exact" })
     .eq("employee_id", sub)
     .gte("work_date", from)
     .lte("work_date", to)
-    .order("work_date", { ascending: false })
-    .order("shift_start", { ascending: false })
+    .order("work_date", { ascending })
+    .order("shift_start", { ascending })
+    .order("id", { ascending })
+    .range(window.from, window.to)
 
-  if (shiftError) {
+  if (shiftError || count === null) {
     return { status: "error" }
   }
 
@@ -792,7 +855,24 @@ export async function loadRecords(params: {
     return { status: "error" }
   }
 
-  return { status: "ready", range, from, to, rows }
+
+  const totalPages = Math.max(1, Math.ceil(count / RECORDS_PAGE_SIZE))
+  if (count > 0 && parsedPage.page > totalPages) {
+    return { status: "invalid", message: "That records page is not available." }
+  }
+
+  return {
+    status: "ready",
+    range,
+    from,
+    to,
+    page: parsedPage.page,
+    pageSize: RECORDS_PAGE_SIZE,
+    totalCount: count,
+    totalPages,
+    sort: parsedSort.sort,
+    rows,
+  }
 }
 
 export async function loadRecordDetail(id: string): Promise<RecordDetailResult> {

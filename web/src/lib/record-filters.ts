@@ -5,9 +5,18 @@ const CALENDAR_DATE = /^\d{4}-\d{2}-\d{2}$/
 
 export type RecordFilterParams = { range?: string; from?: string; to?: string }
 
+export type ParsedRecordPage =
+  | { status: "ready"; page: number }
+  | { status: "invalid"; message: string }
+
+export type ParsedRecordSort =
+  | { status: "ready"; sort: "newest" | "oldest" }
+  | { status: "invalid"; message: string }
+
 export type ParsedRecordFilter =
   | { status: "ready"; range: "week" | "month" | "custom"; from: string; to: string }
   | { status: "period" }
+  | { status: "custom-pending" }
   | { status: "invalid"; message: string }
 
 function manilaDate(isoDate: string): DateTime {
@@ -54,6 +63,9 @@ function parseCustomRange(
   from: string | undefined,
   to: string | undefined,
 ): ParsedRecordFilter {
+  if (isMissing(from) && isMissing(to)) {
+    return { status: "custom-pending" }
+  }
   if (isMissing(from) || isMissing(to)) {
     return {
       status: "invalid",
@@ -103,5 +115,33 @@ export function parseRecordFilter(
   return {
     status: "invalid",
     message: "Choose a week, payroll period, month, or custom range.",
+  }
+}
+
+export function parseRecordPage(value: string | undefined): ParsedRecordPage {
+  if (value === undefined || value === "") {
+    return { status: "ready", page: 1 }
+  }
+
+  if (!/^[1-9]\d*$/.test(value)) {
+    return { status: "invalid", message: "Choose a valid records page." }
+  }
+
+  const page = Number(value)
+  return Number.isSafeInteger(page)
+    ? { status: "ready", page }
+    : { status: "invalid", message: "Choose a valid records page." }
+}
+
+export function parseRecordSort(value: string | undefined): ParsedRecordSort {
+  if (value === undefined || value === "" || value === "newest") {
+    return { status: "ready", sort: "newest" }
+  }
+  if (value === "oldest") {
+    return { status: "ready", sort: "oldest" }
+  }
+  return {
+    status: "invalid",
+    message: "Choose newest or oldest records first.",
   }
 }

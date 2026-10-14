@@ -4,6 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "cn"
+import { Tooltip } from "@/components/ui/tooltip"
 import styles from "./app-shell.module.css"
 
 type NavLinkProps = {
@@ -37,6 +38,7 @@ function NavLink({
     return (
       <Link
         href={href}
+        aria-label={prominent ? "Add shift" : undefined}
         aria-current={isActive ? "page" : undefined}
         className={cn(
           "flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg py-1.5 text-[10px] font-medium text-[var(--vx-ink-soft)] transition-colors",
@@ -64,7 +66,7 @@ function NavLink({
   }
 
   return (
-    <Link
+    <Tooltip title={label}><Link
       href={href}
       aria-current={isActive ? "page" : undefined}
       className={cn(
@@ -84,7 +86,7 @@ function NavLink({
         {icon}
       </span>
       <span className={cn(styles.navLabel, "truncate")}>{label}</span>
-    </Link>
+    </Link></Tooltip>
   )
 }
 

@@ -22,6 +22,7 @@ function ResetPasswordForm() {
       <Field
         label="New password"
         htmlFor="reset-password"
+        required
         helper="Use at least 12 characters."
         error={state.fieldErrors.password}
       >

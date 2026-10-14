@@ -28,7 +28,10 @@ type ComputationValues = {
   breakHours: string
 }
 
+type CodeSource = { file: string; page: number; rows: { code: string; category: string; hours: string; percentage: string }[] }
+
 type WageCatalogRow = {
+  isNd: boolean
   id: string
   code: string
   category: string
@@ -45,8 +48,9 @@ type SettingsPageData =
       profile: ProfileValues
       computation: ComputationValues
       wages: WageCatalogRow[]
+      codeSource: CodeSource | null
     }
-  | { status: "needs-profile"; email: string; wages: WageCatalogRow[] }
+  | { status: "needs-profile"; email: string; wages: WageCatalogRow[]; codeSource: CodeSource | null }
   | { status: "unavailable" }
   | { status: "signed-out" }
 
@@ -98,6 +102,7 @@ function salaryFields(value: string | number | null): {
 
 function mapWageRow(row: WageTypeRow): WageCatalogRow {
   return {
+    isNd: row.is_nd,
     id: row.id,
     code: row.code,
     category: row.category,
@@ -105,7 +110,7 @@ function mapWageRow(row: WageTypeRow): WageCatalogRow {
     percentage: new Decimal(row.percentage).toFixed(2),
     description: row.description,
     active: row.active,
-    formulaLabel: row.code === "2211" ? "Confirmed 10% estimate" : "Formula TBD",
+    formulaLabel: row.active && row.is_nd && row.code === "2211" && row.category === "REGULAR_WORK_DAY" && row.hours_category === "FIRST_8" && new Decimal(row.percentage).equals(10) ? "Confirmed 10% estimate" : "Formula TBD",
   }
 }
 
@@ -145,12 +150,20 @@ async function loadSettings(): Promise<SettingsPageData> {
     return { status: "unavailable" }
   }
 
+  const [sourceMeta, sourceRows] = await Promise.all([
+    supabase.from("calendar_sources").select("code_file, code_page").eq("id", "ncr-voyix-cebu-2026").maybeSingle(),
+    supabase.from("reference_codes").select("code, category, hours_category, percentage").eq("source_id", "ncr-voyix-cebu-2026").order("code"),
+  ])
+  const codeSource: CodeSource | null = !sourceMeta.error && !sourceRows.error && sourceMeta.data
+    ? { file: String(sourceMeta.data.code_file), page: Number(sourceMeta.data.code_page), rows: (sourceRows.data ?? []).map(row => ({code: String(row.code), category: String(row.category), hours: String(row.hours_category), percentage: String(row.percentage)})) }
+    : null
+
   if (!employee) {
     const email = claimData?.claims?.email
     if (typeof email !== "string" || email.length === 0) {
       return { status: "unavailable" }
     }
-    return { status: "needs-profile", email, wages }
+    return { status: "needs-profile", email, wages, codeSource }
   }
 
   const row = employee as EmployeeSettingsRow
@@ -176,6 +189,7 @@ async function loadSettings(): Promise<SettingsPageData> {
         breakHours: stableDecimalString(row.break_hours, 2),
       },
       wages,
+      codeSource,
     }
   } catch {
     return { status: "unavailable" }
@@ -184,6 +198,7 @@ async function loadSettings(): Promise<SettingsPageData> {
 
 export { loadSettings }
 export type {
+  CodeSource,
   ComputationValues,
   ProfileValues,
   SettingsPageData,

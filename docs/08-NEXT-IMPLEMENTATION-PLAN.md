@@ -1,8 +1,8 @@
 # Voyix Workspace — Next Implementation Plan
 
-- **Status:** Documentation revision in review; implementation paused pending design and source decisions
+- **Status:** Execution authorized; Direction A and recommended Calendar/Week package selected
 - **Prepared:** October 15, 2026 (original plan October 11; current-state/source addendum added October 15)
-- **Scope:** Preserve the completed core workflow, execute the approved UI redesign in controlled slices, then optionally add source-backed Calendar and Week entry capabilities.
+- **Scope:** Preserve the completed core workflow, execute the approved UI redesign in controlled slices, implement the approved source-backed Calendar and Week entry capabilities.
 - **Runtime:** `web/`
 - **Hosted Supabase project:** `dvfxyrcxxktjgutpgcyw` (existing Tokyo project; do not create another project)
 - **Production URL:** `https://voyix-workspace.vercel.app`
@@ -16,12 +16,12 @@ This addendum supersedes stale baseline statements later in this document withou
 
 - Overview, Add Shift, My Records, Record detail, Calendar, and Settings are now implemented.
 - Playwright and `@axe-core/playwright` now exist in the working tree.
-- Calendar currently provides employee-owned holiday/payroll-period lists and forms; it is not yet a visual month/week calendar.
-- Shift entry is currently day-at-a-time; Week entry does not exist.
-- Settings already exposes the seeded ND wage catalog, but it is not yet the proposed source-aware ADP code explorer.
-- Ant Design is not installed.
-- The worktree contains user-owned uncommitted application, test, CI, and documentation changes. Future implementation must preserve them.
-- No runtime, schema, seed, dependency, migration, or deployment change is authorized while this planning revision is under review.
+- Calendar now provides Month/Week/References views, saved-shift overlays, a selected-day drawer, and an explicitly selected read-only Cebu 2026 reference.
+- Day remains the default; Week composes reviewed private shifts with atomic, idempotent persistence.
+- Settings provides a searchable source-aware ADP code explorer; non-ND reference rows remain inactive.
+- Ant Design 6.6.6 and the App Router registry are installed behind Voyix adapters; obsolete Radix/shadcn dependencies are removed.
+- The execution changes remain uncommitted for review. Future implementation must preserve them.
+- Runtime, dependency, and additive schema implementation is authorized by the October 15 user request. Deployment remains a separate action.
 
 New planning sources:
 
@@ -107,7 +107,7 @@ Foundation tasks 1–8 are already present:
 - `supabase --agent no migration list --local` listed both migrations locally and remotely.
 - No database reset, hosted schema mutation, commit, or push was performed while producing this plan.
 
-### 3.3 Work not yet implemented
+### 3.3 Historical gap list (October 11; superseded by the October 15 execution)
 
 - All signed-in product pages are still empty landmarks.
 - `/shift/new` does not have a working form, preview, or save action.
@@ -207,7 +207,7 @@ The next engine phase adds only missing direct characterizations. It must not re
 - Control transitions are approximately 180 ms. The single page entrance is approximately 280 ms and a 5 px rise/fade.
 - Motion is CSS-only and honors `prefers-reduced-motion`.
 - Do not add Framer Motion, GSAP, gradients, looping animation, avatars, employer badges, nested cards, or a chart dashboard.
-- Compose screens from existing Voyix product components and shadcn/Radix primitives. Keep color tokens in `web/src/app/globals.css`; do not scatter one-off hex values through components.
+- Compose screens from existing Voyix product components and Ant-backed Voyix UI adapters. Keep color tokens in `web/src/app/globals.css`; do not scatter one-off hex values through components.
 
 The pending redesign replaces the last bullet's library-specific wording only after approval: Ant may be introduced behind `components/ui/**` adapters and `AntdRegistry`, while Voyix product components and tokens remain the visual source of truth. Until then, the current component stack remains authoritative.
 
@@ -1415,7 +1415,7 @@ Do not stop merely because a rule is TBD. Preserve the TBD state and continue wi
 - [ ] Each selected slice helps calculate, understand, or track ND.
 - [ ] Each slice has its own test and accessibility plan.
 
-### Phase 8 — Source-backed Calendar and Week entry (not yet approved)
+### Phase 8 — Source-backed Calendar and Week entry (approved October 15)
 
 - [ ] Six product/source decisions explicitly approved.
 - [ ] Exact source manifest independently verified against both PDFs.
@@ -1443,3 +1443,13 @@ Completion also requires that:
 - Browser, accessibility, security, web, and database checks pass at their stated boundaries.
 - No manager/admin/public/payroll-submission scope was added.
 - The implementation remains inside the existing Next.js, Supabase, RLS, and Server Action architecture.
+
+## October 15, 2026 redesign execution contract
+
+The user authorized production implementation of Direction A — Editorial Night Ledger and approved the recommended Calendar/Week package: Day remains default; reviewed Week records save atomically with idempotent retries; Calendar uses Month, Week, and References; the read-only Cebu 2026 source is explicitly selected; non-ND codes remain reference-only; filing reminders are source-labelled guidance.
+
+Ant Design is the interaction primitive layer behind `web/src/components/ui/**`. `AntdRegistry` and the small `VoyixAntProvider` preserve the root Server Component. Product components, native date/time inputs, semantic record tables, Lucide icons, Server Actions/`useActionState`, and CSS tokens remain authoritative. Use explicit `Button` and `ButtonLink`; no polymorphic `asChild` contract, direct route-level Ant imports, Ant Form, Ant icons, default dashboard layout, GSAP, or Framer Motion. Controls are at least 44 px; control motion is 180 ms and the page entrance is 280 ms with reduced-motion support.
+
+Source data is separate from employee-owned facts and the active wage engine. No source date silently sets classification. Only ordinary-day code 2211 has a confirmed money formula; all others stay TBD. See `docs/SOURCE-REFERENCE-VERIFICATION.md` for independent PDF comparison and provenance. Source imports do not create personal payroll periods.
+
+Earlier statements that implementation is paused or that Radix/shadcn must remain the runtime primitive layer are superseded by this execution contract. Historical setup examples are retained for context. Commit/push/deployment remain separate user actions.

@@ -1,10 +1,9 @@
-import Link from "next/link"
-
 import { RecordFilters } from "@/components/records/record-filters"
+import { RecordsPagination } from "@/components/records/records-pagination"
 import { RecordsTable } from "@/components/records/records-table"
 import { EmptyState } from "@/components/shell/empty-state"
 import { PageHeader } from "@/components/shell/page-header"
-import { Button } from "@/components/ui/button"
+import { ButtonLink } from "@/components/ui/button"
 import {
   loadRecords,
   type RecordsListResult,
@@ -14,6 +13,8 @@ type RecordsSearch = {
   range?: string | string[]
   from?: string | string[]
   to?: string | string[]
+  page?: string | string[]
+  sort?: string | string[]
 }
 
 function firstSearchValue(
@@ -27,11 +28,15 @@ function recordsSearchHref(params: {
   range?: string
   from?: string
   to?: string
+  page?: number
+  sort?: string
 }) {
   const search = new URLSearchParams()
   if (params.range) search.set("range", params.range)
   if (params.from) search.set("from", params.from)
   if (params.to) search.set("to", params.to)
+  if (params.page && params.page > 1) search.set("page", String(params.page))
+  if (params.sort === "oldest") search.set("sort", "oldest")
   const query = search.toString()
   return query.length > 0 ? `/records?${query}` : "/records"
 }
@@ -51,9 +56,7 @@ function UnavailableState({ href }: { href: string }) {
   return (
     <div className="flex flex-col items-start gap-3">
       <AlertMessage>Could not load these records.</AlertMessage>
-      <Button asChild variant="outline">
-        <Link href={href}>Try again</Link>
-      </Button>
+      <ButtonLink href={href} variant="outline">Try again</ButtonLink>
     </div>
   )
 }
@@ -68,9 +71,7 @@ function NoPeriodState() {
       title="No payroll period yet"
       description="A personal payroll period is needed before this filter can group shifts. None was invented."
       action={
-        <Button asChild variant="outline">
-          <Link href="/calendar">Open calendar</Link>
-        </Button>
+        <ButtonLink href="/calendar" variant="outline">Open calendar</ButtonLink>
       }
     />
   )
@@ -82,9 +83,7 @@ function OverlapState() {
       <AlertMessage>
         More than one active payroll period covers today. No period was selected.
       </AlertMessage>
-      <Button asChild variant="outline">
-        <Link href="/calendar">Open calendar</Link>
-      </Button>
+      <ButtonLink href="/calendar" variant="outline">Open calendar</ButtonLink>
     </div>
   )
 }
@@ -95,9 +94,7 @@ function EmptyRangeState() {
       title="No shifts in this range"
       description="Saved shifts in this range will list here with their night-differential hours and wage codes."
       action={
-        <Button asChild>
-          <Link href="/shift/new">Add shift</Link>
-        </Button>
+        <ButtonLink href="/shift/new">Add shift</ButtonLink>
       }
     />
   )
@@ -120,11 +117,28 @@ function RecordsBody({
       return <NoPeriodState />
     case "overlap":
       return <OverlapState />
+    case "custom-pending":
+      return <p className="text-sm text-[var(--vx-muted)]">Choose both dates above to load your records.</p>
     case "ready":
       return result.rows.length === 0 ? (
         <EmptyRangeState />
       ) : (
-        <RecordsTable rows={result.rows} />
+        <div className="flex flex-col gap-5">
+          <RecordsTable rows={result.rows} />
+          <RecordsPagination
+            page={result.page}
+            pageSize={result.pageSize}
+            totalCount={result.totalCount}
+            totalPages={result.totalPages}
+            hrefForPage={(page) => recordsSearchHref({
+              range: result.range,
+              from: result.range === "custom" ? result.from : undefined,
+              to: result.range === "custom" ? result.to : undefined,
+              page,
+              sort: result.sort,
+            })}
+          />
+        </div>
       )
   }
 }
@@ -138,8 +152,11 @@ export default async function RecordsPage({
   const range = firstSearchValue(params.range)
   const from = firstSearchValue(params.from)
   const to = firstSearchValue(params.to)
-  const result = await loadRecords({ range, from, to })
-  const tryAgainHref = recordsSearchHref({ range, from, to })
+  const page = firstSearchValue(params.page)
+  const sort = firstSearchValue(params.sort)
+  const result = await loadRecords({ range, from, to, page, sort })
+  const parsedPage = page && /^\d+$/.test(page) ? Number(page) : undefined
+  const tryAgainHref = recordsSearchHref({ range, from, to, page: parsedPage, sort })
 
   return (
     <div className="flex flex-col gap-8">
@@ -147,13 +164,14 @@ export default async function RecordsPage({
         eyebrow="MY RECORDS"
         title="My records"
         description="Saved shifts for a week, payroll period, month, or custom range."
-        action={
-          <Button asChild>
-            <Link href="/shift/new">Add shift</Link>
-          </Button>
-        }
       />
-      <RecordFilters range={range} from={from} to={to} />
+      <RecordFilters
+        key={`${range ?? "week"}:${from ?? ""}:${to ?? ""}:${sort ?? "newest"}`}
+        range={range}
+        from={from}
+        to={to}
+        sort={sort}
+      />
       <RecordsBody result={result} tryAgainHref={tryAgainHref} />
     </div>
   )

@@ -1,8 +1,8 @@
 # Voyix Workspace — Calendar, Weekly Entry, and ADP Visibility Brief
 
-- **Status:** Design and implementation-planning proposal only
+- **Status:** Recommended package approved for implementation
 - **Prepared:** October 15, 2026
-- **Implementation authorization:** None; no runtime, schema, seed, or dependency change is authorized by this document
+- **Implementation authorization:** User approved the recommended package on October 15, 2026; implementation follows the locked payroll and source-verification contracts.
 - **Recommended product shape:** Daily quick entry + Week entry composer + source-labelled Calendar
 
 This brief translates the newly supplied 2026 Cebu calendar, new-hire expectations material, and ADP screenshots into a product-safe UX direction for Voyix Workspace. It supplements `docs/UI-REDESIGN-AUDIT.md` and `docs/08-NEXT-IMPLEMENTATION-PLAN.md` without changing the existing calculation contract.
@@ -512,3 +512,7 @@ The schema design must preserve:
 6. **Source reminders:** show Friday/cut-off reminders as source-labelled guidance without claiming filing or submission?
 
 No implementation should begin until these decisions and the main visual direction are approved.
+
+## Execution authorization - October 15, 2026
+
+The user authorized the redesign and approved the recommended Calendar/Week/source package. Direction A is the implementation default. Source transcriptions require independent visual verification; unresolved payroll formulas remain TBD.

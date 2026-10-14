@@ -7,7 +7,7 @@ This file is the operating contract for **Cursor**, **Codex**, and **Gemini**. `
 ## Product
 
 - Runtime is `web/`. Product specs live in `docs/`. `PRODUCT.md` and `DESIGN.md` stay at the repository root. Vercel root directory is `web`.
-- Stack: Next.js 16 App Router (`src/`), React 19, TypeScript strict, Tailwind 4, shadcn/ui on Radix, Supabase Auth + Postgres + RLS, Server Actions. No separate API service. No Edge Functions in v1.
+- Stack: Next.js 16 App Router (`src/`), React 19, TypeScript strict, Tailwind 4, Ant Design behind Voyix UI adapters, Supabase Auth + Postgres + RLS, Server Actions. No separate API service. No Edge Functions in v1.
 - `web/src/proxy.ts` refreshes cookies only. Layouts, Server Actions, and RLS authorize.
 - Brand purple is `#5F249F`. Deep structural purple is `#341A4B`. Type is Manrope + IBM Plex Mono. Light paper canvas. No dark-mode palette in v1.
 - Wordmark is lowercase `voyixworkspace`. On the deep-purple rail, `workspace` is `#C3A3E0`.
@@ -55,7 +55,7 @@ Load `voyix-shift-workflow` for feature work. Default loop:
 
 ## Default skills
 
-- UI: `design-taste-frontend`, `minimalist-ui`, `shadcn`, `apple-design`, `accessibility`, `browser-qa`
+- UI: `design-taste-frontend`, `minimalist-ui`, `apple-design`, `accessibility`, `browser-qa`
 - Schema / Auth: `supabase`, `supabase-postgres-best-practices`, `security-review`
 - Engine: `tdd-workflow`, `verification-loop`
 - Next.js 16: `nextjs-turbopack`
@@ -81,3 +81,13 @@ This repo has no Python or SEO agent. Do not add one.
 ## Git
 
 Do not skip hooks. Do not commit secrets. Install from `web/` with pnpm. Do not add a root `package-lock.json`.
+
+## October 15, 2026 redesign execution contract
+
+The user authorized production implementation of Direction A — Editorial Night Ledger and approved the recommended Calendar/Week package: Day remains default; reviewed Week records save atomically with idempotent retries; Calendar uses Month, Week, and References; the read-only Cebu 2026 source is explicitly selected; non-ND codes remain reference-only; filing reminders are source-labelled guidance.
+
+Ant Design is the interaction primitive layer behind `web/src/components/ui/**`. `AntdRegistry` and the small `VoyixAntProvider` preserve the root Server Component. Product components, native date/time inputs, semantic record tables, Lucide icons, Server Actions/`useActionState`, and CSS tokens remain authoritative. Use explicit `Button` and `ButtonLink`; no polymorphic `asChild` contract, direct route-level Ant imports, Ant Form, Ant icons, default dashboard layout, GSAP, or Framer Motion. Controls are at least 44 px; control motion is 180 ms and the page entrance is 280 ms with reduced-motion support.
+
+Source data is separate from employee-owned facts and the active wage engine. No source date silently sets classification. Only ordinary-day code 2211 has a confirmed money formula; all others stay TBD. See `docs/SOURCE-REFERENCE-VERIFICATION.md` for independent PDF comparison and provenance. Source imports do not create personal payroll periods.
+
+Earlier statements that implementation is paused or that Radix/shadcn must remain the runtime primitive layer are superseded by this execution contract. Historical setup examples are retained for context. Commit/push/deployment remain separate user actions.

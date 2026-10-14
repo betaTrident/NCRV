@@ -49,49 +49,70 @@ function Ledger<T extends { id: string }>({
   }
 
   return (
-    <div className="overflow-x-auto">
-      <Table className="caption-top">
-        <TableCaption className="mt-0 mb-3 text-left text-sm text-[var(--vx-muted)]">
-          {caption}
-        </TableCaption>
-        <TableHeader>
-          <TableRow className="border-[var(--vx-line)] hover:bg-transparent">
-            {columns.map((column) => (
-              <TableHead
-                key={column.id}
-                scope="col"
-                className={cn(
-                  HEADER_CLASS,
-                  column.numeric && "text-right font-mono tabular-nums",
-                )}
-              >
-                {column.header}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row.id}
-              className="border-[var(--vx-line)] hover:bg-transparent"
-            >
+    <div>
+      <p className="mb-3 text-sm text-[var(--vx-muted)] sm:hidden">{caption}</p>
+      <ul className="divide-y divide-[var(--vx-line)] border-y border-[var(--vx-line)] sm:hidden">
+        {rows.map((row) => (
+          <li key={row.id} className="py-4">
+            <dl className="grid grid-cols-[minmax(6rem,0.4fr)_minmax(0,1fr)] gap-x-4 gap-y-2">
               {columns.map((column) => (
-                <TableCell
+                <div key={column.id} className="contents">
+                  <dt className="font-mono text-[10px] font-medium tracking-[0.1em] text-[var(--vx-muted)] uppercase">
+                    {column.header}
+                  </dt>
+                  <dd className={cn("min-w-0 text-sm text-[var(--vx-ink-soft)]", column.numeric && "font-mono tabular-nums text-[var(--vx-ink)]")}>
+                    {column.cell(row)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </li>
+        ))}
+      </ul>
+      <div className="hidden overflow-x-auto sm:block">
+        <Table className="caption-top">
+          <TableCaption className="mt-0 mb-3 text-left text-sm text-[var(--vx-muted)]">
+            {caption}
+          </TableCaption>
+          <TableHeader>
+            <TableRow className="border-[var(--vx-line)] hover:bg-transparent">
+              {columns.map((column) => (
+                <TableHead
                   key={column.id}
-                  className={
-                    column.numeric
-                      ? "text-right font-mono tabular-nums text-[var(--vx-ink)]"
-                      : "text-[var(--vx-ink-soft)]"
-                  }
+                  scope="col"
+                  className={cn(
+                    HEADER_CLASS,
+                    column.numeric && "text-right font-mono tabular-nums",
+                  )}
                 >
-                  {column.cell(row)}
-                </TableCell>
+                  {column.header}
+                </TableHead>
               ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow
+                key={row.id}
+                className="border-[var(--vx-line)] hover:bg-transparent"
+              >
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    className={
+                      column.numeric
+                        ? "text-right font-mono tabular-nums text-[var(--vx-ink)]"
+                        : "text-[var(--vx-ink-soft)]"
+                    }
+                  >
+                    {column.cell(row)}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }

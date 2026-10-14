@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link"
+import { LegalModal } from "@/components/ui/legal-modal"
 import { useActionState, useState } from "react"
 
 import { Field } from "@/components/forms/field"
@@ -8,13 +8,7 @@ import { StatusLine } from "@/components/forms/status-line"
 import { Panel } from "@/components/shell/panel"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Select } from "@/components/ui/select"
 import {
   createProfile,
   updateProfile,
@@ -67,15 +61,11 @@ function ProfileForm({ profile, mode = "update" }: ProfileFormProps) {
             />
           </Field>
 
-          <Field
-            label="Email"
-            htmlFor="profile-email"
-            helper="Used only to sign in."
-          >
-            <p id="profile-email" className="text-sm text-[var(--vx-ink)]">
-              {profile.email}
-            </p>
-          </Field>
+          <div className="flex flex-col gap-1.5">
+            <p className="text-sm font-medium">Sign-in email</p>
+            <p className="text-sm break-all text-[var(--vx-ink)]">{profile.email}</p>
+            <p className="text-xs text-[var(--vx-muted)]">Read only. Used only to sign in.</p>
+          </div>
 
           <Field
             label="Monthly basic salary"
@@ -120,35 +110,15 @@ function ProfileForm({ profile, mode = "update" }: ProfileFormProps) {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <Select
-                value={scheduleType}
-                onValueChange={(value) => {
-                  const next = value as ProfileValues["workScheduleType"]
-                  setScheduleType(next)
-                  if (next === "STANDARD") {
-                    setScheduledRegularHours("8.00")
-                  }
-                }}
-              >
-                <Field
-                  label="Schedule type"
-                  htmlFor="profile-schedule-type"
-                  error={state.fieldErrors.workScheduleType}
-                >
-                  <SelectTrigger
-                    id="profile-schedule-type"
-                    className="min-h-11 w-full"
-                  >
-                    <SelectValue />
-                  </SelectTrigger>
-                </Field>
-                <SelectContent>
-                  <SelectItem value="STANDARD">Standard</SelectItem>
-                  <SelectItem value="APPROVED_CWW">
-                    Approved compressed workweek
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <Field label="Schedule type" htmlFor="profile-schedule-type" error={state.fieldErrors.workScheduleType}>
+                <Select id="profile-schedule-type" value={scheduleType}
+                  options={[{value: "STANDARD", label: "Standard"}, {value: "APPROVED_CWW", label: "Approved compressed workweek"}]}
+                  onValueChange={(value) => {
+                    const next = value as ProfileValues["workScheduleType"]
+                    setScheduleType(next)
+                    if (next === "STANDARD") setScheduledRegularHours("8.00")
+                  }} />
+              </Field>
               <input
                 type="hidden"
                 name="workScheduleType"
@@ -187,6 +157,7 @@ function ProfileForm({ profile, mode = "update" }: ProfileFormProps) {
                   id="profile-terms"
                   name="termsAccepted"
                   type="checkbox"
+                  required
                   className="size-4 shrink-0 accent-[var(--vx-brand)]"
                   aria-invalid={state.fieldErrors.termsAccepted ? true : undefined}
                   aria-describedby={
@@ -195,26 +166,10 @@ function ProfileForm({ profile, mode = "update" }: ProfileFormProps) {
                       : undefined
                   }
                 />
-                <label
-                  htmlFor="profile-terms"
-                  className="text-sm text-[var(--vx-ink)]"
-                >
-                  I agree to the{" "}
-                  <Link
-                    href="/terms"
-                    className="text-[var(--vx-brand)] underline-offset-2 hover:underline"
-                  >
-                    Terms
-                  </Link>{" "}
-                  and{" "}
-                  <Link
-                    href="/privacy"
-                    className="text-[var(--vx-brand)] underline-offset-2 hover:underline"
-                  >
-                    Privacy Notice
-                  </Link>
-                  .
-                </label>
+                <div className="text-sm text-[var(--vx-ink)]">
+                  <label htmlFor="profile-terms">I agree to the Terms and Privacy Notice.</label>
+                  <div className="text-xs"><LegalModal kind="terms" /> · <LegalModal kind="privacy" /></div>
+                </div>
               </div>
               {state.fieldErrors.termsAccepted ? (
                 <p

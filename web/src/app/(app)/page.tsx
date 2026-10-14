@@ -6,7 +6,7 @@ import { Metric } from "@/components/records/metric"
 import { PeriodBanner } from "@/components/records/period-banner"
 import { EmptyState } from "@/components/shell/empty-state"
 import { PageHeader } from "@/components/shell/page-header"
-import { Button } from "@/components/ui/button"
+import { ButtonLink } from "@/components/ui/button"
 import { formatPhp } from "@/lib/format"
 import {
   loadOverview,
@@ -65,9 +65,7 @@ function UnavailableState() {
       >
         Could not load this overview.
       </p>
-      <Button asChild variant="outline">
-        <Link href="/">Try again</Link>
-      </Button>
+      <ButtonLink variant="outline" href="/">Try again</ButtonLink>
     </div>
   )
 }
@@ -78,9 +76,7 @@ function NoPeriodState() {
       title="No payroll period yet"
       description="A personal payroll period is needed before totals can be grouped. None was invented."
       action={
-        <Button asChild variant="outline">
-          <Link href="/calendar">Open calendar</Link>
-        </Button>
+        <ButtonLink variant="outline" href="/calendar">Open calendar</ButtonLink>
       }
     />
   )
@@ -95,9 +91,7 @@ function OverlapState() {
       >
         More than one active payroll period covers today. No period was selected.
       </p>
-      <Button asChild variant="outline">
-        <Link href="/calendar">Open calendar</Link>
-      </Button>
+      <ButtonLink variant="outline" href="/calendar">Open calendar</ButtonLink>
     </div>
   )
 }
@@ -162,12 +156,7 @@ export default async function OverviewPage() {
       <PageHeader
         eyebrow="YOUR HISTORY"
         title="Overview"
-        description="Your current payroll period, three headline figures, and your most recent shifts."
-        action={
-          <Button asChild>
-            <Link href="/shift/new">Add shift</Link>
-          </Button>
-        }
+        description="Your night hours, estimates, and saved evidence for this period."
       />
       <OverviewBody overview={overview} />
     </div>

@@ -14,7 +14,7 @@ function WageCodeChip({ code, tbd = false }: WageCodeChipProps) {
       className={cn(
         "inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-mono text-xs font-medium tabular-nums",
         tbd
-          ? "bg-[var(--vx-amber-bg)] text-[var(--vx-amber)]"
+          ? "bg-[var(--vx-amber-bg)] text-[var(--vx-amber-ink)]"
           : "bg-[var(--vx-brand-tint)] text-[var(--vx-brand)]",
       )}
     >

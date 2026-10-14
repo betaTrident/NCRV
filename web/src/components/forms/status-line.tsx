@@ -24,7 +24,7 @@ const TONE_ICON = {
 } as const
 
 const TONE_CLASS: Record<StatusLineTone, string> = {
-  estimate: "bg-[var(--vx-amber-bg)] text-[var(--vx-amber)]",
+  estimate: "bg-[var(--vx-amber-bg)] text-[var(--vx-amber-ink)]",
   pending: "bg-[var(--vx-surface-soft)] text-[var(--vx-muted)]",
   saved: "bg-[var(--vx-success-bg)] text-[var(--vx-success)]",
   error: "bg-[var(--vx-rose-bg)] text-[var(--vx-rose)]",

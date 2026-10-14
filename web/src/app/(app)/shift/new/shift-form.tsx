@@ -1,26 +1,20 @@
 "use client"
 
-import Link from "next/link"
-import { useActionState, useState } from "react"
+import { useActionState, useState, useSyncExternalStore } from "react"
 
 import { CalculationPreview } from "@/components/shift/calculation-preview"
 import { Field } from "@/components/forms/field"
 import { StatusLine } from "@/components/forms/status-line"
 import { Panel } from "@/components/shell/panel"
-import { Button } from "@/components/ui/button"
+import { Button, ButtonLink } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { Select } from "@/components/ui/select"
 import { calculateNd } from "@/engine/calculate-nd"
 import type { DayClassification, NdResult, WageTypeRule, WorkScheduleType } from "@/engine/types"
 import { formatPhp } from "@/lib/format"
 import { saveShiftAction } from "@/server/actions/shifts"
 import type { SaveShiftResult } from "@/server/shift/save-shift"
+import { WeekForm } from "./week-form"
 import {
   buildShiftInput,
   DAY_CLASSIFICATIONS,
@@ -40,11 +34,25 @@ const DAY_CLASSIFICATION_LABELS: Record<DayClassification, string> = {
   DOUBLE_REGULAR_HOLIDAY_REST_DAY: "Double Regular Holiday + Rest Day",
 }
 
+const subscribeReady = () => () => {}
+const clientReady = () => true
+const serverReady = () => false
+
 const initialShiftActionState: SaveShiftResult = { fieldErrors: {} }
 
 type ShiftFormProps = {
   profile: ShiftProfile
   rules: WageTypeRule[]
+  employeeKey?: string
+  sourceEvents?: SourceEvent[]
+  initialWorkDate?: string
+}
+
+type SourceEvent = {
+  date: string
+  label: string
+  kind: string
+  classification: string | null
 }
 
 type PreviewState = {
@@ -66,12 +74,13 @@ function previewRows(result: NdResult) {
   }))
 }
 
-function ShiftForm({ profile, rules }: ShiftFormProps) {
+function ShiftForm({ profile, rules, employeeKey = "anonymous", sourceEvents = [], initialWorkDate = "" }: ShiftFormProps) {
+  const interactive = useSyncExternalStore(subscribeReady, clientReady, serverReady)
   const [state, formAction, pending] = useActionState(
     saveShiftAction,
     initialShiftActionState,
   )
-  const [workDate, setWorkDate] = useState("")
+  const [workDate, setWorkDate] = useState(initialWorkDate)
   const [shiftStart, setShiftStart] = useState("")
   const [shiftEnd, setShiftEnd] = useState("")
   const [dayClassification, setDayClassification] =
@@ -82,6 +91,12 @@ function ShiftForm({ profile, rules }: ShiftFormProps) {
   const [overtimeApproved, setOvertimeApproved] = useState("false")
   const [localFieldErrors, setLocalFieldErrors] = useState<ShiftFieldErrors>({})
   const [preview, setPreview] = useState<PreviewState | null>(null)
+  const [previewStale, setPreviewStale] = useState(false)
+  const [mode, setMode] = useState<"day" | "week">("day")
+
+  function invalidatePreview() {
+    setPreviewStale(true)
+  }
 
   const fieldErrors: ShiftFieldErrors = {
     ...localFieldErrors,
@@ -115,12 +130,37 @@ function ShiftForm({ profile, rules }: ShiftFormProps) {
       endLabel: parsed.data.shiftEnd,
       overtimeApprovedLabel: parsed.data.overtimeApproved ? "Yes" : "No",
     })
+    setPreviewStale(false)
   }
 
+  if (mode === "week") {
+    return <WeekForm profile={profile} rules={rules} employeeKey={employeeKey} sourceEvents={sourceEvents} onBack={() => setMode("day")} />
+  }
+
+  const saveAction = <div className="mt-4 flex flex-wrap gap-3">            <Button
+              type="submit"
+              form="day-shift-form"
+              variant="outline"
+              disabled={pending || preview === null || previewStale}
+              aria-disabled={pending || preview === null || previewStale}
+            >
+              Save entry
+            </Button></div>
+
   return (
-    <div className="grid items-start gap-8 lg:grid-cols-2">
+    <div className="flex flex-col gap-5">
+      <div className="flex gap-2" aria-label="Entry mode">
+        <Button type="button" onClick={() => setMode("day")} aria-pressed="true">
+          Day
+        </Button>
+        <Button type="button" variant="outline" onClick={() => setMode("week")} aria-pressed="false">
+          Week
+        </Button>
+      </div>
+      <div className="grid min-w-0 grid-cols-1 items-start gap-8 lg:grid-cols-2">
       <Panel className="p-6 sm:p-8">
-        <form action={formAction} className="flex flex-col gap-4" noValidate>
+        <form id="day-shift-form" action={formAction} className="flex flex-col gap-4" noValidate>
+          <fieldset disabled={!interactive} className="flex min-w-0 flex-col gap-4 border-0 p-0" aria-label="Shift details">
           <Field label="Work date" htmlFor="work-date" error={fieldErrors.workDate}>
             <Input
               id="work-date"
@@ -129,11 +169,16 @@ function ShiftForm({ profile, rules }: ShiftFormProps) {
               value={workDate}
               onChange={(event) => {
                 setWorkDate(event.target.value)
-                setPreview(null)
+                invalidatePreview()
               }}
               className="h-11 font-mono"
             />
           </Field>
+          {sourceEvents.filter((event) => event.date === workDate).map((event) => (
+            <p key={`${event.date}-${event.label}`} className="rounded-[var(--vx-radius-control)] bg-[var(--vx-amber-bg)] px-3 py-2 text-sm text-[var(--vx-ink)]">
+              Source reference · NCR Voyix Cebu 2026: {event.label}. Review the day classification for this shift; Voyix will not change it automatically.
+            </p>
+          ))}
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
@@ -146,10 +191,10 @@ function ShiftForm({ profile, rules }: ShiftFormProps) {
                 name="shiftStart"
                 type="time"
                 value={shiftStart}
-              onChange={(event) => {
-                setShiftStart(event.target.value)
-                setPreview(null)
-              }}
+                onChange={(event) => {
+                  setShiftStart(event.target.value)
+                  invalidatePreview()
+                }}
                 className="h-11 font-mono"
               />
             </Field>
@@ -163,102 +208,76 @@ function ShiftForm({ profile, rules }: ShiftFormProps) {
                 name="shiftEnd"
                 type="time"
                 value={shiftEnd}
-              onChange={(event) => {
-                setShiftEnd(event.target.value)
-                setPreview(null)
-              }}
+                onChange={(event) => {
+                  setShiftEnd(event.target.value)
+                  invalidatePreview()
+                }}
                 className="h-11 font-mono"
               />
             </Field>
           </div>
 
-          <Select
-            value={dayClassification}
-            onValueChange={(value) => {
-              setDayClassification(value as DayClassification)
-              setPreview(null)
-            }}
+          <Field
+            label="Day classification"
+            htmlFor="day-classification"
+            error={fieldErrors.dayClassification}
           >
-            <Field
-              label="Day classification"
-              htmlFor="day-classification"
-              error={fieldErrors.dayClassification}
-            >
-              <SelectTrigger
-                id="day-classification"
-                className="min-h-11 w-full"
-              >
-                <SelectValue />
-              </SelectTrigger>
-            </Field>
-            <SelectContent>
-              {DAY_CLASSIFICATIONS.map((value) => (
-                <SelectItem key={value} value={value}>
-                  {DAY_CLASSIFICATION_LABELS[value]}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <input type="hidden" name="dayClassification" value={dayClassification} />
+            <Select
+              id="day-classification"
+              name="dayClassification"
+              value={dayClassification}
+              onValueChange={(value) => {
+                setDayClassification(value as DayClassification)
+                invalidatePreview()
+              }}
+              options={DAY_CLASSIFICATIONS.map((value) => ({
+                value,
+                label: DAY_CLASSIFICATION_LABELS[value],
+              }))}
+              aria-invalid={fieldErrors.dayClassification ? true : undefined}
+            />
+          </Field>
 
-          <Select
-            value={breakIncludedInNd}
-            onValueChange={(value) => {
-              setBreakIncludedInNd(value)
-              setPreview(null)
-            }}
+          <Field
+            label="Break included in night differential"
+            htmlFor="break-included-in-nd"
+            helper={`Default unpaid break: ${profile.breakHours} hour`}
+            error={fieldErrors.breakIncludedInNd}
           >
-            <Field
-              label="Break included in night differential"
-              htmlFor="break-included-in-nd"
-              helper={`Default unpaid break: ${profile.breakHours} hour`}
-              error={fieldErrors.breakIncludedInNd}
-            >
-              <SelectTrigger
-                id="break-included-in-nd"
-                className="min-h-11 w-full"
-              >
-                <SelectValue />
-              </SelectTrigger>
-            </Field>
-            <SelectContent>
-              <SelectItem value="false">No</SelectItem>
-              <SelectItem value="true">Yes</SelectItem>
-            </SelectContent>
-          </Select>
-          <input
-            type="hidden"
-            name="breakIncludedInNd"
-            value={breakIncludedInNd}
-          />
+            <Select
+              id="break-included-in-nd"
+              name="breakIncludedInNd"
+              value={breakIncludedInNd}
+              onValueChange={(value) => {
+                setBreakIncludedInNd(value)
+                invalidatePreview()
+              }}
+              options={[{ value: "false", label: "No" }, { value: "true", label: "Yes" }]}
+              aria-invalid={fieldErrors.breakIncludedInNd ? true : undefined}
+            />
+          </Field>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <div>
+            <Field
+              label="Schedule type"
+              htmlFor="schedule-type"
+              error={fieldErrors.scheduleType}
+            >
               <Select
+                id="schedule-type"
+                name="scheduleType"
                 value={scheduleType}
                 onValueChange={(value) => {
                   setScheduleType(value as WorkScheduleType)
-                  setPreview(null)
+                  invalidatePreview()
                 }}
-              >
-                <Field
-                  label="Schedule type"
-                  htmlFor="schedule-type"
-                  error={fieldErrors.scheduleType}
-                >
-                  <SelectTrigger id="schedule-type" className="min-h-11 w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                </Field>
-                <SelectContent>
-                  <SelectItem value="STANDARD">Standard</SelectItem>
-                  <SelectItem value="APPROVED_CWW">
-                    Approved compressed workweek
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-              <input type="hidden" name="scheduleType" value={scheduleType} />
-            </div>
+                options={[
+                  { value: "STANDARD", label: "Standard" },
+                  { value: "APPROVED_CWW", label: "Approved compressed workweek" },
+                ]}
+                aria-invalid={fieldErrors.scheduleType ? true : undefined}
+              />
+            </Field>
             <Field
               label="Scheduled regular hours"
               htmlFor="scheduled-regular-hours"
@@ -272,35 +291,30 @@ function ShiftForm({ profile, rules }: ShiftFormProps) {
                 value={scheduledRegularHours}
                 onChange={(event) => {
                   setScheduledRegularHours(event.target.value)
-                  setPreview(null)
+                  invalidatePreview()
                 }}
                 className="h-11 font-mono"
               />
             </Field>
           </div>
 
-          <Select
-            value={overtimeApproved}
-            onValueChange={(value) => {
-              setOvertimeApproved(value)
-              setPreview(null)
-            }}
+          <Field
+            label="Overtime agreed or approved"
+            htmlFor="overtime-approved"
+            error={fieldErrors.overtimeApproved}
           >
-            <Field
-              label="Overtime agreed or approved"
-              htmlFor="overtime-approved"
-              error={fieldErrors.overtimeApproved}
-            >
-              <SelectTrigger id="overtime-approved" className="min-h-11 w-full">
-                <SelectValue />
-              </SelectTrigger>
-            </Field>
-            <SelectContent>
-              <SelectItem value="false">No</SelectItem>
-              <SelectItem value="true">Yes</SelectItem>
-            </SelectContent>
-          </Select>
-          <input type="hidden" name="overtimeApproved" value={overtimeApproved} />
+            <Select
+              id="overtime-approved"
+              name="overtimeApproved"
+              value={overtimeApproved}
+              onValueChange={(value) => {
+                setOvertimeApproved(value)
+                invalidatePreview()
+              }}
+              options={[{ value: "false", label: "No" }, { value: "true", label: "Yes" }]}
+              aria-invalid={fieldErrors.overtimeApproved ? true : undefined}
+            />
+          </Field>
 
           <p className="text-sm text-[var(--vx-muted)]">
             This does not submit anything to payroll.
@@ -310,7 +324,7 @@ function ShiftForm({ profile, rules }: ShiftFormProps) {
           {!pending && state.formError ? (
             <StatusLine tone="error">{state.formError}</StatusLine>
           ) : null}
-          {!pending && state.savedId && !state.formError ? (
+          {!pending && state.savedId && !state.formError && !previewStale ? (
             <StatusLine tone="saved">in your shiftbook</StatusLine>
           ) : null}
 
@@ -318,13 +332,10 @@ function ShiftForm({ profile, rules }: ShiftFormProps) {
             <Button type="button" onClick={calculatePreview}>
               Calculate shift
             </Button>
-            <Button type="submit" disabled={pending} aria-disabled={pending}>
-              Save entry
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/">Cancel</Link>
-            </Button>
+
+            <ButtonLink href="/" variant="outline">Cancel</ButtonLink>
           </div>
+          </fieldset>
         </form>
       </Panel>
 
@@ -336,7 +347,27 @@ function ShiftForm({ profile, rules }: ShiftFormProps) {
               startLabel: preview.startLabel,
               endLabel: preview.endLabel,
               kind: "shift",
+              track: "shift",
+              hours: Number(preview.result.elapsedHours),
             },
+            {
+              startLabel: profile.ndStart,
+              endLabel: profile.ndEnd,
+              kind: "overlap",
+              track: "nd",
+              hours: Number(preview.result.potentialNdHours),
+              displayLabel: "Potential ND aggregate",
+              displayValue: `${Number(preview.result.potentialNdHours).toFixed(2)} h`,
+            },
+            { startLabel: "", endLabel: "", kind: "qualifying", track: "qualifying", hours: Number(preview.result.ndHours), displayLabel: "Final ND aggregate", displayValue: `${preview.result.ndHours} h` },
+            ...(!preview.result.breakIncludedInNd && Number(preview.result.breakHours) > 0
+              ? [{
+                  startLabel: "",
+                  endLabel: "",
+                  kind: "excluded-break" as const,
+                  hours: Number(preview.result.breakHours),
+                }]
+              : []),
           ]}
           shiftLabel={`${preview.startLabel} – ${preview.endLabel}`}
           dayClassificationLabel={
@@ -356,14 +387,18 @@ function ShiftForm({ profile, rules }: ShiftFormProps) {
           ndHours={preview.result.ndHours}
           rows={previewRows(preview.result)}
           unresolved={preview.result.unresolved}
+          stale={previewStale}
+          actions={saveAction}
         />
       ) : (
         <Panel className="p-6 sm:p-8">
           <p className="text-sm text-[var(--vx-muted)]">
             Calculate this shift to see night hours and wage lines.
           </p>
+          {saveAction}
         </Panel>
       )}
+      </div>
     </div>
   )
 }

@@ -10,7 +10,7 @@ function Panel({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="panel"
       className={cn(
-        "rounded-[var(--vx-radius-panel)] border border-[var(--vx-line)] bg-[var(--vx-surface)] shadow-sm",
+        "min-w-0 rounded-[var(--vx-radius-panel)] border border-[var(--vx-line)] bg-[var(--vx-surface)] shadow-sm",
         className
       )}
       {...props}

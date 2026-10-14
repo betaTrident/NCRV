@@ -4,8 +4,10 @@ import { formatPhp } from "../../lib/format"
 import { createClient, getRequestClaims } from "@/lib/supabase/server"
 import {
   loadRecordDetail,
+  loadRecords,
   mapRecordDetail,
   mapRecordListRows,
+  paginationWindow,
   type RecordListRow,
 } from "./records"
 
@@ -65,11 +67,18 @@ describe("mapRecordListRows", () => {
         id: "nd-saturday",
         workDate: saturday,
         workDateLabel: "Oct 3",
+        workDateLongLabel: "October 3, 2026",
+        weekdayLabel: "Saturday",
         shiftLabel: "9:00 PM–6:00 AM",
         dayLabel: "Regular Work Day",
         ndHours: "7.00",
         wageCodes: "2211, 2252",
+        wageCodeItems: [
+          { code: "2211", tbd: false },
+          { code: "2252", tbd: true },
+        ],
         amountLabel: `${formatPhp(14000)} · TBD`,
+        amountState: "partial-tbd",
       },
     ])
   })
@@ -81,7 +90,9 @@ describe("mapRecordListRows", () => {
     const tbdOnly = mapRecordListRows([shiftRow({}, [tbdLine("2252")])])
 
     expect(estimatedOnly?.[0]?.amountLabel).toBe(formatPhp(14000))
+    expect(estimatedOnly?.[0]?.amountState).toBe("estimated")
     expect(tbdOnly?.[0]?.amountLabel).toBe("TBD")
+    expect(tbdOnly?.[0]?.amountState).toBe("tbd")
   })
 
   it("labels empty wage lines with an em dash", () => {
@@ -89,6 +100,7 @@ describe("mapRecordListRows", () => {
 
     expect(rows?.[0]?.wageCodes).toBe("—")
     expect(rows?.[0]?.amountLabel).toBe("—")
+    expect(rows?.[0]?.amountState).toBe("none")
   })
 
   it("returns null for a malformed embed", () => {
@@ -109,6 +121,13 @@ describe("mapRecordListRows", () => {
     expect(
       mapRecordListRows([shiftRow({}, [estimatedLine("2211", 14000.5)])]),
     ).toBeNull()
+  })
+})
+
+describe("paginationWindow", () => {
+  it("returns a bounded inclusive database range", () => {
+    expect(paginationWindow(1)).toEqual({ from: 0, to: 24 })
+    expect(paginationWindow(2)).toEqual({ from: 25, to: 49 })
   })
 })
 
@@ -175,6 +194,8 @@ describe("mapRecordDetail", () => {
     expect(detail?.id).toBe("nd-locked")
     expect(detail?.workDateLabel).toBe("October 1, 2026")
     expect(detail?.shiftLabel).toBe("9:00 PM – 6:00 AM")
+    expect(detail?.shiftStartLabel).toBe("9:00 PM")
+    expect(detail?.shiftEndLabel).toBe("6:00 AM")
     expect(detail?.dayLabel).toBe("Regular Work Day")
     expect(detail?.elapsedHours).toBe("9.00")
     expect(detail?.workedHours).toBe("8.00")
@@ -242,6 +263,45 @@ describe("mapRecordDetail", () => {
     expect(mapRecordDetail(null)).toBeNull()
     expect(mapRecordDetail("nd-locked")).toBeNull()
   })
+
+  it("keeps legacy ND snapshot gaps as not-recorded values instead of zero", () => {
+    const detail = mapRecordDetail({
+      id: "nd-legacy",
+      potential_nd_hours: null,
+      break_hours: null,
+      break_included_in_nd: false,
+      nd_hours: null,
+      nd_start: "22:00:00",
+      nd_end: "06:00:00",
+      time_zone: "Asia/Manila",
+      calculation_version: 1,
+      monthly_basic_salary: null,
+      derived_daily_rate: null,
+      derived_hourly_rate: null,
+      work_schedule_type: null,
+      scheduled_regular_hours: null,
+      elapsed_hours: null,
+      worked_hours: null,
+      regular_hours: null,
+      potential_overtime_hours: null,
+      approved_overtime_hours: null,
+      unapproved_extra_hours: null,
+      overtime_approved: null,
+      shifts: {
+        employee_id: "employee-1",
+        work_date: "2026-10-01",
+        shift_start: "2026-10-01T21:00:00.000+08:00",
+        shift_end: "2026-10-02T06:00:00.000+08:00",
+        day_classification: "REGULAR_WORK_DAY",
+      },
+      nd_wage_type_lines: [],
+    })
+
+    expect(detail).not.toBeNull()
+    expect(detail?.potentialNdHours).toBeNull()
+    expect(detail?.breakHours).toBeNull()
+    expect(detail?.ndHours).toBeNull()
+  })
 })
 
 describe("records module", () => {
@@ -262,6 +322,56 @@ function mockClaims(sub: string | null) {
       : { data: null, error: null }) as Awaited<ReturnType<typeof getRequestClaims>>,
   )
 }
+
+function mockRecordsQuery(result: { data: unknown[]; count: number | null; error: { message: string } | null }) {
+  const range = vi.fn().mockResolvedValue(result)
+  const order = vi.fn(() => query)
+  const lte = vi.fn(() => query)
+  const gte = vi.fn(() => query)
+  const eq = vi.fn(() => query)
+  const select = vi.fn(() => query)
+  const query = { select, eq, gte, lte, order, range }
+  const from = vi.fn(() => query)
+  vi.mocked(createClient).mockResolvedValue({ from } as unknown as Awaited<ReturnType<typeof createClient>>)
+  return { select, eq, order, range }
+}
+
+describe("loadRecords pagination", () => {
+  beforeEach(() => {
+    vi.mocked(createClient).mockReset()
+    vi.mocked(getRequestClaims).mockReset()
+  })
+
+  it("requests page two with exact count and stable date, start, and id ordering", async () => {
+    mockClaims(ownerId)
+    const query = mockRecordsQuery({ data: [], count: 26, error: null })
+
+    const result = await loadRecords({
+      range: "custom",
+      from: "2026-10-01",
+      to: "2026-10-31",
+      page: "2",
+    })
+
+    expect(query.select).toHaveBeenCalledWith(expect.any(String), { count: "exact" })
+    expect(query.order).toHaveBeenNthCalledWith(1, "work_date", { ascending: false })
+    expect(query.order).toHaveBeenNthCalledWith(2, "shift_start", { ascending: false })
+    expect(query.order).toHaveBeenNthCalledWith(3, "id", { ascending: false })
+    expect(query.range).toHaveBeenCalledWith(25, 49)
+    expect(result).toMatchObject({ status: "ready", page: 2, totalCount: 26, totalPages: 2 })
+  })
+
+  it("uses ascending stable ordering when oldest is requested", async () => {
+    mockClaims(ownerId)
+    const query = mockRecordsQuery({ data: [], count: 0, error: null })
+
+    await loadRecords({ range: "custom", from: "2026-10-01", to: "2026-10-31", sort: "oldest" })
+
+    expect(query.order).toHaveBeenNthCalledWith(1, "work_date", { ascending: true })
+    expect(query.order).toHaveBeenNthCalledWith(2, "shift_start", { ascending: true })
+    expect(query.order).toHaveBeenNthCalledWith(3, "id", { ascending: true })
+  })
+})
 
 function mockDetailQuery(result: { data: unknown; error: { message: string } | null }) {
   const maybeSingle = vi.fn().mockResolvedValue(result)

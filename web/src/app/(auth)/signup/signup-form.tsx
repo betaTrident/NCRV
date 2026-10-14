@@ -1,12 +1,12 @@
 "use client"
 
 import { useActionState } from "react"
-import Link from "next/link"
 import { Field } from "@/components/forms/field"
 import { PasswordInput } from "@/components/forms/password-input"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { signUp, type AuthActionState } from "@/server/actions/auth"
+import { LegalModal } from "@/components/ui/legal-modal"
 
 const initialState: AuthActionState = { fieldErrors: {} }
 
@@ -18,7 +18,7 @@ function SignupForm() {
 
   return (
     <form action={formAction} className="flex flex-col gap-4" noValidate>
-      <Field label="Full name" htmlFor="signup-name" error={state.fieldErrors.name}>
+      <Field label="Full name" htmlFor="signup-name" required error={state.fieldErrors.name}>
         <Input
           id="signup-name"
           name="name"
@@ -30,6 +30,7 @@ function SignupForm() {
       <Field
         label="Email"
         htmlFor="signup-email"
+        required
         helper="Only used to sign back in. Creating a profile does not verify employment."
         error={state.fieldErrors.email}
       >
@@ -44,6 +45,7 @@ function SignupForm() {
       <Field
         label="Password"
         htmlFor="signup-password"
+        required
         helper="Use at least 12 characters."
         error={state.fieldErrors.password}
       >
@@ -59,6 +61,7 @@ function SignupForm() {
             id="signup-terms"
             name="termsAccepted"
             type="checkbox"
+            required
             className="size-4 shrink-0 accent-[var(--vx-brand)]"
             aria-invalid={state.fieldErrors.termsAccepted ? true : undefined}
             aria-describedby={
@@ -67,25 +70,12 @@ function SignupForm() {
                 : undefined
             }
           />
-          <label
-            htmlFor="signup-terms"
-            className="text-sm text-[var(--vx-ink)]"
-          >
-            I agree to the{" "}
-            <Link
-              href="/terms"
-              className="font-medium text-[var(--vx-brand)] underline-offset-2 hover:underline"
-            >
-              Terms
-            </Link>
-            {" and "}
-            <Link
-              href="/privacy"
-              className="font-medium text-[var(--vx-brand)] underline-offset-2 hover:underline"
-            >
-              Privacy Notice
-            </Link>{"."}
-          </label>
+          <div className="text-sm text-[var(--vx-ink)]">
+            <label htmlFor="signup-terms">I agree to the Terms and Privacy Notice.</label>{" "}
+            <span className="block text-xs text-[var(--vx-muted)]">
+              <LegalModal kind="terms" /> <span aria-hidden="true">·</span>{" "}<LegalModal kind="privacy" />
+            </span>
+          </div>
         </div>
         {state.fieldErrors.termsAccepted ? (
           <p

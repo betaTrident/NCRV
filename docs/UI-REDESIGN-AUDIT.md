@@ -1,6 +1,6 @@
 # Voyix Workspace UI Audit and Redesign Direction
 
-- **Status:** Design direction and Calendar/Week-entry source decisions awaiting approval
+- **Status:** Execution authorized; Direction A and recommended Calendar/Week package selected
 - **Prepared:** October 15, 2026 (refreshed against the current checkout)
 - **Runtime:** `web/`
 - **Canvas:** [Voyix Workspace — Product redesign](https://superdesign.dev/teams/d9ab7d98-7600-4517-8d77-5bca18547291/projects/6358f71c-4d44-4b34-af4c-7f3b564f82bf)
@@ -8,7 +8,7 @@
 
 This document records the current-state review, accessibility and interaction critique, Ant Design integration boundary, approved-product constraints, proposed redesign phases, and the design-selection gate. It does not authorize invented payroll rules, employer workflows, or legal claims.
 
-The source-informed Calendar, Week entry, ADP-code, and ND-visualization proposal is detailed in [`docs/CALENDAR-WEEKLY-ENTRY-UX-BRIEF.md`](./CALENDAR-WEEKLY-ENTRY-UX-BRIEF.md). It is planning material only and does not authorize runtime or schema changes.
+The source-informed Calendar, Week entry, ADP-code, and ND-visualization proposal is detailed in [`docs/CALENDAR-WEEKLY-ENTRY-UX-BRIEF.md`](./CALENDAR-WEEKLY-ENTRY-UX-BRIEF.md). The user approved its recommended package for execution on October 15, 2026. Earlier critique sections preserve the pre-execution audit.
 
 ---
 
@@ -37,7 +37,7 @@ Evidence boundaries:
 - Both proposed signup/modal directions were checked at 1440 px and 375 px.
 - The repository now has Playwright and `@axe-core/playwright` coverage. Existing checks cover Login, Overview, Add Shift, and Records and require zero serious or critical findings. This is useful regression evidence, not a WCAG-conformance claim; every redesigned route and open modal state still needs to be added to the matrix.
 - Calendar and Settings are now implemented. Any earlier statement describing them as placeholders is superseded by this refresh.
-- Ant Design is not installed in the current checkout.
+- Ant Design 6.6.6 is now installed behind Voyix adapters. The critique below records the pre-execution baseline.
 
 Workflow and plugin resolution:
 
@@ -364,7 +364,7 @@ The October 15 documentation refresh reported Ant Design `6.6.6`. Ant v6 require
 - Raw component-library styling outside the adapter boundary.
 - Ant Table for the current read-only Records ledger; it would add hydration and styling cost without replacing the authoritative server query.
 
-The current repository contract names shadcn/Radix as the component foundation. The user’s explicit Ant Design request therefore requires coordinated updates to `AGENTS.md`, `DESIGN.md`, `docs/05-USER-INTERFACE.md`, `docs/06-IMPLEMENTATION-PLAN.md`, `docs/07-SETUP-PLAN.md`, `docs/08-NEXT-IMPLEMENTATION-PLAN.md`, `.agents/README.md`, and dependency guidance when implementation begins. A temporary mixed-library migration is acceptable only behind the adapter boundary; remove obsolete Radix/shadcn dependencies and configuration after usage reaches zero.
+The pre-execution repository contract named shadcn/Radix as the component foundation; the current contract now uses Ant-backed Voyix adapters. The user’s explicit Ant Design request therefore requires coordinated updates to `AGENTS.md`, `DESIGN.md`, `docs/05-USER-INTERFACE.md`, `docs/06-IMPLEMENTATION-PLAN.md`, `docs/07-SETUP-PLAN.md`, `docs/08-NEXT-IMPLEMENTATION-PLAN.md`, `.agents/README.md`, and dependency guidance when implementation begins. A temporary mixed-library migration is acceptable only behind the adapter boundary; remove obsolete Radix/shadcn dependencies and configuration after usage reaches zero.
 
 Motion Design guidance is adopted only for hierarchy, state continuity, and purposeful feedback. Its default GSAP workflow conflicts with the repository's CSS-only contract, so the repository contract wins: controls remain about 180 ms, the single page entrance remains 280 ms, reduced motion is honored, and no GSAP or Framer Motion is introduced.
 
@@ -580,3 +580,7 @@ Recommended approval:
 > Approve Direction A — Editorial Night Ledger, use the same legal modal shell for Terms and Privacy, retain standalone deep-link pages, and continue into production implementation.
 
 The Calendar/Week-entry source expansion has a separate decision gate. Review the six decisions in [`docs/CALENDAR-WEEKLY-ENTRY-UX-BRIEF.md`](./CALENDAR-WEEKLY-ENTRY-UX-BRIEF.md) before authorizing source import, batch persistence, or calendar-route changes.
+
+## Execution authorization - October 15, 2026
+
+The user authorized the redesign and approved the recommended Calendar/Week/source package. Direction A is the implementation default. Source transcriptions require independent visual verification; unresolved payroll formulas remain TBD.
