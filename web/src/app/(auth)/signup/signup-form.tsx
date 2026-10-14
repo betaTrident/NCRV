@@ -47,7 +47,11 @@ function SignupForm() {
         helper="Use at least 12 characters."
         error={state.fieldErrors.password}
       >
-        <PasswordInput name="password" autoComplete="new-password" />
+        <PasswordInput
+          id="signup-password"
+          name="password"
+          autoComplete="new-password"
+        />
       </Field>
       <div className="flex flex-col gap-1.5">
         <div className="flex min-h-11 items-center gap-3">

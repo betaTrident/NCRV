@@ -380,7 +380,8 @@ select is(
   (
     select count(*)
     from public.shifts
-    where work_date in (date '2026-10-02', date '2026-10-03', date '2026-10-04')
+    where employee_id = '123e4567-e89b-12d3-a456-426614174000'
+      and work_date in (date '2026-10-02', date '2026-10-03', date '2026-10-04')
   ),
   0::bigint,
   'a child-line failure rolls back the shift'
@@ -391,7 +392,8 @@ select is(
     select count(*)
     from public.nd_records as r
     join public.shifts as s on s.id = r.shift_id
-    where s.work_date in (date '2026-10-02', date '2026-10-03', date '2026-10-04')
+    where s.employee_id = '123e4567-e89b-12d3-a456-426614174000'
+      and s.work_date in (date '2026-10-02', date '2026-10-03', date '2026-10-04')
   ),
   0::bigint,
   'a child-line failure rolls back the nd record'

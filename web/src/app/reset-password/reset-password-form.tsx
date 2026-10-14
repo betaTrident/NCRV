@@ -25,7 +25,11 @@ function ResetPasswordForm() {
         helper="Use at least 12 characters."
         error={state.fieldErrors.password}
       >
-        <PasswordInput name="password" autoComplete="new-password" />
+        <PasswordInput
+          id="reset-password"
+          name="password"
+          autoComplete="new-password"
+        />
       </Field>
       {state.formError ? (
         <p className="text-xs text-[var(--vx-rose)]" role="alert">

@@ -37,7 +37,11 @@ function LoginForm() {
           htmlFor="login-password"
           error={state.fieldErrors.password}
         >
-          <PasswordInput name="password" autoComplete="current-password" />
+          <PasswordInput
+            id="login-password"
+            name="password"
+            autoComplete="current-password"
+          />
         </Field>
         <Link
           href="/forgot-password"

@@ -1,26 +1,9 @@
 # Component library implementation plan
-_Exported on 10/13/2026 at 04:18:40 GMT+8 from Cursor (3.23.23)_
+_Exported on 10/15/2026 at 01:02:24 GMT+8 from Cursor (3.23.23)_
 
 ---
 
 **User**
-
-<timestamp>Sunday, Oct 4, 2026, 9:04 PM (UTC+8)</timestamp>
-<system_notification>
-The following task has finished. If you were already aware, ignore this notification and do not restate prior responses.
-
-<task>
-kind: shell
-status: error
-task_id: 724949
-title: Wait for the user to approve Supabase login
-tool_call_id: call-d0a60b2d-4de4-4b4e-a2a8-4d23aef3ba91-190
-fc_d0e45732-5a7c-941e-a575-5d426d52c1ae_0
-detail: exit_code=1
-output_path: C:\Users\Dennis\.cursor\projects\k-VoyixNDX\terminals\724949.txt
-</task>
-</system_notification>
-<user_query>Briefly inform the user about the task result and perform any follow-up actions (if needed). If there's no follow-ups needed, don't explicitly say that.</user_query>
 
 I want you to plan the best possible implementation plan for the component library, tools and etc for this project. I'd recommend serverless setup with next.js, supabase, and vercel also i wanted a much more refined design system, more premium with a clean and minimalist but overwhelmingly stunning and visually appealing, user-friendly/user-centered design, offers high accessability. we can use mobbin or superdesign for this and for the frontend skills we could also use https://github.com/pbakaus/impeccable and https://github.com/Leonxlnx/taste-skill so as not to make our design look AI slop. But for now i just wanted to set this project up so come up with the best possible implementation plan for this, the setup, file structure, libraries and everything. Make it on a .md file.
 
@@ -273,6 +256,31 @@ can you do it ill just approve it once i see it
 **Cursor**
 
 The login prompt has to open in a real terminal so you can approve it. I’ll start that window now.
+
+---
+
+**User**
+
+<timestamp>Sunday, Oct 4, 2026, 9:04 PM (UTC+8)</timestamp>
+<system_notification>
+The following task has finished. If you were already aware, ignore this notification and do not restate prior responses.
+
+<task>
+kind: shell
+status: error
+task_id: 724949
+title: Wait for the user to approve Supabase login
+tool_call_id: call-d0a60b2d-4de4-4b4e-a2a8-4d23aef3ba91-190
+fc_d0e45732-5a7c-941e-a575-5d426d52c1ae_0
+detail: exit_code=1
+output_path: C:\Users\Dennis\.cursor\projects\k-VoyixNDX\terminals\724949.txt
+</task>
+</system_notification>
+<user_query>Briefly inform the user about the task result and perform any follow-up actions (if needed). If there's no follow-ups needed, don't explicitly say that.</user_query>
+
+---
+
+**Cursor**
 
 The approval wait ended without a login. I’ll check whether the CLI is signed in now.
 
@@ -801,22 +809,6 @@ This move is not committed.
 
 **User**
 
-<timestamp>Sunday, Oct 11, 2026, 4:41 AM (UTC+8)</timestamp>
-<system_notification>
-The following task has finished. If you were already aware, ignore this notification and do not restate prior responses.
-
-<task>
-kind: shell
-status: error
-task_id: 509734
-title: Start Next.js dev server
-tool_call_id: call-b4cf53f8-4215-4a17-97e4-599420f9a112-29
-fc_c151294c-ac7b-9009-ac1d-7baf262be24b_0
-detail: exit_code=1073807364
-</task>
-</system_notification>
-<user_query>Briefly inform the user about the task result and perform any follow-up actions (if needed). If there's no follow-ups needed, don't explicitly say that.</user_query>
-
 @c:\Users\Dennis\.cursor\projects\k-VoyixNDX\terminals\1.txt:8-79 can you check this problem?
 
 ---
@@ -1329,4 +1321,209 @@ These were leftover background checks from the subagent work, now confirmed clea
 - **Multiple `pnpm --dir web typecheck` runs** (duplicates from parallel subagents): all succeeded.
 
 No follow-up action needed — this just reconfirms what I already verified: the employee-ID removal migration and the auth rework are clean on both the database and TypeScript side. The only outstanding item is still the manual Supabase dashboard step (turning off "Confirm email") I flagged earlier.
+
+---
+
+**User**
+
+Now i want you to proceed on Proceed on phase 5 on @08-NEXT-IMPLEMENTATION-PLAN.md use Grok 4.7 extra high fast for the main reasoning model orchestrate it this task by using subagents, use cursok grok 4.6 extra high fast as the executor model or composer 2.5. you can run upto 3-5 sub agents, run them in parallell. also check on the newly modified files as well and always go with the @AGENTS.md @AGENTS.md on all implementations.
+
+---
+
+**Cursor**
+
+Phase 5 is next. I’ll read the workflow skill and the phase 5 section of the plan first, then split the work across parallel executor agents.
+
+Phase 5 is Calendar, then Settings. The schema and ownership rules are already in place, so I’m locking one shared contract and running five executor agents in parallel against separate files.
+
+---
+
+**User**
+
+continue
+
+---
+
+**Cursor**
+
+The parallel agents were interrupted. I’ll check which Phase 5 files actually landed, then finish the rest.
+
+The screen, action, and test files are on disk. I’ll review them against the Phase 5 contract, then run typecheck and tests.
+
+Unit tests passed (118). Two database tests used an update inside a nested query, which Postgres rejects, and one TypeScript assertion is typed too narrowly. I’m fixing those next.
+
+Calendar save failed because this account can sign in but has no `employees` row, and holiday rows must belong to that profile. I’m adding a finish-profile step so dates and settings can be saved.
+
+Phase 5 is in place. Calendar and Settings both work on your signed-in account, and the earlier signup gap that blocked them is closed.
+
+## What shipped
+
+**Calendar.** Two panels for holiday references and payroll periods. You can add and list your own rows. A Saturday stays the type you chose. The sample saved as "Saturday, October 3, 2026" and "Regular holiday". Dates are personal notes and do not change a shift's classification. Nothing is seeded.
+
+**Settings.** Profile, computation, and a read-only wage catalog. A monthly salary of 34800 shows the factor-261 rate **200.00000000** as an estimate. Standard hours stay locked at 8. The night window can cross midnight. Code 2211 is the only confirmed formula. Every other code says "Formula TBD". There is no hourly-rate field, no rest-day setting, and no way to edit the catalog.
+
+**Missing profile.** The account you signed in with had no `employees` row, so the first calendar save failed on the ownership link. Settings now asks for a name and Terms acceptance and creates that row. Sign-in sends you there when the profile is still missing.
+
+## Verified
+
+- Typecheck is clean. Unit tests: **118/118**. Database tests: **81/81**, including the rule that one employee cannot read or change another's calendar or settings.
+- [Spec review](8e967337-017b-406e-966b-33b6c1f1b09b) and [security review](89ab87ff-a3f2-4d48-9662-62c1587fb10b) both passed.
+- In the browser, at desktop and at 375 px: empty calendar, saved holiday, saved period, settings rate, and Overview now showing **2026-10-01 – 2026-10-15**.
+
+The profile name currently stored is **Employee**, with salary **34800**. Change both in Settings whenever you want. The sample Saturday and that October period are on the account. There is no delete control yet. That stays in the later polish phase. Nothing has been committed.
+
+---
+
+**User**
+
+<timestamp>Wednesday, Oct 14, 2026, 4:09 AM (UTC+8)</timestamp>
+<system_notification>
+The following task has finished. If you were already aware, ignore this notification and do not restate prior responses.
+
+<task>
+kind: shell
+status: success
+task_id: 965252
+title: Lint the web app
+tool_call_id: call-7829451f-4d15-4f16-a4d9-5566d8f7bc07-163
+fc_cc969e34-4557-981a-9c1e-39ff247c6537_1
+</task>
+</system_notification>
+<user_query>Briefly inform the user about the task result and perform any follow-up actions (if needed). If there's no follow-ups needed, don't explicitly say that.</user_query>
+
+---
+
+**Cursor**
+
+The lint run finished clean of errors. I’ll confirm the calendar warning from that run is already fixed.
+
+Lint finished with no errors. The only new warning was an unused calendar field list, and that list is now used when reading form errors. The other warning is the existing unused prop in `estimate-note.tsx`, which this phase did not touch.
+
+---
+
+**User**
+
+Now i want you to proceed on Proceed on phase 6 on @08-NEXT-IMPLEMENTATION-PLAN.md use Grok 4.7 extra high fast for the main reasoning model orchestrate it this task by using subagents, use cursok grok 4.6 extra high fast as the executor model or composer 2.5. you can run upto 3-5 sub agents, run them in parallell. also check on the newly modified files as well and always go with the @AGENTS.md @AGENTS.md on all implementations.
+
+---
+
+**Cursor**
+
+Phase 6 is the integrated verification gate. I’ll read the plan and the current test setup, then split the work across parallel executor agents.
+
+Playwright is in the web project, and the browser flows stay on local Supabase so they never touch the hosted employee data. I’m splitting the harness, the four flows, and CI across parallel executors.
+
+The four executors finished the harness, flows, and CI job. I’ll review those files, then start local Supabase and run the suite.
+
+Phase 6 is in place. The employee journey, row isolation, the locked 2211 estimate, and accessibility all pass against local Supabase only.
+
+Playwright runs 30 tests, desktop at 1440 and mobile at 375:
+
+- Sign up, save 9:00 PM–6:00 AM, and see 7.00 ND hours, code 2211, ₱140.00, and the estimate wording.
+- A second user opening the first user’s record URL sees “This record isn’t available” and not the amount.
+- A Saturday saved as Regular Work Day stays Regular Work Day.
+- Axe on login, overview, add shift, and records reports zero serious or critical violations. Skip link, labels, 44 px actions, reduced motion, and the read-only Formula TBD catalog are covered too.
+
+The flows never use the hosted project. `pnpm test:e2e` reads local `supabase status` and stops unless the API host is `127.0.0.1` or `localhost`. CI starts that same local stack in a new `e2e` job. Password fields on login, signup, and reset now use the same id as their labels.
+
+| Check | Result |
+| --- | --- |
+| Playwright, local Supabase, both viewports | 30 passed |
+| Vitest | 18 files, 118 passed |
+| pgTAP | 81 passed |
+| Typecheck, lint, production build, `git diff --check` | Passed. Lint still has the existing unused `_props` warning in `estimate-note.tsx`. |
+
+Spec review and security review both passed. No cross-user access, secret exposure, `user_metadata` authorization, public privileged function, or anonymous table access was introduced. No schema migration. Nothing was committed.
+
+Verification boundaries: browser flows and pgTAP ran on local Docker. The production build compiled with `web/.env` and did not exercise hosted employee data. The dev server’s Turbopack process aborted on a cross-origin HMR request, so the browser suite uses `next build` and `next start` on port 3100 instead.
+
+---
+
+**User**
+
+<timestamp>Wednesday, Oct 14, 2026, 1:35 PM (UTC+8)</timestamp>
+<system_notification>
+The following task has finished. If you were already aware, ignore this notification and do not restate prior responses.
+
+<task>
+kind: shell
+status: success
+task_id: 199856
+title: Install Playwright and axe packages
+tool_call_id: call-e9f5b609-8110-4093-85ea-82418217eaae-95
+fc_25589301-8d1c-9128-b765-6bcfed9dc539_1
+output_path: C:\Users\Dennis\.cursor\projects\k-VoyixNDX\terminals\199856.txt
+</task>
+</system_notification>
+
+<timestamp>Wednesday, Oct 14, 2026, 1:35 PM (UTC+8)</timestamp>
+<system_notification>
+The following task has finished. If you were already aware, ignore this notification and do not restate prior responses.
+
+<task>
+kind: shell
+status: error
+task_id: 199859
+title: Run Playwright flows against local Supabase
+tool_call_id: call-12c59122-18ed-4d13-bd14-6dd1e8033b7f-126
+fc_b227f370-b84a-954c-9822-bfb5ac6feb6a_0
+detail: exit_code=1
+output_path: C:\Users\Dennis\.cursor\projects\k-VoyixNDX\terminals\199859.txt
+</task>
+</system_notification>
+
+<timestamp>Wednesday, Oct 14, 2026, 1:35 PM (UTC+8)</timestamp>
+<system_notification>
+The following task has finished. If you were already aware, ignore this notification and do not restate prior responses.
+
+<task>
+kind: shell
+status: error
+task_id: 199860
+title: Run desktop Playwright project on production server
+tool_call_id: call-c728f59b-9b7e-4ab3-8d4c-2077fb63345a-139
+fc_1db11842-448a-9556-ad9e-0e808d6643d7_0
+detail: exit_code=1
+output_path: C:\Users\Dennis\.cursor\projects\k-VoyixNDX\terminals\199860.txt
+</task>
+</system_notification>
+
+<timestamp>Wednesday, Oct 14, 2026, 1:35 PM (UTC+8)</timestamp>
+<system_notification>
+The following task has finished. If you were already aware, ignore this notification and do not restate prior responses.
+
+<task>
+kind: shell
+status: success
+task_id: 199861
+title: Re-run Playwright at desktop and mobile
+tool_call_id: call-62d41e61-14da-4026-9c81-f42649b6ef6f-165
+fc_a411d23f-ec67-95d4-b76a-4f04333f1847_0
+output_path: C:\Users\Dennis\.cursor\projects\k-VoyixNDX\terminals\199861.txt
+</task>
+</system_notification>
+
+<timestamp>Wednesday, Oct 14, 2026, 1:35 PM (UTC+8)</timestamp>
+<system_notification>
+The following task has finished. If you were already aware, ignore this notification and do not restate prior responses.
+
+<task>
+kind: shell
+status: success
+task_id: 199863
+title: Production build of the web app
+tool_call_id: call-8ebde32e-5554-4a8d-83b6-8fe1b9949639-188
+fc_43e8ac35-263b-9dd7-8231-682ad98cfd71_2
+output_path: C:\Users\Dennis\.cursor\projects\k-VoyixNDX\terminals\199863.txt
+</task>
+</system_notification>
+<user_query>Briefly inform the user about the task result and perform any follow-up actions (if needed). If there's no follow-ups needed, don't explicitly say that.</user_query>
+
+---
+
+**Cursor**
+
+The final Playwright run finished cleanly: 30 tests passed at desktop and mobile against local Supabase. The production build also succeeded.
+
+Two earlier runs failed and were already replaced. The first died when the Turbopack dev server aborted, and the second failed on a password-label mismatch and a contrast check taken while the page entrance was still animating. The suite now builds and starts the production server, waits for that animation to finish before axe, and uses the exact password label.
 

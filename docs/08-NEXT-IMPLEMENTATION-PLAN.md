@@ -1,14 +1,37 @@
 # Voyix Workspace — Next Implementation Plan
 
-- **Status:** Ready for implementation planning handoff
-- **Prepared:** October 11, 2026
-- **Scope:** Finish the calculation characterization matrix, then build the signed-in employee workflow in dependency order.
+- **Status:** Documentation revision in review; implementation paused pending design and source decisions
+- **Prepared:** October 15, 2026 (original plan October 11; current-state/source addendum added October 15)
+- **Scope:** Preserve the completed core workflow, execute the approved UI redesign in controlled slices, then optionally add source-backed Calendar and Week entry capabilities.
 - **Runtime:** `web/`
 - **Hosted Supabase project:** `dvfxyrcxxktjgutpgcyw` (existing Tokyo project; do not create another project)
 - **Production URL:** `https://voyix-workspace.vercel.app`
 - **Intended custom domain:** `https://voyix.kentsuuii.tech` (CNAME already added; certificate propagation may still be in progress)
 
 This is an implementation plan, not an authorization to invent payroll rules. It reconciles the requested next build with the repository as it exists now. It does not restart completed foundation work from `docs/07-SETUP-PLAN.md`.
+
+## 0. October 15 planning addendum
+
+This addendum supersedes stale baseline statements later in this document without erasing their historical implementation rationale.
+
+- Overview, Add Shift, My Records, Record detail, Calendar, and Settings are now implemented.
+- Playwright and `@axe-core/playwright` now exist in the working tree.
+- Calendar currently provides employee-owned holiday/payroll-period lists and forms; it is not yet a visual month/week calendar.
+- Shift entry is currently day-at-a-time; Week entry does not exist.
+- Settings already exposes the seeded ND wage catalog, but it is not yet the proposed source-aware ADP code explorer.
+- Ant Design is not installed.
+- The worktree contains user-owned uncommitted application, test, CI, and documentation changes. Future implementation must preserve them.
+- No runtime, schema, seed, dependency, migration, or deployment change is authorized while this planning revision is under review.
+
+New planning sources:
+
+- [`docs/resources/2026_NCRV_Cebu Calendar.pdf`](./resources/2026_NCRV_Cebu%20Calendar.pdf)
+- [`docs/resources/New Hire - Setting of Expectations (1).pdf`](./resources/New%20Hire%20-%20Setting%20of%20Expectations%20%281%29.pdf)
+- User-supplied ADP schedule/timesheet screenshots
+- [`docs/CALENDAR-WEEKLY-ENTRY-UX-BRIEF.md`](./CALENDAR-WEEKLY-ENTRY-UX-BRIEF.md), the detailed source analysis, interaction options, wireframes, and decision gate
+- [`docs/UI-REDESIGN-AUDIT.md`](./UI-REDESIGN-AUDIT.md), the current design-system and route-level contract
+
+The PDFs are evidence, not executable configuration. The 2026 calendar is Cebu/site/year-specific. The onboarding material's 9 PM–6 AM example conflicts with the clarified break rule, and its cutoff prose is not enough to derive future dates automatically. The locked Voyix calculation and TBD contracts continue to win.
 
 ---
 
@@ -23,6 +46,9 @@ Build the smallest complete version of Voyix Workspace that lets one signed-in e
 5. Filter personal records and open saved calculation details.
 6. Maintain personal holiday references, payroll periods, and computation settings.
 7. See unresolved wage rules as explicit `TBD` states rather than guessed amounts.
+8. Optionally enter several private shift records through a reviewed Week composer while retaining Day entry as the default.
+9. Understand source calendar events, personal notes, saved shifts, ND totals, and ADP codes in one accessible Calendar experience.
+10. Browse sourced ADP-code reference data while clearly distinguishing source percentage, engine activation, applicable hours, and money-formula status.
 
 The completed product remains a private employee shiftbook. It is not employer payroll, does not submit time, does not approve wages, and does not verify employment.
 
@@ -39,6 +65,7 @@ Read these before beginning a phase. Later implementation must preserve the cont
 | Schema and auth | `docs/04-DATA-MODEL.md`, `docs/07-SETUP-PLAN.md` Supabase sections |
 | UI | `DESIGN.md`, `docs/05-USER-INTERFACE.md`, `docs/07-SETUP-PLAN.md` section “Screen work that follows this plan,” `.superdesign/design-system.md` |
 | Delivery order | `docs/06-IMPLEMENTATION-PLAN.md`, reconciled with the actual checkout and this document |
+| Calendar / Week entry source expansion | `docs/CALENDAR-WEEKLY-ENTRY-UX-BRIEF.md`, both PDFs under `docs/resources/`, and `docs/UI-REDESIGN-AUDIT.md` |
 
 If the sources disagree, use this priority:
 
@@ -182,6 +209,24 @@ The next engine phase adds only missing direct characterizations. It must not re
 - Do not add Framer Motion, GSAP, gradients, looping animation, avatars, employer badges, nested cards, or a chart dashboard.
 - Compose screens from existing Voyix product components and shadcn/Radix primitives. Keep color tokens in `web/src/app/globals.css`; do not scatter one-off hex values through components.
 
+The pending redesign replaces the last bullet's library-specific wording only after approval: Ant may be introduced behind `components/ui/**` adapters and `AntdRegistry`, while Voyix product components and tokens remain the visual source of truth. Until then, the current component stack remains authoritative.
+
+### 4.7 Source-backed Calendar, weekly entry, and ADP visibility
+
+- Day entry remains the default and must remain complete on its own.
+- Week entry is a private batch shift composer. It is not an employer timesheet, team schedule, approval request, or payroll submission.
+- A weekly draft is not a saved record. Every included row must be calculated and reviewed before persistence.
+- If atomic batch saving is approved, all reviewed snapshots save in one transaction or none do; retries must be idempotent.
+- More than one shift may occur on a date. Do not add a one-shift-per-day constraint.
+- Source calendar rows are read-only, source/site/year-labelled reference data. Personal calendar rows remain employee-owned.
+- A source holiday may prompt the employee to review classification but never silently changes it.
+- Calendar cells show ADP codes only for calculated/saved shifts; a holiday date alone does not generate a code.
+- The 2026 Cebu source does not establish other years, sites, or users' applicability.
+- The onboarding filing/cutoff material may be shown as source-labelled guidance, never as proof that Voyix filed a record.
+- Non-ND codes transcribed from the supplied table remain display-only until a separate engine/configuration decision activates them.
+- The phrase `TOTAL % to be added` remains visible for sourced percentages. It does not establish a money formula.
+- Only code 2211 retains a confirmed estimate formula. No source expansion changes this rule.
+
 ---
 
 ## 5. Rules that must remain TBD
@@ -192,6 +237,9 @@ These are global stop conditions for every phase:
 2. Treatment of an overnight shift that crosses from one holiday or day classification into another.
 3. Allocation of qualifying ND overlap between regular hours and approved overtime, including when and how code 2252 applies.
 4. Any wage-type code not already present in the seeded table.
+5. Automatic derivation of a payroll cut-off from “next business day,” including holiday/weekend treatment.
+6. Applicability of the Cebu/2026 source calendar to an employee who has not explicitly selected or confirmed that source.
+7. Whether weekly persistence is all-or-nothing and the exact duplicate/idempotency contract, until the user approves the recommendation.
 
 When one of these rules is needed:
 
@@ -200,6 +248,7 @@ When one of these rules is needed:
 - Show the reason in employee-facing language.
 - Do not format a TBD amount as currency.
 - Stop and request a source when two interpretations would change payroll math.
+- Preserve source labels and provenance rather than presenting an employer reference as a universal rule.
 
 ---
 
@@ -978,7 +1027,168 @@ Polish must not introduce:
 
 ---
 
-## 15. Per-screen UI verification gate
+## 15. Proposed Phase 8 — Source-backed Calendar and Week entry
+
+**Status:** Proposed and intentionally blocked on explicit user approval.
+
+### Goal
+
+Add a fast weekly path, a source-labelled month/week Calendar, and consistent ADP/ND evidence without changing Voyix into an employer timesheet or resolving any unsupported payroll formula.
+
+### Approval dependencies
+
+Before implementation, the user must decide:
+
+1. Whether the supplied 2026 Cebu calendar becomes a read-only shared reference.
+2. Whether Day stays the default and Week becomes a second entry mode.
+3. Whether a reviewed week saves atomically.
+4. Whether Calendar contains Month, Week, and References views.
+5. Whether non-ND sourced codes appear as inactive/reference-only rows.
+6. Whether Friday/cut-off guidance appears as source-labelled reminders.
+
+Direction A/B approval for the broader redesign remains a separate gate.
+
+### Phase 8A — Verify and register source data
+
+Create a reviewable manifest from the supplied PDFs before any SQL or seed file:
+
+- Exact holiday rows, type, site, year, source label, and source document.
+- Exact pay-day and cut-off markers from the rendered calendar.
+- Existing ND code rows cross-checked against `docs/02-WAGE-TYPES.md`.
+- Non-ND code/category/hours/percentage rows marked reference-only.
+- Source conflicts and ambiguous visual cells explicitly flagged rather than guessed.
+
+Require an independent second comparison of every manifest row against the rendered source. Approving the PDF as a reference does not approve automatic classification or a money formula.
+
+### Phase 8B — ADP code explorer and shared disclosure model
+
+Likely surfaces:
+
+- `web/src/components/settings/wage-catalog.tsx`
+- A reusable code-detail/disclosure product component
+- Shift calculation preview
+- Record detail
+- Weekly review and Calendar day detail
+
+Required behavior:
+
+- Search/filter codes by code and category.
+- Display source percentage as `TOTAL % to be added`.
+- Display `Engine active` or `Reference only`.
+- Display `Confirmed estimate formula`, `Formula TBD`, `Hours allocation TBD`, or `Mapping unresolved`.
+- Keep 2211 as the only confirmed money formula.
+- Explain why a calculation returned each code.
+
+### Phase 8C — Calendar source read model and visual workspace
+
+Proposed route model:
+
+```text
+/calendar?view=month&month=2026-10&date=2026-10-14
+/calendar?view=week&week=2026-10-12
+/calendar?view=references
+```
+
+Required layers:
+
+- Verified read-only source events.
+- Employee-owned personal holidays and payroll periods.
+- Saved shift summaries from immutable records.
+- No unsourced employer data and no automatic wage-code selection.
+
+Likely files/components after approval:
+
+- Calendar range query and summary view models.
+- Semantic month grid plus chronological list fallback.
+- Week record view.
+- Source-event legend/provenance component.
+- Selected-day drawer adapter and product composition.
+- Existing reference forms/lists preserved under References.
+
+Tests first:
+
+- Source rows are readable but never mutable by authenticated users.
+- User A's personal events and shifts never appear for User B.
+- Month/week boundaries use `Asia/Manila`.
+- Selected date survives navigation and is URL-addressable.
+- Grid and list expose equivalent event/shift information.
+- Source holiday never changes classification or produces a code without employee calculation.
+- Drawer contains focus, closes with Escape, restores focus, and reflows at 320/375 px.
+
+### Phase 8D — Week-entry draft and calculate-all review
+
+Recommended product composition:
+
+- `Day | Week` mode switch on Add Shift.
+- Week navigation, selected-day controls, and reusable time template.
+- Per-day classification, break, schedule, and OT-answer editing.
+- `Add another shift` for multiple shifts on one date.
+- Per-row calculation through the existing engine.
+- Weekly review that preserves every daily result, code, applicable hours, warning, and TBD reason.
+- Stacked mobile summaries; no seven-column mobile timesheet.
+
+Tests first:
+
+- Copy/apply affects only selected draft rows.
+- Saturday/Sunday never become rest days automatically.
+- Source holidays create a prompt without mutating classification.
+- A changed row invalidates its preview and aggregate review.
+- Day and Week modes produce identical engine output for identical input.
+- One invalid row is linked to its field errors without hiding valid rows.
+- Multiple shifts on one date remain distinct.
+- Draft exit warns before loss; browser navigation behavior is specified and tested.
+
+### Phase 8E — Atomic reviewed-week persistence
+
+Implement only if the atomic recommendation is approved:
+
+- The browser sends raw reviewed shift inputs, not trusted calculated output.
+- The server reloads profile/rules and recalculates every shift.
+- One authenticated transaction writes every immutable snapshot or none.
+- Ownership comes from claims, never request data or `user_metadata`.
+- Add a batch idempotency key so a retry cannot silently duplicate a saved week.
+- Return a safe per-row error map without leaking database detail.
+- Never create approval, manager, team, or ADP-submission records.
+
+Tests first:
+
+- One invalid row saves zero rows.
+- RPC failure after validation saves zero rows.
+- Successful save writes the complete batch and all wage lines.
+- Retrying the same idempotency key does not duplicate records.
+- User A cannot read/write User B's batch or results.
+- Server output matches Day entry for the same shifts.
+
+### Phase 8F — Cross-surface convergence
+
+- Reuse one ND trace and code-status vocabulary in Day, Week, Calendar, Records, Record detail, and Settings.
+- Add source-unavailable, no-source-selected, empty week, partial-TBD, query-error, and retry states.
+- Verify 320, 375, 768, 900, and 1440 px plus 200%/400% reflow.
+- Run keyboard, screen-reader name/role/value, drawer focus, axe, and reduced-motion checks.
+- Run security review for source-row grants, employee isolation, batch persistence, and safe errors.
+
+### Done means
+
+- Day entry remains fast and complete.
+- Week entry saves private records without employer/submission language.
+- Calendar clearly distinguishes source, personal, draft, and saved layers.
+- Every sourced row identifies NCR Voyix Cebu, year 2026, and its source document/version.
+- Source dates never silently classify shifts.
+- ADP code visibility is consistent and never converts a percentage into an unsupported formula.
+- Existing immutable snapshot and two-user isolation contracts remain intact.
+- Every focused/full verification gate passes at its stated boundary.
+
+### Rules that remain TBD
+
+- Cross-date holiday treatment.
+- Non-2211 money formulas.
+- ND regular/overtime allocation and code 2252 behavior.
+- Automatic future cut-off derivation.
+- Any site/year calendar not supplied and separately approved.
+
+---
+
+## 16. Per-screen UI verification gate
 
 Run this gate after each screen rather than deferring all quality work to Phase 6.
 
@@ -1030,7 +1240,7 @@ Run this gate after each screen rather than deferring all quality work to Phase 
 
 ---
 
-## 16. Verification commands
+## 17. Verification commands
 
 Use focused commands during RED/GREEN work, then run the full relevant gates before marking a phase done.
 
@@ -1088,7 +1298,7 @@ Passing web gates does not by itself prove that a migration was applied successf
 
 ---
 
-## 17. Security review checklist
+## 18. Security review checklist
 
 Run this whenever a phase touches Server Actions, RLS, functions, auth, or employee input.
 
@@ -1111,13 +1321,13 @@ Run this whenever a phase touches Server Actions, RLS, functions, auth, or emplo
 
 ---
 
-## 18. Drift corrections carried forward
+## 19. Drift corrections carried forward
 
 Use these decisions instead of stale text in older plans:
 
 - Do not rerun the 44 unchecked setup steps; reconcile with existing artifacts first.
 - The hosted Supabase project already exists in Tokyo. Do not create a Singapore Supabase project. Singapore remains the Vercel runtime region.
-- Do not seed holidays or payroll periods. They are personal rows added later.
+- Do not seed unsourced holidays or payroll periods. Personal rows remain employee-owned. The supplied Cebu/2026 source may become a bounded read-only shared reference only after Phase 8 approval, manifest verification, provenance design, and security tests.
 - Use `Overview`, not the older `Dashboard` navigation label.
 - Use the lowercase `voyixworkspace` wordmark. The older `voyixshift` component-table reference is stale.
 - Use 44 px minimum controls. This overrides older 42 px button wording.
@@ -1131,7 +1341,7 @@ Use these decisions instead of stale text in older plans:
 
 ---
 
-## 19. Stop conditions
+## 20. Stop conditions
 
 Stop implementation and request direction when:
 
@@ -1147,7 +1357,7 @@ Do not stop merely because a rule is TBD. Preserve the TBD state and continue wi
 
 ---
 
-## 20. Delivery checklist
+## 21. Delivery checklist
 
 ### Phase 1 — Engine characterizations
 
@@ -1205,11 +1415,25 @@ Do not stop merely because a rule is TBD. Preserve the TBD state and continue wi
 - [ ] Each selected slice helps calculate, understand, or track ND.
 - [ ] Each slice has its own test and accessibility plan.
 
+### Phase 8 — Source-backed Calendar and Week entry (not yet approved)
+
+- [ ] Six product/source decisions explicitly approved.
+- [ ] Exact source manifest independently verified against both PDFs.
+- [ ] Shared rows include source/site/year provenance and are read-only.
+- [ ] Source dates never silently classify shifts or select wage codes.
+- [ ] ADP explorer distinguishes source percentage, engine status, hours status, and formula status.
+- [ ] Day and Week produce identical calculation results for identical inputs.
+- [ ] Weekly persistence is idempotent and all-or-nothing if that policy is approved.
+- [ ] Calendar grid/list parity and selected-day focus/URL behavior pass.
+- [ ] Cross-surface accessibility, security, responsive, and build gates pass.
+
 ---
 
-## 21. Definition of core-product completion
+## 22. Definition of core-product completion
 
 The next implementation is complete when a new employee can sign up, enter the locked sample, understand the complete hour trace, save the server result, see it in Overview and My Records, reopen an immutable detail snapshot, and manage personal dates/settings without accessing another employee’s data.
+
+The proposed Phase 8 source-backed Calendar and Week entry expansion is not part of this core-completion claim until the user explicitly approves it.
 
 Completion also requires that:
 
