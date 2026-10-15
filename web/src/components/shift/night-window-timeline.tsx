@@ -1,4 +1,7 @@
-import { cn } from "cn"
+import { DateTime } from "luxon"
+
+import type { NdClockIntervals } from "@/engine/types"
+import { buildTimeRulerModel, type TimeRulerRowKind } from "./time-ruler-model"
 
 type TimelineSegment = {
   startLabel: string
@@ -12,149 +15,123 @@ type TimelineSegment = {
 
 type NightWindowTimelineProps = {
   windowLabel: string
-  segments: TimelineSegment[]
+  /** Legacy scalar evidence; it renders as text only until clock intervals are supplied. */
+  segments?: TimelineSegment[]
+  clockIntervals?: NdClockIntervals
+  breakHours?: string
+  breakIncludedInNd?: boolean
 }
 
-const CLOCK_KINDS = new Set(["shift", "overlap", "qualifying"])
-
-const KIND_LABEL: Record<
-  Exclude<TimelineSegment["kind"], "excluded-break">,
-  string
-> = {
-  shift: "Shift",
-  overlap: "Potential overlap",
-  qualifying: "Qualifying ND",
+const ROW_TONE: Record<TimeRulerRowKind, string> = {
+  shift: "bg-[var(--vx-line-strong)]",
+  window: "bg-[var(--vx-brand-light)]/65",
+  potential: "bg-[var(--vx-brand-light)]",
+  final: "bg-[var(--vx-brand)]",
 }
 
-const BAR_TONE: Record<
-  Exclude<TimelineSegment["kind"], "excluded-break">,
-  string
-> = {
-  shift: "bg-[var(--vx-line)]",
-  overlap: "bg-[var(--vx-brand-light)]",
-  qualifying: "bg-[var(--vx-brand)]",
+function clockLabel(value: string): string {
+  const date = DateTime.fromISO(value, { setZone: true })
+  return date.isValid ? date.toFormat("h:mm a") : value
+}
+
+function durationLabel(start: string, end: string): string {
+  const duration = Date.parse(end) - Date.parse(start)
+  return Number.isFinite(duration) ? `${(duration / 3_600_000).toFixed(2)} h` : ""
+}
+
+function tickLabel(value: number, axisStart: string): string {
+  const start = DateTime.fromISO(axisStart, { setZone: true })
+  const tick = DateTime.fromMillis(value, { zone: start.zoneName ?? "UTC" })
+  const dayChanged = tick.toISODate() !== start.toISODate()
+  return dayChanged && tick.hour === 0 ? `${tick.toFormat("h a")} · next day` : tick.toFormat("h a")
+}
+
+function LegacyEvidence({ segments }: { segments: TimelineSegment[] }) {
+  const clockSegments = segments.filter((segment) => segment.kind !== "excluded-break")
+  return (
+    <ul className="flex flex-col gap-1 text-sm text-[var(--vx-ink-soft)]">
+      {clockSegments.map((segment, index) => (
+        <li key={`${segment.kind}-${segment.startLabel}-${segment.endLabel}-${index}`}>
+          <span>{segment.displayLabel ?? (segment.kind === "shift" ? "Shift" : segment.kind === "overlap" ? "Potential overlap" : "Qualifying ND")}</span>{" "}
+          <span className="font-mono tabular-nums text-[var(--vx-ink)]">{segment.displayValue ?? `${segment.startLabel} – ${segment.endLabel}`}</span>
+        </li>
+      ))}
+    </ul>
+  )
 }
 
 /**
- * Renders already-computed window labels. It does not calculate hours.
- * Excluded break stays off the clock and appears only in the legend.
+ * A truthful, shared time ruler. Every plotted row uses the shift's one clock
+ * axis; duration-only breaks are disclosed below the ruler, never positioned.
  */
 function NightWindowTimeline({
   windowLabel,
-  segments,
+  segments = [],
+  clockIntervals,
+  breakHours,
+  breakIncludedInNd = false,
 }: NightWindowTimelineProps) {
-  const clockSegments = segments.filter(
-    (
-      segment,
-    ): segment is TimelineSegment & {
-      kind: "shift" | "overlap" | "qualifying"
-    } => CLOCK_KINDS.has(segment.kind),
-  )
-  const excludedBreaks = segments.filter(
-    (segment) => segment.kind === "excluded-break",
-  )
-  const tracks = (["shift", "nd", "potential", "qualifying"] as const).filter((track) =>
-    clockSegments.some((segment) => segment.track === track),
-  )
-  const renderTracks: ("shift" | "nd" | "potential" | "qualifying")[] = tracks.length > 0 ? tracks : ["shift"]
-
-  function trackSegments(track: "shift" | "nd" | "potential" | "qualifying") {
-    return clockSegments.filter((segment) =>
-      tracks.length === 0 ? true : segment.track === track,
-    )
-  }
+  const deduction = breakIncludedInNd ? null : breakHours ?? segments.find((segment) => segment.kind === "excluded-break")?.hours?.toFixed(2)
+  const model = clockIntervals
+    ? buildTimeRulerModel(clockIntervals, breakIncludedInNd)
+    : null
 
   return (
-    <div className="flex flex-col gap-3">
+    <section aria-labelledby="night-time-ruler-heading" className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
-        <p className="font-mono text-[11px] font-medium tracking-[0.12em] text-[var(--vx-muted)] uppercase">
-          ND window
-        </p>
-        <p className="font-mono text-sm tabular-nums text-[var(--vx-ink)]">
-          {windowLabel}
-        </p>
+        <p id="night-time-ruler-heading" className="font-mono text-[11px] font-medium tracking-[0.12em] text-[var(--vx-muted)] uppercase">Night time ruler</p>
+        <p className="font-mono text-sm tabular-nums text-[var(--vx-ink)]">Configured ND window · {windowLabel}</p>
       </div>
 
-      {tracks.length > 0 ? <p className="text-xs text-[var(--vx-muted)]">Aggregate hours share one scale. These bars do not place the unpaid break on the clock.</p> : null}
-      {tracks.length > 0 ? (
-        <div className="flex flex-col gap-2" aria-hidden="true">
-          {renderTracks.map((track) => {
-            const row = trackSegments(track)
-            const total = row.reduce((sum, segment) => sum + (segment.hours ?? 1), 0)
-            const maxTotal = Math.max(
-              ...renderTracks.map((candidate) => trackSegments(candidate).reduce((sum, segment) => sum + (segment.hours ?? 1), 0)),
-              1,
-            )
-            return (
-              <div key={track} className="flex items-center gap-2">
-                <span className="w-16 shrink-0 font-mono text-[10px] tracking-[0.1em] text-[var(--vx-muted)] uppercase">
-                  {{shift:"Shift",nd:"Potential",potential:"Potential",qualifying:"Final ND"}[track]}
-                </span>
-                <div className="flex h-2.5 min-w-0 flex-1 overflow-hidden rounded-sm bg-[var(--vx-surface-soft)]">
-                  <div className="flex h-full min-w-0 overflow-hidden" style={{ width: `${(total / maxTotal) * 100}%` }}>
-                    {row.map((segment, index) => (
-                      <div
-                        key={`${segment.kind}-${segment.startLabel}-${segment.endLabel}-${index}`}
-                        className={cn("min-w-0", BAR_TONE[segment.kind])}
-                        style={{ flex: `${segment.hours ?? 1} 1 0%` }}
-                        title={`${segment.displayLabel ?? KIND_LABEL[segment.kind]} ${segment.displayValue ?? `${segment.startLabel} – ${segment.endLabel}`}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <span className="w-16 shrink-0 text-right font-mono text-[10px] tabular-nums text-[var(--vx-muted)]">
-                  {total.toFixed(2)} h
-                </span>
-              </div>
-            )
-          })}
-        </div>
-      ) : null}
-
-      {clockSegments.length > 0 ? (
-        <ul className="flex flex-col gap-1">
-          {clockSegments.map((segment, index) => (
-            <li
-              key={`label-${segment.kind}-${segment.startLabel}-${segment.endLabel}-${index}`}
-              className="text-sm text-[var(--vx-ink-soft)]"
-            >
-              <span>{segment.displayLabel ?? KIND_LABEL[segment.kind]}</span>{" "}
-              <span className="font-mono tabular-nums text-[var(--vx-ink)]">
-                {segment.displayValue ?? `${segment.startLabel} – ${segment.endLabel}`}
+      {model ? (
+        <div className="flex flex-col gap-3" role="img" aria-label="Night time ruler with clock-aligned night differential evidence">
+          <div className="flex justify-between font-mono text-[11px] tabular-nums text-[var(--vx-muted)]" aria-hidden="true">
+            <span>{clockLabel(model.axis.start)}</span>
+            <span>{clockLabel(model.axis.end)}</span>
+          </div>
+          <div className="relative h-5" aria-hidden="true">
+            {model.ticks.map((tick) => (
+              <span key={tick.value} className="absolute -translate-x-1/2 font-mono text-[9px] tabular-nums text-[var(--vx-muted)]" style={{ left: `${tick.percent}%` }}>
+                {tickLabel(tick.value, model.axis.start)}
               </span>
-            </li>
-          ))}
-        </ul>
-      ) : null}
+            ))}
+          </div>
+          <div className="flex flex-col gap-2">
+            {model.rows.map((row) => (
+              <div key={row.kind} className="grid grid-cols-[5.75rem_minmax(0,1fr)] items-center gap-3">
+                <span className="font-mono text-[10px] tracking-[0.1em] text-[var(--vx-muted)] uppercase">{row.label}</span>
+                <div className="relative h-3 overflow-hidden rounded-sm bg-[var(--vx-surface-soft)]">
+                  {row.intervals.map((interval) => (
+                    <span
+                      key={`${row.kind}-${interval.start}-${interval.end}`}
+                      className={`absolute inset-y-0 ${ROW_TONE[row.kind]}`}
+                      style={{ left: `${interval.startPercent}%`, width: `${interval.widthPercent}%` }}
+                      title={`${row.label}: ${clockLabel(interval.start)} – ${clockLabel(interval.end)} (${durationLabel(interval.start, interval.end)})`}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <dl className="sr-only">
+            <div><dt>Clock axis</dt><dd>{clockLabel(model.axis.start)} to {clockLabel(model.axis.end)}</dd></div>
+            {model.rows.map((row) => row.intervals.map((interval) => <div key={`text-${row.kind}-${interval.start}`}><dt>{row.label}</dt><dd>{clockLabel(interval.start)} to {clockLabel(interval.end)}, {durationLabel(interval.start, interval.end)}</dd></div>))}
+          </dl>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm text-[var(--vx-muted)]">Exact clock intervals are unavailable for this calculation. The saved scalar evidence is shown below.</p>
+          <LegacyEvidence segments={segments} />
+        </div>
+      )}
 
       <div className="flex flex-col gap-1 text-xs text-[var(--vx-muted)]">
-        {clockSegments.some((segment) => segment.kind === "qualifying") ? (
-          <p>
-            <span
-              aria-hidden="true"
-              className="mr-1.5 inline-block size-2 align-middle bg-[var(--vx-brand)]"
-            />
-            Purple marks qualifying ND.
-          </p>
-        ) : null}
-        {clockSegments.some((segment) => segment.kind === "overlap") ? (
-          <p>
-            <span
-              aria-hidden="true"
-              className="mr-1.5 inline-block size-2 align-middle bg-[var(--vx-brand-light)]"
-            />
-            The lighter mark is potential overlap.
-          </p>
-        ) : null}
-        {excludedBreaks.map((segment, index) => (
-          <p
-            key={`excluded-${segment.startLabel}-${segment.endLabel}-${index}`}
-          >
-            Break deduction: {segment.hours?.toFixed(2) ?? "—"} h · exact clock position not recorded.
-          </p>
-        ))}
+        <p><span aria-hidden="true" className="mr-1.5 inline-block size-2 bg-[var(--vx-brand-light)]" />Lighter purple marks the configured and potential ND intervals.</p>
+        {breakIncludedInNd ? <p><span aria-hidden="true" className="mr-1.5 inline-block size-2 bg-[var(--vx-brand)]" />Purple marks final ND when the break is included and the interval is fully known.</p> : null}
+        {deduction ? <p>Break deduction: −{deduction} h · exact clock position not recorded.</p> : null}
+        {!breakIncludedInNd ? <p>Final ND is a scalar result below because the excluded break has no recorded clock position.</p> : null}
       </div>
-    </div>
+    </section>
   )
 }
 

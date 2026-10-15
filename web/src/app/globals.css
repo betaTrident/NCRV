@@ -54,6 +54,33 @@
   --vx-on-deep: #fffefa;
   --vx-radius-control: 8px;
   --vx-radius-panel: 14px;
+  --vx-type-display: clamp(1.9375rem, 2vw + 1.25rem, 2.5rem);
+  --vx-type-title: 1.1875rem;
+  --vx-type-body: 0.875rem;
+  --vx-type-label: 0.6875rem;
+  --vx-leading-tight: 1.15;
+  --vx-leading-body: 1.5;
+  --vx-tracking-label: 0.12em;
+  --vx-space-1: 0.25rem;
+  --vx-space-2: 0.5rem;
+  --vx-space-3: 0.75rem;
+  --vx-space-4: 1rem;
+  --vx-space-6: 1.5rem;
+  --vx-space-8: 2rem;
+  --vx-density-compact: 0.5rem;
+  --vx-density-default: 0.75rem;
+  --vx-surface-raised: var(--vx-surface);
+  --vx-surface-inset: var(--vx-surface-soft);
+  --vx-elevation-floating: 0 12px 28px rgb(52 26 75 / 14%);
+  --vx-focus-ring: 3px solid var(--vx-brand);
+  --vx-focus-offset: 2px;
+  --vx-z-base: 0;
+  --vx-z-sticky: 10;
+  --vx-z-navigation: 20;
+  --vx-z-overlay: 50;
+  --vx-motion-control: 180ms;
+  --vx-motion-page: 280ms;
+  --vx-ease-standard: ease-out;
   --vx-rail: 244px;
   --vx-rail-tablet: 215px;
   --vx-rail-icon: 74px;
@@ -104,8 +131,8 @@
 }
 
 :focus-visible {
-  outline: 3px solid var(--vx-brand);
-  outline-offset: 2px;
+  outline: var(--vx-focus-ring);
+  outline-offset: var(--vx-focus-offset);
 }
 
 @keyframes vx-page-enter {
@@ -120,7 +147,7 @@
 }
 
 .vx-page-enter {
-  animation: vx-page-enter 280ms ease-out both;
+  animation: vx-page-enter var(--vx-motion-page) var(--vx-ease-standard) both;
 }
 
 .vx-sr-only {
@@ -140,7 +167,7 @@
   position: fixed;
   top: 12px;
   left: 12px;
-  z-index: 50;
+  z-index: var(--vx-z-overlay);
   width: auto;
   height: auto;
   padding: 0.5rem 1rem;
@@ -170,7 +197,7 @@
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
   min-height: 44px; padding: 8px 16px; border: 1px solid transparent;
   border-radius: var(--vx-radius-control); font-weight: 600; font-size: 14px;
-  transition: background-color 180ms, border-color 180ms, transform 180ms;
+  transition: background-color var(--vx-motion-control), border-color var(--vx-motion-control), transform var(--vx-motion-control);
 }
 .vx-button-primary { background: var(--vx-brand); color: var(--vx-surface); }
 .vx-button-primary:hover { background: var(--vx-brand-hover); color: var(--vx-surface); }
@@ -181,3 +208,10 @@
 .vx-button-icon { width: 44px; padding: 0; }
 .vx-button:disabled { opacity: .5; }
 .vx-input { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--vx-line-strong); border-radius: var(--vx-radius-control); padding: 8px 12px; background: var(--vx-surface); color: var(--vx-ink); }
+.vx-radio-group { display: grid; gap: var(--vx-density-compact); }
+.vx-radio-row, .vx-checkbox-row { display: flex; min-height: 44px; align-items: flex-start; gap: var(--vx-space-3); padding: var(--vx-density-default); border: 1px solid var(--vx-line); border-radius: var(--vx-radius-control); background: var(--vx-surface-raised); color: var(--vx-ink); font-size: var(--vx-type-body); line-height: var(--vx-leading-body); }
+.vx-radio-row input, .vx-checkbox-row input { width: 1rem; height: 1rem; flex: none; margin-top: 0.2rem; accent-color: var(--vx-brand); }
+.vx-control-description { display: block; color: var(--vx-muted); font-size: 0.75rem; }
+.vx-disclosure { border-top: 1px solid var(--vx-line); }
+.vx-disclosure-trigger { display: flex; width: 100%; min-height: 44px; align-items: center; justify-content: space-between; gap: var(--vx-space-3); padding: var(--vx-density-default) 0; color: var(--vx-ink); font-weight: 600; text-align: left; }
+.vx-disclosure-content { padding: 0 0 var(--vx-space-4); }

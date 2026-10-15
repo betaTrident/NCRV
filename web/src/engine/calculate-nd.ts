@@ -1,5 +1,4 @@
 import Decimal from "decimal.js"
-import { DateTime } from "luxon"
 
 import type {
   AmountLine,
@@ -9,6 +8,7 @@ import type {
   ShiftInput,
   WageTypeRule,
 } from "./types"
+import { buildNdIntervals } from "./nd-intervals"
 
 const ANNUAL_MONTHS = new Decimal(12)
 const WORKDAYS_FACTOR = new Decimal(261)
@@ -36,93 +36,8 @@ function fixedHours(value: Decimal): string {
   return value.toDecimalPlaces(2, Decimal.ROUND_HALF_UP).toFixed(2)
 }
 
-function normalizeShift(input: ShiftInput): { start: DateTime; end: DateTime } {
-  const start = DateTime.fromISO(input.shiftStart, { zone: input.timeZone })
-  let end = DateTime.fromISO(input.shiftEnd, { zone: input.timeZone })
-
-  if (!start.isValid || !end.isValid) {
-    throw new Error("Shift start and end must be valid local date-times.")
-  }
-
-  if (end.toMillis() <= start.toMillis()) {
-    end = end.plus({ days: 1 })
-  }
-
-  return { start, end }
-}
-
-function buildNdWindow(
-  input: ShiftInput,
-  windowDate: string,
-): { start: DateTime; end: DateTime } {
-  const start = DateTime.fromISO(`${windowDate}T${input.ndStart}`, {
-    zone: input.timeZone,
-  })
-  let end = DateTime.fromISO(`${windowDate}T${input.ndEnd}`, {
-    zone: input.timeZone,
-  })
-
-  if (!start.isValid || !end.isValid) {
-    throw new Error("The work date and ND window must be valid.")
-  }
-
-  if (end.toMillis() <= start.toMillis()) {
-    end = end.plus({ days: 1 })
-  }
-
-  return { start, end }
-}
-
 function durationHours(startMillis: number, endMillis: number): Decimal {
   return Decimal.max(0, new Decimal(endMillis).minus(startMillis).div(MILLIS_PER_HOUR))
-}
-
-function ndOverlapHours(
-  input: ShiftInput,
-  shift: { start: DateTime; end: DateTime },
-): Decimal {
-  const overlaps: Array<{ startMillis: number; endMillis: number }> = []
-  let windowDate = shift.start.startOf("day").minus({ days: 1 })
-  const lastWindowDate = shift.end.startOf("day")
-
-  while (windowDate.toMillis() <= lastWindowDate.toMillis()) {
-    const isoDate = windowDate.toISODate()
-    if (isoDate === null) {
-      throw new Error("The shift dates must be valid.")
-    }
-
-    const window = buildNdWindow(input, isoDate)
-    const startMillis = Math.max(shift.start.toMillis(), window.start.toMillis())
-    const endMillis = Math.min(shift.end.toMillis(), window.end.toMillis())
-
-    if (endMillis > startMillis) {
-      overlaps.push({ startMillis, endMillis })
-    }
-
-    windowDate = windowDate.plus({ days: 1 })
-  }
-
-  if (overlaps.length === 0) {
-    return new Decimal(0)
-  }
-
-  overlaps.sort((left, right) => left.startMillis - right.startMillis)
-  let totalMillis = new Decimal(0)
-  let mergedStart = overlaps[0].startMillis
-  let mergedEnd = overlaps[0].endMillis
-
-  for (const overlap of overlaps.slice(1)) {
-    if (overlap.startMillis <= mergedEnd) {
-      mergedEnd = Math.max(mergedEnd, overlap.endMillis)
-      continue
-    }
-
-    totalMillis = totalMillis.plus(mergedEnd - mergedStart)
-    mergedStart = overlap.startMillis
-    mergedEnd = overlap.endMillis
-  }
-
-  return totalMillis.plus(mergedEnd - mergedStart).div(MILLIS_PER_HOUR)
 }
 
 function deriveRateBasis(monthlyBasicSalary: string | null): {
@@ -171,14 +86,6 @@ function tbdLine(rule: WageTypeRule, reason: string, hours: string | null): Amou
   }
 }
 
-function isoOrThrow(value: DateTime, label: string): string {
-  const iso = value.toISO()
-  if (iso === null) {
-    throw new Error(`${label} must serialize to an ISO date-time with offset.`)
-  }
-  return iso
-}
-
 export function calculateNd(input: ShiftInput, rules: WageTypeRule[]): NdResult {
   const breakHours = decimalInput("Break hours", input.breakHours)
   const scheduledRegularHours = decimalInput(
@@ -197,10 +104,13 @@ export function calculateNd(input: ShiftInput, rules: WageTypeRule[]): NdResult 
     throw new Error("An approved CWW threshold must be between 8 and 12 hours.")
   }
 
-  const shift = normalizeShift(input)
-  const normalizedShiftStart = isoOrThrow(shift.start, "Normalized shift start")
-  const normalizedShiftEnd = isoOrThrow(shift.end, "Normalized shift end")
-  const elapsedHours = durationHours(shift.start.toMillis(), shift.end.toMillis())
+  const clockIntervals = buildNdIntervals(input)
+  const normalizedShiftStart = clockIntervals.shift.start
+  const normalizedShiftEnd = clockIntervals.shift.end
+  const elapsedHours = durationHours(
+    Date.parse(normalizedShiftStart),
+    Date.parse(normalizedShiftEnd),
+  )
   const workedHours = Decimal.max(0, elapsedHours.minus(breakHours))
   const regularHours = Decimal.min(workedHours, scheduledRegularHours)
   const potentialOvertimeHours = Decimal.max(0, workedHours.minus(scheduledRegularHours))
@@ -211,7 +121,10 @@ export function calculateNd(input: ShiftInput, rules: WageTypeRule[]): NdResult 
     ? new Decimal(0)
     : potentialOvertimeHours
 
-  const potentialNdHours = ndOverlapHours(input, shift)
+  const potentialNdHours = clockIntervals.overlaps.reduce(
+    (total, interval) => total.plus(durationHours(Date.parse(interval.start), Date.parse(interval.end))),
+    new Decimal(0),
+  )
   const ndHours = input.breakIncludedInNd
     ? potentialNdHours
     : Decimal.max(0, potentialNdHours.minus(breakHours))
@@ -325,6 +238,7 @@ export function calculateNd(input: ShiftInput, rules: WageTypeRule[]): NdResult 
     dayClassification: input.dayClassification,
     normalizedShiftStart,
     normalizedShiftEnd,
+    clockIntervals,
     hoursCategories,
     lines,
     unresolved,

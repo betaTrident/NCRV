@@ -9,6 +9,7 @@ import { Panel } from "@/components/shell/panel"
 import { Button, ButtonLink } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select } from "@/components/ui/select"
+import { Segmented } from "@/components/ui/segmented"
 import { calculateNd } from "@/engine/calculate-nd"
 import type { DayClassification, NdResult, WageTypeRule, WorkScheduleType } from "@/engine/types"
 import { formatPhp } from "@/lib/format"
@@ -133,11 +134,9 @@ function ShiftForm({ profile, rules, employeeKey = "anonymous", sourceEvents = [
     setPreviewStale(false)
   }
 
-  if (mode === "week") {
-    return <WeekForm profile={profile} rules={rules} employeeKey={employeeKey} sourceEvents={sourceEvents} onBack={() => setMode("day")} />
-  }
-
-  const saveAction = <div className="mt-4 flex flex-wrap gap-3">            <Button
+  const saveAction = preview ? <div className="sticky bottom-[calc(var(--vx-bottom-nav)+env(safe-area-inset-bottom))] z-10 -mx-3 mt-4 flex items-center justify-between gap-3 border border-[var(--vx-line-strong)] bg-[var(--vx-brand-deep)] px-4 py-3 text-[var(--vx-on-deep)] shadow-lg sm:static sm:mx-0 sm:border-x-0 sm:border-b-0 sm:bg-transparent sm:px-0 sm:pb-0 sm:text-[var(--vx-ink)] sm:shadow-none">
+            <p className="text-sm"><span className="block text-xs text-[var(--vx-brand-light)] sm:text-[var(--vx-muted)]">Final ND</span><strong className="font-mono tabular-nums">{preview.result.ndHours} h</strong></p>
+            <Button
               type="submit"
               form="day-shift-form"
               variant="outline"
@@ -145,22 +144,33 @@ function ShiftForm({ profile, rules, employeeKey = "anonymous", sourceEvents = [
               aria-disabled={pending || preview === null || previewStale}
             >
               Save entry
-            </Button></div>
+            </Button></div> : null
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex gap-2" aria-label="Entry mode">
-        <Button type="button" onClick={() => setMode("day")} aria-pressed="true">
-          Day
-        </Button>
-        <Button type="button" variant="outline" onClick={() => setMode("week")} aria-pressed="false">
-          Week
-        </Button>
+      <div className="flex flex-col gap-2 border-b border-[var(--vx-border)] pb-5 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--vx-muted)]">Entry cadence</p>
+          <p className="mt-1 text-sm text-[var(--vx-muted)]">Record one shift or review a complete week.</p>
+        </div>
+        <Segmented
+          name="entry-mode"
+          value={mode}
+          options={[{ value: "day", label: "Day" }, { value: "week", label: "Week" }]}
+          onValueChange={(value) => setMode(value as "day" | "week")}
+        />
       </div>
+      {mode === "week" ? (
+        <WeekForm profile={profile} rules={rules} employeeKey={employeeKey} sourceEvents={sourceEvents} onBack={() => setMode("day")} />
+      ) : (
       <div className="grid min-w-0 grid-cols-1 items-start gap-8 lg:grid-cols-2">
       <Panel className="p-6 sm:p-8">
         <form id="day-shift-form" action={formAction} className="flex flex-col gap-4" noValidate>
-          <fieldset disabled={!interactive} className="flex min-w-0 flex-col gap-4 border-0 p-0" aria-label="Shift details">
+          <fieldset disabled={!interactive} className="flex min-w-0 flex-col gap-4 border-0 p-0" aria-labelledby="shift-facts-heading">
+          <div className="border-b border-[var(--vx-border)] pb-4">
+            <h2 id="shift-facts-heading" className="text-lg font-semibold text-[var(--vx-ink)]">Shift facts</h2>
+            <p className="mt-1 text-sm text-[var(--vx-muted)]">Enter what happened. Voyix keeps the calculation separate and reviewable.</p>
+          </div>
           <Field label="Work date" htmlFor="work-date" error={fieldErrors.workDate}>
             <Input
               id="work-date"
@@ -180,7 +190,11 @@ function ShiftForm({ profile, rules, employeeKey = "anonymous", sourceEvents = [
             </p>
           ))}
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="mt-2 border-t border-[var(--vx-border)] pt-5">
+            <h3 className="text-base font-semibold text-[var(--vx-ink)]">Schedule and overtime</h3>
+            <p className="mt-1 text-sm text-[var(--vx-muted)]">Standard schedules use 8.00 regular hours. Change this only for an approved compressed workweek.</p>
+          </div>
+          <div className={scheduleType === "APPROVED_CWW" ? "grid gap-4 sm:grid-cols-2" : "grid gap-4"}>
             <Field
               label="Shift start"
               htmlFor="shift-start"
@@ -268,7 +282,9 @@ function ShiftForm({ profile, rules, employeeKey = "anonymous", sourceEvents = [
                 name="scheduleType"
                 value={scheduleType}
                 onValueChange={(value) => {
-                  setScheduleType(value as WorkScheduleType)
+                  const nextSchedule = value as WorkScheduleType
+                  setScheduleType(nextSchedule)
+                  if (nextSchedule === "STANDARD") setScheduledRegularHours("8.00")
                   invalidatePreview()
                 }}
                 options={[
@@ -278,7 +294,7 @@ function ShiftForm({ profile, rules, employeeKey = "anonymous", sourceEvents = [
                 aria-invalid={fieldErrors.scheduleType ? true : undefined}
               />
             </Field>
-            <Field
+            {scheduleType === "APPROVED_CWW" ? <Field
               label="Scheduled regular hours"
               htmlFor="scheduled-regular-hours"
               error={fieldErrors.scheduledRegularHours}
@@ -295,7 +311,7 @@ function ShiftForm({ profile, rules, employeeKey = "anonymous", sourceEvents = [
                 }}
                 className="h-11 font-mono"
               />
-            </Field>
+            </Field> : <input type="hidden" name="scheduledRegularHours" value="8.00" />}
           </div>
 
           <Field
@@ -342,6 +358,7 @@ function ShiftForm({ profile, rules, employeeKey = "anonymous", sourceEvents = [
       {preview ? (
         <CalculationPreview
           windowLabel={`${profile.ndStart} – ${profile.ndEnd}`}
+          clockIntervals={preview.result.clockIntervals}
           segments={[
             {
               startLabel: preview.startLabel,
@@ -392,13 +409,15 @@ function ShiftForm({ profile, rules, employeeKey = "anonymous", sourceEvents = [
         />
       ) : (
         <Panel className="p-6 sm:p-8">
-          <p className="text-sm text-[var(--vx-muted)]">
-            Calculate this shift to see night hours and wage lines.
+          <p className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--vx-muted)]">Calculation receipt</p>
+          <h2 className="mt-3 text-lg font-semibold text-[var(--vx-ink)]">Ready when the shift facts are complete</h2>
+          <p className="mt-2 max-w-md text-sm leading-6 text-[var(--vx-muted)]">
+            Calculate to review the exact night window, qualifying hours, ADP wage lines, and any rules that are still TBD before saving.
           </p>
-          {saveAction}
         </Panel>
       )}
       </div>
+      )}
     </div>
   )
 }

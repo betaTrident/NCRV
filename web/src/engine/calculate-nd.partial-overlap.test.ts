@@ -44,6 +44,18 @@ describe("calculateNd partial overlap", () => {
     expect(result.potentialNdHours).toBe("7.00")
     expect(result.ndHours).toBe("6.00")
     expect(result.workedHours).toBe("7.00")
+    expect(result.clockIntervals).toMatchObject({
+      shift: {
+        start: "2026-10-01T23:00:00.000+08:00",
+        end: "2026-10-02T07:00:00.000+08:00",
+      },
+      overlaps: [
+        {
+          start: "2026-10-01T23:00:00.000+08:00",
+          end: "2026-10-02T06:00:00.000+08:00",
+        },
+      ],
+    })
     expect(result.lines).toEqual([
       {
         status: "estimated",

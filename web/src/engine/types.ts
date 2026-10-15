@@ -47,6 +47,17 @@ export type RateBasis = {
   hourlyRate: string
 }
 
+export type ClockInterval = {
+  start: string
+  end: string
+}
+
+export type NdClockIntervals = {
+  shift: ClockInterval
+  windows: ClockInterval[]
+  overlaps: ClockInterval[]
+}
+
 export type AmountLine =
   | {
       status: "estimated"
@@ -88,6 +99,8 @@ export type NdResult = {
   dayClassification: DayClassification
   normalizedShiftStart: string
   normalizedShiftEnd: string
+  /** Exact, known clock evidence. A duration-only break is intentionally omitted. */
+  clockIntervals?: NdClockIntervals
   hoursCategories: HoursCategory[]
   lines: AmountLine[]
   unresolved: string[]

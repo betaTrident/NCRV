@@ -14,4 +14,23 @@ describe("Voyix tokens", () => {
     expect(css).toMatch(/--muted:\s*var\(--vx-surface-soft\)/)
     expect(css).toMatch(/--muted-foreground:\s*var\(--vx-muted\)/)
   })
+
+  it("defines the semantic foundation roles used by product primitives", () => {
+    for (const token of [
+      "--vx-type-display",
+      "--vx-type-title",
+      "--vx-type-body",
+      "--vx-space-1",
+      "--vx-space-4",
+      "--vx-density-compact",
+      "--vx-surface-raised",
+      "--vx-elevation-floating",
+      "--vx-focus-ring",
+      "--vx-z-overlay",
+      "--vx-motion-control",
+      "--vx-motion-page",
+    ]) {
+      expect(css).toContain(token)
+    }
+  })
 })

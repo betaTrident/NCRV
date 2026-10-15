@@ -6,7 +6,15 @@ describe("Ant token convergence", () => {
   const css = readFileSync(resolve(process.cwd(), "src/app/globals.css"), "utf8")
   it("matches the authoritative CSS palette", () => {
     const mappings = { colorPrimary: "brand", colorPrimaryHover: "brand-hover", colorLink: "brand", colorText: "ink", colorTextSecondary: "ink-soft", colorTextDescription: "muted", colorBgLayout: "paper", colorBgContainer: "surface", colorFillAlter: "surface-soft", colorBorder: "line-strong", colorBorderSecondary: "line", colorSuccess: "success", colorWarning: "amber", colorError: "rose" } as const
-    for (const [key, token] of Object.entries(mappings)) expect(css).toContain(`--vx-${token}: ${voyixTokens[key as keyof typeof mappings]};`)
+    for (const [key, token] of Object.entries(mappings)) {
+      expect(voyixTokens[key as keyof typeof mappings]).toBe(`var(--vx-${token})`)
+      expect(css).toContain(`--vx-${token}:`)
+    }
   })
   it("uses 44px controls and CSS-only brief motion", () => { expect(voyixTokens.controlHeight).toBe(44); expect(voyixTokens.borderRadius).toBe(8); expect(voyixTokens.motionDurationMid).toBe("0.18s") })
+  it("uses the semantic CSS contract instead of duplicating palette literals", () => {
+    expect(voyixTokens.colorPrimary).toBe("var(--vx-brand)")
+    expect(voyixTokens.colorBgContainer).toBe("var(--vx-surface)")
+    expect(voyixTokens.colorBorder).toBe("var(--vx-line-strong)")
+  })
 })
