@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest"
 import { revalidatePath } from "next/cache"
 
 import { createClient, getRequestClaims } from "@/lib/supabase/server"
-import { addHoliday, addPayrollPeriod, type CalendarActionState } from "./calendar"
+import { addHoliday, addPayrollPeriod, updatePayrollPeriod, type CalendarActionState } from "./calendar"
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(),
@@ -194,5 +194,24 @@ describe("calendar actions", () => {
     expect(revalidatePath).toHaveBeenCalledWith("/")
     expect(revalidatePath).toHaveBeenCalledWith("/records")
     expect(revalidatePath).toHaveBeenCalledTimes(3)
+  })
+})
+
+
+describe("updatePayrollPeriod ownership", () => {
+  it("uses claims owner, validates id, and reports an inaccessible period", async () => {
+    mockClaims(ownerId)
+    const maybeSingle = vi.fn().mockResolvedValue({ data: null, error: null })
+    const select = vi.fn(() => ({ maybeSingle }))
+    const eq = vi.fn(() => ({ eq, select }))
+    const update = vi.fn(() => ({ eq }))
+    vi.mocked(createClient).mockResolvedValue({ from: () => ({ update }) } as unknown as Awaited<ReturnType<typeof createClient>>)
+    const result = await updatePayrollPeriod(emptyState, periodForm({ id: otherId, owner_id: otherId }))
+    expect(eq).toHaveBeenCalledWith("owner_id", ownerId)
+    expect(eq).toHaveBeenCalledWith("id", otherId)
+    expect(result.formError).toBeTruthy()
+    update.mockClear()
+    await updatePayrollPeriod(emptyState, periodForm({ id: "invalid" }))
+    expect(update).not.toHaveBeenCalled()
   })
 })

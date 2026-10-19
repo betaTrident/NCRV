@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState } from "react"
+import { useActionState, useState, useRef } from "react"
 import { DateTime } from "luxon"
 
 import { Field } from "@/components/forms/field"
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
   addPayrollPeriod,
+  updatePayrollPeriod,
   type CalendarActionState,
 } from "@/server/actions/calendar"
 import type { PayrollPeriodListItem } from "@/server/queries/calendar"
@@ -60,15 +61,21 @@ function formatCutoff(
 }
 
 function PayrollPeriodPanel({ periods }: PayrollPeriodPanelProps) {
-  const [state, formAction, pending] = useActionState(
-    addPayrollPeriod,
-    initialState,
-  )
+  const blank = { id: "", periodStart: "", periodEnd: "", payDate: "", cutoffDate: "", cutoffTime: "" }
+  const [values, setValues] = useState(blank)
+  const [feedback, setFeedback] = useState(false)
+  const startInput = useRef<HTMLInputElement>(null)
+  const [state, formAction, pending] = useActionState(async (prev: CalendarActionState, data: FormData) => {
+    const result = await (values.id ? updatePayrollPeriod(prev, data) : addPayrollPeriod(prev, data))
+    if (result.formNotice && !result.formError && !values.id) setValues(blank)
+    setFeedback(true)
+    return result
+  }, initialState)
 
   return (
     <Panel className="flex flex-col gap-6 p-6 sm:p-8">
       <h2 className="text-[15px] font-semibold text-[var(--vx-ink)]">
-        Payroll periods
+        Personal payroll periods
       </h2>
 
       {periods.length === 0 ? (
@@ -93,6 +100,11 @@ function PayrollPeriodPanel({ periods }: PayrollPeriodPanelProps) {
                   {formatCalendarDate(period.periodStart)} -{" "}
                   {formatCalendarDate(period.periodEnd)}
                 </p>
+                <button type="button" className="vx-button vx-button-quiet self-start" onClick={() => {
+                  setFeedback(false)
+                  setValues({ id: period.id, periodStart: period.periodStart, periodEnd: period.periodEnd, payDate: period.payDate ?? "", cutoffDate: period.cutoffDate ?? "", cutoffTime: period.cutoffTime?.slice(0,5) ?? "" })
+                  startInput.current?.focus()
+                }}>Edit period</button>
                 {period.payDate ? (
                   <p className="text-sm text-[var(--vx-ink-soft)]">
                     Pay date {formatCalendarDate(period.payDate)}
@@ -109,7 +121,10 @@ function PayrollPeriodPanel({ periods }: PayrollPeriodPanelProps) {
         </ul>
       )}
 
-      <form action={formAction} className="flex flex-col gap-4" noValidate>
+      <form action={formAction} className="flex flex-col gap-4" onChange={() => setFeedback(false)} noValidate>
+        <fieldset disabled={pending} className="contents">
+        <input type="hidden" name="id" value={values.id} />
+        <h3 className="font-semibold">{values.id ? "Edit your period" : "Add a personal period"}</h3>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
             label="Period start"
@@ -117,8 +132,8 @@ function PayrollPeriodPanel({ periods }: PayrollPeriodPanelProps) {
             error={state.fieldErrors.periodStart}
           >
             <Input
-              id="period-start"
-              name="periodStart"
+              id="period-start" ref={startInput}
+              name="periodStart" value={values.periodStart} onChange={(event) => setValues({ ...values, periodStart: event.target.value })}
               type="date"
               className="h-11"
             />
@@ -130,7 +145,7 @@ function PayrollPeriodPanel({ periods }: PayrollPeriodPanelProps) {
           >
             <Input
               id="period-end"
-              name="periodEnd"
+              name="periodEnd" value={values.periodEnd} onChange={(event) => setValues({ ...values, periodEnd: event.target.value })}
               type="date"
               className="h-11"
             />
@@ -143,7 +158,7 @@ function PayrollPeriodPanel({ periods }: PayrollPeriodPanelProps) {
             htmlFor="pay-date"
             error={state.fieldErrors.payDate}
           >
-            <Input id="pay-date" name="payDate" type="date" className="h-11" />
+            <Input id="pay-date" name="payDate" value={values.payDate} onChange={(event) => setValues({ ...values, payDate: event.target.value })} type="date" className="h-11" />
           </Field>
           <Field
             label="Cutoff date"
@@ -152,7 +167,7 @@ function PayrollPeriodPanel({ periods }: PayrollPeriodPanelProps) {
           >
             <Input
               id="cutoff-date"
-              name="cutoffDate"
+              name="cutoffDate" value={values.cutoffDate} onChange={(event) => setValues({ ...values, cutoffDate: event.target.value })}
               type="date"
               className="h-11"
             />
@@ -166,7 +181,7 @@ function PayrollPeriodPanel({ periods }: PayrollPeriodPanelProps) {
         >
           <Input
             id="cutoff-time"
-            name="cutoffTime"
+            name="cutoffTime" value={values.cutoffTime} onChange={(event) => setValues({ ...values, cutoffTime: event.target.value })}
             type="time"
             className="h-11"
           />
@@ -179,18 +194,20 @@ function PayrollPeriodPanel({ periods }: PayrollPeriodPanelProps) {
         {pending ? (
           <StatusLine tone="pending">this payroll period</StatusLine>
         ) : null}
-        {!pending && state.formError ? (
+        {!pending && feedback && state.formError ? (
           <StatusLine tone="error">{state.formError}</StatusLine>
         ) : null}
-        {!pending && state.formNotice && !state.formError ? (
+        {!pending && feedback && state.formNotice && !state.formError ? (
           <StatusLine tone="saved">in your calendar</StatusLine>
         ) : null}
 
         <div className="pt-2">
           <Button type="submit" disabled={pending} aria-disabled={pending}>
-            {pending ? "Saving…" : "Add payroll period"}
+            {pending ? "Saving…" : values.id ? "Save period changes" : "Add payroll period"}
           </Button>
+          {values.id ? <Button type="button" variant="quiet" onClick={() => { setValues(blank); setFeedback(false) }}>Cancel edit</Button> : null}
         </div>
+        </fieldset>
       </form>
     </Panel>
   )

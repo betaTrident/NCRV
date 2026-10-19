@@ -41,7 +41,7 @@ function NavLink({
         aria-label={prominent ? "Add shift" : undefined}
         aria-current={isActive ? "page" : undefined}
         className={cn(
-          "flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg py-1.5 text-[10px] font-medium text-[var(--vx-ink-soft)] transition-colors",
+          "flex min-h-11 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg py-1.5 text-[11px] font-medium text-[var(--vx-ink-soft)] transition-colors",
           isActive && "text-[var(--vx-brand)]",
           prominent &&
             "relative -mt-6 text-[var(--vx-on-deep)]"
@@ -70,15 +70,15 @@ function NavLink({
       href={href}
       aria-current={isActive ? "page" : undefined}
       className={cn(
-        "relative flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[var(--vx-brand-light)] transition-colors hover:bg-[color-mix(in_srgb,var(--vx-on-deep)_10%,transparent)] hover:text-[var(--vx-on-deep)]",
+        "relative flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-[var(--vx-ink-soft)] transition-colors hover:bg-[var(--vx-surface-soft)] hover:text-[var(--vx-brand)]",
         isActive &&
-          "bg-[color-mix(in_srgb,var(--vx-on-deep)_10%,transparent)] text-[var(--vx-on-deep)]"
+          "bg-[var(--vx-brand-tint)] text-[var(--vx-brand)]"
       )}
     >
       <span
         aria-hidden="true"
         className={cn(
-          "absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-[var(--vx-brand-light)] transition-opacity",
+          "absolute inset-y-1.5 left-0 w-0.5 rounded-full bg-[var(--vx-brand)] transition-opacity",
           isActive ? "opacity-100" : "opacity-0"
         )}
       />

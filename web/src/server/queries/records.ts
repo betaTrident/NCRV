@@ -107,6 +107,7 @@ export type RecordsListResult =
       to: string
       page: number
       pageSize: number
+      hasAnyRecords: boolean
       totalCount: number
       totalPages: number
       sort: "newest" | "oldest"
@@ -856,6 +857,13 @@ export async function loadRecords(params: {
   }
 
 
+  let hasAnyRecords = count > 0
+  if (!hasAnyRecords) {
+    const history = await supabase.from("shifts").select("id", { count: "exact" }).eq("employee_id", sub).range(0, 0)
+    if (history.error || history.count === null) return { status: "error" }
+    hasAnyRecords = history.count > 0
+  }
+
   const totalPages = Math.max(1, Math.ceil(count / RECORDS_PAGE_SIZE))
   if (count > 0 && parsedPage.page > totalPages) {
     return { status: "invalid", message: "That records page is not available." }
@@ -868,6 +876,7 @@ export async function loadRecords(params: {
     to,
     page: parsedPage.page,
     pageSize: RECORDS_PAGE_SIZE,
+    hasAnyRecords,
     totalCount: count,
     totalPages,
     sort: parsedSort.sort,

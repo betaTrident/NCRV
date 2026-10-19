@@ -17,7 +17,7 @@ const PRIMARY_NAV = [
 const BOTTOM_NAV = [
   { href: "/", label: "Overview", icon: <Home size={18} aria-hidden="true" />, exact: true },
   { href: "/records", label: "Records", icon: <Receipt size={18} aria-hidden="true" /> },
-  { href: "/shift/new", label: "Shift", icon: <Plus size={20} aria-hidden="true" />, prominent: true },
+  { href: "/shift/new", label: "Add shift", icon: <Plus size={20} aria-hidden="true" />, prominent: true },
   { href: "/calendar", label: "Calendar", icon: <CalendarDays size={18} aria-hidden="true" /> },
   { href: "/settings", label: "Settings", icon: <Settings size={18} aria-hidden="true" /> },
 ] as const
@@ -36,13 +36,14 @@ function AppShell({ children }: AppShellProps) {
       <a href="#content" className="vx-sr-only vx-skip-link">
         Skip to content
       </a>
-      <div className={styles.shell}>
+      <div className={`${styles.shell} vx-workspace`}>
         <nav aria-label="Primary" className={styles.rail}>
           <div className={styles.railHeader}>
             <Link href="/" aria-label="Voyix Workspace, go to overview">
               <Wordmark className={styles.railWordmark} />
             </Link>
           </div>
+          <p className={styles.railCaption}>Your shiftbook</p>
           <div className={styles.railNav}>
             {PRIMARY_NAV.map((item) => (
               <NavLink
@@ -54,9 +55,11 @@ function AppShell({ children }: AppShellProps) {
               />
             ))}
           </div>
+          <div className={styles.railFooter}>Your nights, accounted for.<br /><span>Private records. Personal estimates.</span></div>
         </nav>
         <div className={styles.main}>
           <header className={styles.topbar}>
+            <Link href="/" className={styles.mobileBrand} aria-label="Voyix Workspace, go to overview">voyix<span>workspace</span></Link>
             <PrivacyIndicator />
             <div className={styles.shiftAction}><ShiftShortcut /></div>
           </header>

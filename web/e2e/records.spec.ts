@@ -12,7 +12,7 @@ const CUSTOM_RECORDS_URL =
   "/records?range=custom&from=2026-10-01&to=2026-10-03"
 const LOCKED_SALARY = "34800"
 const EMPLOYEE_NAME = "Employee"
-const RECORD_HREF = /\/records\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const RECORD_HREF = /\/records\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?:\?returnTo=.*)?$/i
 
 async function addLockedShift(page: Page, workDate: string) {
   await page.goto("/shift/new")
@@ -20,7 +20,7 @@ async function addLockedShift(page: Page, workDate: string) {
   await page.getByLabel("Shift start").fill("21:00")
   await page.getByLabel("Shift end").fill("06:00")
   await page.getByRole("button", { name: "Calculate shift" }).click()
-  await expect(page.getByText("7.00 hrs", { exact: true })).toBeVisible()
+  await expect(page.getByRole("region", {name:"Calculation receipt",exact:true}).getByText("7.00 hrs", { exact: true }).first()).toBeVisible()
   await page.getByRole("button", { name: "Save entry" }).click()
   await expect(
     page.getByRole("status").filter({ hasText: "Saved privately" }),
@@ -147,7 +147,7 @@ test("table usable at 375 px", async ({ browser }, testInfo) => {
     await expect(mobileRecord).toContainText("9:00 PM–6:00 AM")
     await expect(mobileRecord).toContainText("Regular Work Day")
     await expect(mobileRecord).toContainText("7.00 h")
-    await expect(mobileRecord).toContainText("2211")
+    await expect(mobileRecord).toContainText("Estimated")
     await expect(mobileRecord).toContainText("₱140.00")
     await expect(session.page.getByRole("link", { name: "Open record for October 3, 2026" })).toBeVisible()
 

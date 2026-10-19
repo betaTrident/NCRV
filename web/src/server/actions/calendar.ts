@@ -117,3 +117,25 @@ async function addPayrollPeriod(
 
 export { addHoliday, addPayrollPeriod }
 export type { CalendarActionState }
+
+
+export async function updatePayrollPeriod(_prev: CalendarActionState, formData: FormData): Promise<CalendarActionState> {
+  const id = readFormString(formData, "id")
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+    return { fieldErrors: {}, formError: "Choose a saved personal period to edit." }
+  }
+  const parsed = parsePayrollPeriod(formRecord(formData, ["periodStart", "periodEnd", "payDate", "cutoffDate", "cutoffTime"]))
+  if (!parsed.ok) return { fieldErrors: parsed.fieldErrors }
+  const sub = await signedInSub()
+  if (!sub) return { fieldErrors: {}, formError: "Sign in to save this." }
+  const supabase = await createClient()
+  const { data, error } = await supabase.from("payroll_periods").update({
+    period_start: parsed.value.periodStart, period_end: parsed.value.periodEnd,
+    pay_date: parsed.value.payDate, cutoff_date: parsed.value.cutoffDate, cutoff_time: parsed.value.cutoffTime,
+  }).eq("id", id).eq("owner_id", sub).select("id").maybeSingle()
+  if (error || !data) return { fieldErrors: {}, formError: "Could not update this personal period. Reload and try again." }
+  revalidatePath("/calendar")
+  revalidatePath("/")
+  revalidatePath("/records")
+  return { fieldErrors: {}, formNotice: "Saved." }
+}

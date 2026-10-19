@@ -58,7 +58,7 @@ test("source holiday handoff prefills only the date", async ({page}) => {
   await page.getByLabel("Shift start").fill("21:00")
   await page.getByLabel("Shift end").fill("06:00")
   await page.getByRole("button",{name:"Calculate shift"}).click()
-  const preview=page.getByRole("region",{name:"Calculation preview"})
+  const preview=page.getByRole("region",{name:"Calculation receipt"})
   await expect(preview).toContainText("Regular Work Day")
   await expect(preview).toContainText("2211")
 })

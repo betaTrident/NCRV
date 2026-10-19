@@ -414,3 +414,11 @@ describe("loadRecordDetail isolation", () => {
     })
   })
 })
+
+it("distinguishes a new shiftbook from an empty filtered range", async () => {
+  mockClaims(ownerId)
+  const range = vi.fn().mockResolvedValueOnce({ data: [], count: 0, error: null }).mockResolvedValueOnce({ data: [{id:"outside"}], count: 1, error: null })
+  const query = { select: vi.fn().mockReturnThis(), eq: vi.fn().mockReturnThis(), gte: vi.fn().mockReturnThis(), lte: vi.fn().mockReturnThis(), order: vi.fn().mockReturnThis(), range }
+  vi.mocked(createClient).mockResolvedValue({ from: () => query } as unknown as Awaited<ReturnType<typeof createClient>>)
+  expect(await loadRecords({ range: "month" })).toMatchObject({status: "ready", hasAnyRecords: true, totalCount: 0})
+})

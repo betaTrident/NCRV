@@ -3,7 +3,7 @@ type PrivacyIndicatorProps = {
 }
 
 /**
- * Success dot plus the words "Saved privately". Status is never color alone,
+ * Success dot plus the words "Private shiftbook". Status is never color alone,
  * so the text stays visible next to the dot.
  */
 function PrivacyIndicator({ className }: PrivacyIndicatorProps) {
@@ -15,7 +15,7 @@ function PrivacyIndicator({ className }: PrivacyIndicatorProps) {
         aria-hidden="true"
         className="size-2 rounded-full bg-[var(--vx-success)]"
       />
-      Saved privately
+      Private shiftbook
     </span>
   )
 }

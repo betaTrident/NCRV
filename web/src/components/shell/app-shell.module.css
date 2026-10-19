@@ -10,7 +10,8 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  background: var(--vx-brand-deep);
+  background: var(--vx-surface);
+  border-right: 1px solid var(--vx-line);
   padding: 24px 16px;
   position: sticky;
   top: 0;
@@ -33,7 +34,7 @@
 }
 
 .rail :focus-visible {
-  outline-color: var(--vx-brand-light);
+  outline-color: var(--vx-brand);
 }
 
 .main {
@@ -175,4 +176,18 @@
 }
 @media (max-width: 639px) {
   .shiftAction { display: none; }
+}
+
+.railCaption { padding: 12px 12px 0; font-size: 13px; color: var(--vx-muted); }
+.railFooter { margin-top: auto; padding: 20px 12px; font-size: 14px; font-weight: 600; line-height: 1.8; color: var(--vx-ink-soft); }
+.railFooter span { font-size: 12px; font-weight: 400; }
+.railWordmark { color: var(--vx-brand); }
+.railWordmark span { color: var(--vx-ink-soft); }
+.railWordmark span:first-child { color: var(--vx-brand); }
+@media (min-width: 640px) and (max-width: 899px) { .railCaption, .railFooter { display: none; } }
+
+.mobileBrand { display: none; }
+@media (max-width: 639px) {
+  .mobileBrand { display: block; margin-right: auto; color: var(--vx-brand); font-weight: 800; font-size: 16px; letter-spacing: -.05em; }
+  .mobileBrand span { color: var(--vx-ink-soft); }
 }

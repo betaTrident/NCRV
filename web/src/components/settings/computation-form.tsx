@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState } from "react"
+import { useActionState, useState } from "react"
 
 import { Field } from "@/components/forms/field"
 import { StatusLine } from "@/components/forms/status-line"
@@ -20,18 +20,23 @@ type ComputationFormProps = {
 }
 
 function ComputationForm({ computation }: ComputationFormProps) {
-  const [state, formAction, pending] = useActionState(
-    updateComputation,
-    initialState,
-  )
+  const [dirty, setDirty] = useState(false)
+  const [values, setValues] = useState(computation)
+  const [state, formAction, pending] = useActionState(async (prev: SettingsActionState, data: FormData) => {
+    const result = await updateComputation(prev, data)
+    if (result.formNotice && !result.formError) setDirty(false)
+    return result
+  }, initialState)
 
   return (
     <Panel className="p-6 sm:p-8">
       <div className="flex flex-col gap-6">
         <h2 className="text-[15px] font-semibold text-[var(--vx-ink)]">
-          Computation
+          Calculation preferences
         </h2>
-        <form action={formAction} className="flex flex-col gap-4" noValidate>
+<p className="text-sm text-[var(--vx-muted)]">Choose the night-differential window and default break for future calculations. Existing saved records are unchanged. Times use Asia/Manila.</p>
+        <form action={formAction} className="flex flex-col gap-4" onChange={() => setDirty(true)} noValidate>
+          <fieldset disabled={pending} className="contents">
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
               label="ND start"
@@ -42,7 +47,7 @@ function ComputationForm({ computation }: ComputationFormProps) {
                 id="computation-nd-start"
                 name="ndStart"
                 type="time"
-                defaultValue={computation.ndStart}
+                value={values.ndStart} onChange={(event) => setValues({ ...values, ndStart: event.target.value })}
                 className="h-11"
               />
             </Field>
@@ -55,7 +60,7 @@ function ComputationForm({ computation }: ComputationFormProps) {
                 id="computation-nd-end"
                 name="ndEnd"
                 type="time"
-                defaultValue={computation.ndEnd}
+                value={values.ndEnd} onChange={(event) => setValues({ ...values, ndEnd: event.target.value })}
                 className="h-11"
               />
             </Field>
@@ -75,7 +80,7 @@ function ComputationForm({ computation }: ComputationFormProps) {
               name="breakHours"
               type="text"
               inputMode="decimal"
-              defaultValue={computation.breakHours}
+              value={values.breakHours} onChange={(event) => setValues({ ...values, breakHours: event.target.value })}
               className="h-11 font-mono"
             />
           </Field>
@@ -86,15 +91,17 @@ function ComputationForm({ computation }: ComputationFormProps) {
           {!pending && state.formError ? (
             <StatusLine tone="error">{state.formError}</StatusLine>
           ) : null}
-          {!pending && state.formNotice && !state.formError ? (
+          {!pending && !dirty && state.formNotice && !state.formError ? (
             <StatusLine tone="saved">on your computation settings</StatusLine>
           ) : null}
 
+          {dirty ? <p role="status" className="text-sm text-[var(--vx-amber-ink)]">Unsaved calculation changes</p> : null}
           <div className="pt-2">
             <Button type="submit" disabled={pending} aria-disabled={pending}>
               {pending ? "Saving…" : "Save computation"}
             </Button>
           </div>
+          </fieldset>
         </form>
       </div>
     </Panel>

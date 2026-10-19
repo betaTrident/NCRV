@@ -1,3 +1,4 @@
+import { RetryButton } from "@/components/ui/retry-button"
 import { RecordFilters } from "@/components/records/record-filters"
 import { RecordsPagination } from "@/components/records/records-pagination"
 import { RecordsTable } from "@/components/records/records-table"
@@ -52,11 +53,11 @@ function AlertMessage({ children }: { children: string }) {
   )
 }
 
-function UnavailableState({ href }: { href: string }) {
+function UnavailableState() {
   return (
     <div className="flex flex-col items-start gap-3">
       <AlertMessage>Could not load these records.</AlertMessage>
-      <ButtonLink href={href} variant="outline">Try again</ButtonLink>
+      <RetryButton />
     </div>
   )
 }
@@ -69,7 +70,7 @@ function NoPeriodState() {
   return (
     <EmptyState
       title="No payroll period yet"
-      description="A personal payroll period is needed before this filter can group shifts. None was invented."
+      description="Create a personal period in Calendar, or choose Week or Month above to see your shifts."
       action={
         <ButtonLink href="/calendar" variant="outline">Open calendar</ButtonLink>
       }
@@ -92,7 +93,7 @@ function EmptyRangeState() {
   return (
     <EmptyState
       title="No shifts in this range"
-      description="Saved shifts in this range will list here with their night-differential hours and wage codes."
+      description="Try another range or reset to this week. Add a shift if you are starting your history."
       action={
         <ButtonLink href="/shift/new">Add shift</ButtonLink>
       }
@@ -110,7 +111,7 @@ function RecordsBody({
   switch (result.status) {
     case "signed-out":
     case "error":
-      return <UnavailableState href={tryAgainHref} />
+      return <UnavailableState />
     case "invalid":
       return <InvalidState message={result.message} />
     case "no-period":
@@ -121,10 +122,10 @@ function RecordsBody({
       return <p className="text-sm text-[var(--vx-muted)]">Choose both dates above to load your records.</p>
     case "ready":
       return result.rows.length === 0 ? (
-        <EmptyRangeState />
+        result.hasAnyRecords ? <EmptyRangeState /> : <EmptyState title="Your shiftbook starts here" description="Save your first shift to keep a private history of your night hours and estimates." action={<ButtonLink href="/shift/new">Add your first shift</ButtonLink>} />
       ) : (
         <div className="flex flex-col gap-5">
-          <RecordsTable rows={result.rows} />
+          <RecordsTable rows={result.rows} returnTo={tryAgainHref} />
           <RecordsPagination
             page={result.page}
             pageSize={result.pageSize}
@@ -165,6 +166,7 @@ export default async function RecordsPage({
         title="My records"
         description="Saved shifts for a week, payroll period, month, or custom range."
       />
+      <section className="vx-records-panel">
       <RecordFilters
         key={`${range ?? "week"}:${from ?? ""}:${to ?? ""}:${sort ?? "newest"}`}
         range={range}
@@ -172,7 +174,9 @@ export default async function RecordsPage({
         to={to}
         sort={sort}
       />
-      <RecordsBody result={result} tryAgainHref={tryAgainHref} />
+      {result.status === "ready" ? <div className="vx-records-summary"><div><strong>{result.totalCount} saved shifts</strong><p>{result.from} to {result.to}</p></div><p>ND = night differential; estimates exclude TBD amounts</p></div> : null}
+      <div className="mt-5"><RecordsBody result={result} tryAgainHref={tryAgainHref} /></div>
+      </section>
     </div>
   )
 }

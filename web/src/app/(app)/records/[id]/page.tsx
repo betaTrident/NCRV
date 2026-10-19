@@ -1,3 +1,5 @@
+import { RetryButton } from "@/components/ui/retry-button"
+import { recordReturn } from "@/lib/record-return"
 import { RecordDetail } from "@/components/records/record-detail"
 import { EmptyState } from "@/components/shell/empty-state"
 import { PageHeader } from "@/components/shell/page-header"
@@ -6,9 +8,10 @@ import { loadRecordDetail } from "@/server/queries/records"
 
 type RecordDetailPageProps = {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ returnTo?: string }>
 }
 
-function UnavailableRecord() {
+function UnavailableRecord({ returnTo }: { returnTo: string }) {
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
@@ -20,14 +23,14 @@ function UnavailableRecord() {
         title="This record isn't available"
         description="That saved shift isn't in your shiftbook."
         action={
-          <ButtonLink href="/records" variant="outline">Back to records</ButtonLink>
+          <ButtonLink href={returnTo} variant="outline">{returnTo.startsWith("/calendar") ? "Back to calendar" : "Back to records"}</ButtonLink>
         }
       />
     </div>
   )
 }
 
-function RecordLoadError({ id }: { id: string }) {
+function RecordLoadError({ returnTo }: { returnTo: string }) {
   return (
     <div className="flex flex-col gap-8">
       <PageHeader
@@ -43,8 +46,8 @@ function RecordLoadError({ id }: { id: string }) {
           Could not load this record.
         </p>
         <div className="flex flex-wrap gap-3">
-          <ButtonLink href={`/records/${id}`} variant="outline">Try again</ButtonLink>
-          <ButtonLink href="/records" variant="outline">Back to records</ButtonLink>
+          <RetryButton />
+          <ButtonLink href={returnTo} variant="outline">{returnTo.startsWith("/calendar") ? "Back to calendar" : "Back to records"}</ButtonLink>
         </div>
       </div>
     </div>
@@ -53,16 +56,18 @@ function RecordLoadError({ id }: { id: string }) {
 
 export default async function RecordDetailPage({
   params,
+  searchParams,
 }: RecordDetailPageProps) {
+  const returnTo = recordReturn((await searchParams).returnTo)
   const { id } = await params
   const result = await loadRecordDetail(id)
 
   switch (result.status) {
     case "signed-out":
     case "unavailable":
-      return <UnavailableRecord />
+      return <UnavailableRecord returnTo={returnTo} />
     case "error":
-      return <RecordLoadError id={id} />
+      return <RecordLoadError returnTo={returnTo} />
     case "ready":
       return (
         <div className="flex flex-col gap-8">
@@ -71,7 +76,7 @@ export default async function RecordDetailPage({
             title={result.detail.workDateLabel}
             description="Saved snapshot for this shift. Nothing here is recalculated."
             action={
-              <ButtonLink href="/records" variant="outline">Back to records</ButtonLink>
+              <ButtonLink href={returnTo} variant="outline">{returnTo.startsWith("/calendar") ? "Back to calendar" : "Back to records"}</ButtonLink>
             }
           />
           <RecordDetail detail={result.detail} />

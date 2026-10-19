@@ -24,10 +24,14 @@ type ProfileFormProps = {
 }
 
 function ProfileForm({ profile, mode = "update" }: ProfileFormProps) {
-  const [state, formAction, pending] = useActionState(
-    mode === "create" ? createProfile : updateProfile,
-    initialState,
-  )
+  const [dirty, setDirty] = useState(false)
+  const [name, setName] = useState(profile.name)
+  const [salary, setSalary] = useState(profile.monthlyBasicSalary)
+  const [state, formAction, pending] = useActionState(async (prev: SettingsActionState, data: FormData) => {
+    const result = await (mode === "create" ? createProfile : updateProfile)(prev, data)
+    if (result.formNotice && !result.formError) setDirty(false)
+    return result
+  }, initialState)
   const [scheduleType, setScheduleType] = useState<
     ProfileValues["workScheduleType"]
   >(profile.workScheduleType)
@@ -44,7 +48,9 @@ function ProfileForm({ profile, mode = "update" }: ProfileFormProps) {
         <h2 className="text-[15px] font-semibold text-[var(--vx-ink)]">
           My profile
         </h2>
-        <form action={formAction} className="flex flex-col gap-4" noValidate>
+<p className="text-sm text-[var(--vx-muted)]">Salary and schedule are defaults for new calculations. Saved shift snapshots keep their original values.</p>
+        <form action={formAction} className="flex flex-col gap-4" onChange={() => setDirty(true)} noValidate>
+          <fieldset disabled={pending} className="contents">
           <Field
             label="Name"
             htmlFor="profile-name"
@@ -56,7 +62,7 @@ function ProfileForm({ profile, mode = "update" }: ProfileFormProps) {
               type="text"
               required
               autoComplete="name"
-              defaultValue={profile.name}
+              value={name} onChange={(event) => setName(event.target.value)}
               className="h-11"
             />
           </Field>
@@ -79,7 +85,7 @@ function ProfileForm({ profile, mode = "update" }: ProfileFormProps) {
               type="text"
               inputMode="decimal"
               autoComplete="off"
-              defaultValue={profile.monthlyBasicSalary}
+              value={salary} onChange={(event) => setSalary(event.target.value)}
               className="h-11 font-mono"
             />
           </Field>
@@ -111,10 +117,11 @@ function ProfileForm({ profile, mode = "update" }: ProfileFormProps) {
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
               <Field label="Schedule type" htmlFor="profile-schedule-type" error={state.fieldErrors.workScheduleType}>
-                <Select id="profile-schedule-type" value={scheduleType}
+                <Select id="profile-schedule-type" disabled={pending} value={scheduleType}
                   options={[{value: "STANDARD", label: "Standard"}, {value: "APPROVED_CWW", label: "Approved compressed workweek"}]}
                   onValueChange={(value) => {
                     const next = value as ProfileValues["workScheduleType"]
+                    setDirty(true)
                     setScheduleType(next)
                     if (next === "STANDARD") setScheduledRegularHours("8.00")
                   }} />
@@ -189,15 +196,17 @@ function ProfileForm({ profile, mode = "update" }: ProfileFormProps) {
           {!pending && state.formError ? (
             <StatusLine tone="error">{state.formError}</StatusLine>
           ) : null}
-          {!pending && state.formNotice && !state.formError ? (
+          {!pending && !dirty && state.formNotice && !state.formError ? (
             <StatusLine tone="saved">on your profile</StatusLine>
           ) : null}
 
+          {dirty ? <p role="status" className="text-sm text-[var(--vx-amber-ink)]">Unsaved profile changes</p> : null}
           <div className="pt-2">
             <Button type="submit" disabled={pending} aria-disabled={pending}>
               {pending ? "Saving…" : mode === "create" ? "Create profile" : "Save profile"}
             </Button>
           </div>
+          </fieldset>
         </form>
       </div>
     </Panel>

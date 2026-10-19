@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 
 import { Field } from "@/components/forms/field"
-import { Button } from "@/components/ui/button"
+import { Button, ButtonLink } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Segmented } from "@/components/ui/segmented"
 import { Select } from "@/components/ui/select"
@@ -53,9 +53,9 @@ function RecordFilters({ range, from, to, sort }: RecordFiltersProps) {
   return (
     <section aria-labelledby="records-range-heading" className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <h2 id="records-range-heading" className="text-sm font-semibold text-[var(--vx-ink)]">
-          Record range
-        </h2>
+        <div className="flex items-center justify-between gap-3"><h2 id="records-range-heading" className="text-sm font-semibold text-[var(--vx-ink)]">
+          Date range
+        </h2><ButtonLink href="/records" variant="quiet">Reset range</ButtonLink></div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div aria-busy={pending || undefined} className="max-w-full overflow-x-auto pb-1">
             <Segmented name="records-range" value={selected} options={OPTIONS} onValueChange={selectRange} />

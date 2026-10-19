@@ -1,3 +1,4 @@
+import { RetryButton } from "@/components/ui/retry-button"
 import { DateTime } from "luxon"
 
 import { CalendarWorkspace } from "@/components/calendar/calendar-workspace"
@@ -16,7 +17,7 @@ function UnavailableState() {
       >
         Could not load your calendar.
       </p>
-      <ButtonLink href="/calendar" variant="outline">Try again</ButtonLink>
+      <RetryButton />
     </div>
   )
 }
@@ -68,12 +69,8 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
       <PageHeader
         eyebrow="DATES & PERIODS"
         title="Calendar"
-        description="Holiday references and payroll periods you've entered. Dates are never fabricated."
+        description="Your shifts, personal periods, and the dates that matter."
       />
-      <p className="max-w-prose text-sm text-[var(--vx-ink-soft)]">
-        These are personal notes. Voyix Workspace does not supply a company
-        calendar, and saving a date does not change how a shift is classified.
-      </p>
       <CalendarBody result={result} />
       {result.status === "ready" ? (
         <CalendarWorkspace source={result.source} holidays={result.holidays} periods={result.periods} shifts={result.shifts} view={view} date={date} day={day} sourceEnabled={sourceEnabled}>

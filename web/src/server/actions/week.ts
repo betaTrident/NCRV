@@ -89,6 +89,7 @@ async function saveWeekAction(
     revalidatePath("/")
     revalidatePath("/shift/new")
     revalidatePath("/records")
+    revalidatePath("/calendar")
   }
   return result
 }

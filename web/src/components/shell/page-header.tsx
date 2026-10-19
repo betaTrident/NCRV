@@ -13,7 +13,7 @@ type PageHeaderProps = {
  */
 function PageHeader({ eyebrow, title, description, action }: PageHeaderProps) {
   return (
-    <header className="vx-page-enter flex flex-col gap-3 border-b border-[var(--vx-line)] pb-6 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
+    <header className="vx-page-header vx-page-enter flex flex-col gap-3 border-b border-[var(--vx-line)] pb-6 sm:flex-row sm:items-end sm:justify-between sm:gap-6">
       <div className="flex flex-col gap-2">
         <p className="font-mono text-[11px] font-medium tracking-[0.12em] text-[var(--vx-brand)] uppercase">
           {eyebrow}

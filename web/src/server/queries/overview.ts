@@ -48,15 +48,17 @@ type OverviewLedgerRow = {
 type OverviewResult =
   | { status: "signed-out" }
   | { status: "error" }
-  | { status: "no-period" }
-  | { status: "overlap" }
   | {
       status: "ready"
+      scope: "period" | "month"
+      periodNotice: "none" | "overlap" | null
+      activity: { date: string; hours: string }[]
       period: {
         periodStart: string
         periodEnd: string
         cutoffLabel: string | null
       }
+      hasKnownAmount: boolean
       summary: PeriodSummary
       rows: OverviewLedgerRow[]
     }
@@ -375,19 +377,16 @@ async function loadOverview(): Promise<OverviewResult> {
   }
 
   const resolved = resolveCurrentPeriod(periods, today)
-  if (resolved.status === "none") {
-    return { status: "no-period" }
-  }
-  if (resolved.status === "overlap") {
-    return { status: "overlap" }
-  }
+  const month = DateTime.fromISO(today, { zone: MANILA })
+  const periodStart = resolved.status === "current" ? resolved.period.periodStart : month.startOf("month").toISODate()!
+  const periodEnd = resolved.status === "current" ? resolved.period.periodEnd : month.endOf("month").toISODate()!
 
   const { data: shiftRows, error: shiftError } = await supabase
     .from("shifts")
     .select(SHIFT_SELECT)
     .eq("employee_id", sub)
-    .gte("work_date", resolved.period.periodStart)
-    .lte("work_date", resolved.period.periodEnd)
+    .gte("work_date", periodStart)
+    .lte("work_date", periodEnd)
 
   if (shiftError) {
     return { status: "error" }
@@ -400,14 +399,21 @@ async function loadOverview(): Promise<OverviewResult> {
 
   return {
     status: "ready",
+    scope: resolved.status === "current" ? "period" : "month",
+    periodNotice: resolved.status === "current" ? null : resolved.status,
+    activity: [...new Set(collected.map((item) => item.workDate))].sort().map((date) => ({
+      date,
+      hours: collected.filter((item) => item.workDate === date).reduce((total, item) => total.plus(item.record.ndHours), new Decimal(0)).toFixed(2),
+    })),
     period: {
-      periodStart: resolved.period.periodStart,
-      periodEnd: resolved.period.periodEnd,
-      cutoffLabel: formatCutoffLabel(
+      periodStart,
+      periodEnd,
+      cutoffLabel: resolved.status === "current" ? formatCutoffLabel(
         resolved.period.cutoffDate,
         resolved.period.cutoffTime,
-      ),
+      ) : null,
     },
+    hasKnownAmount: collected.some((item) => item.record.lines.some((line) => line.amountStatus === "estimated" && line.centavos !== null)),
     summary: summarizeRecords(collected.map((item) => item.record)),
     rows: [...collected].sort(compareRecent).slice(0, 8).map(toLedgerRow),
   }
